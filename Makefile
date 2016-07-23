@@ -8,6 +8,6 @@ doc: _composer-install
 test: _composer-install
 	@phpunit --bootstrap=test/bootstrap.php --coverage-html=doc/Coverage test
 
-_composer-install:
-	@test ! -f vendor/autoload.php && composer install || true
+composer-install:
+	@test ! -f vendor/autoload.php && composer install || composer update
 

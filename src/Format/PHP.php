@@ -24,7 +24,7 @@
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Mail
  */
-namespace CeusMedia\Router;
+namespace CeusMedia\Router\Format;
 /**
  *	...
  *
@@ -35,41 +35,14 @@ namespace CeusMedia\Router;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
-class Router{
+class PHP{
 
-	protected $registry;
+	public $mimeTypes	= array( 'application/x-php' );
 
-	protected $options	= array();
+	public $contentType	= 'application/x-php';
 
-	public function __construct( $options = array() ){
-		$this->options	= array_merge( $this->options, $options );
-		$this->registry	= new Registry();
-		$this->resolver	= new Resolver( $this->registry );
-	}
-
-	public function add( $controller, $action = 'index', $pattern, $method = '*' ){
-		$route	= new  Route( $controller, $action, $pattern, strtoupper( $method ) );
-		return $this->registry->add( $route );
-	}
-
-	public function addRoute( Route $route ){
-		return $this->registry->add( $route );
-	}
-
-	public function getRoutes(){
-		return $this->registry->index();
-	}
-
-	public function loadRoutes( $filePath ){
-		$this->registry->load( $filePath );
-	}
-
-	public function resolve( $path, $method = "GET" ){
-		return $this->resolver->resolve( $path, $method );
-	}
-
-	public function saveRoutes( $filePath ){
-		$this->registry->save( $filePath );
+	public function transform( $response, $content ){
+		$response->addHeaderPair( 'Content-Type', $this->contentType );
+		return serialize( $content );
 	}
 }
-?>

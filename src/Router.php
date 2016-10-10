@@ -60,8 +60,8 @@ class Router{
 		return $this->registry->index();
 	}
 
-	public function loadRoutes( $filePath ){
-		$this->registry->load( $filePath );
+	public function loadRoutesFromJsonFile( $filePath ){
+		$this->registry->loadFromJsonFile( $filePath );
 	}
 
 	public function resolve( $path, $method = "GET" ){

@@ -39,7 +39,7 @@ class Resolver{
 
 	protected $registry;
 
-	public function __construct( \CeusMedia\Router\Registry $registry ){
+	public function __construct( Registry $registry ){
 		$this->registry	= $registry;
 	}
 

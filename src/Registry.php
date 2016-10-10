@@ -39,7 +39,7 @@ class Registry{
 
 	protected $routes	= array();
 
-	public function add( \CeusMedia\Router\Route $route ){
+	public function add( Route $route ){
 		$routeId	= $route->getId();
 		if( array_key_exists( $routeId, $this->routes ) )
 			throw new \DomainException( 'A route for pattern and method is already registered' );
@@ -51,10 +51,10 @@ class Registry{
 		return $this->routes;
 	}
 
-	public function load( $filePath ){
+	public function loadFromJsonFile( $filePath ){
 		$data	= \FS_File_JSON_Reader::load( $filePath );
 		foreach( $data as $item ){
-			$route	= new \CeusMedia\Router\Route(
+			$route	= new Route(
 				$item->controller,
 				$item->action,
 				$item->pattern,

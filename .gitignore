@@ -1,4 +1,4 @@
 vendor
 composer.lock
 doc/API
-doc/Coverage
+doc/Test

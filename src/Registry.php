@@ -30,6 +30,8 @@ namespace CeusMedia\Router;
  *
  *	@category		Library
  *	@package		CeusMedia_Router
+ *	@uses			FS_File_JSON_Reader
+ *	@uses			FS_File_JSON_Writer
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2007-2016 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
@@ -39,6 +41,13 @@ class Registry{
 
 	protected $routes	= array();
 
+	/**
+	 *	Adds route to route registry by route object.
+	 *	@access		public
+	 *	@param		Route		$route		Route object
+	 *	@return		string		ID of added route
+	 *	@throws		DomainException			if route is already registered by route ID
+	 */
 	public function add( Route $route ){
 		$routeId	= $route->getId();
 		if( array_key_exists( $routeId, $this->routes ) )
@@ -47,13 +56,37 @@ class Registry{
 		return $routeId;
 	}
 
+	/**
+	 *	Return routes map.
+	 *	@access		public
+	 *	@return		array
+	 */
 	public function index(){
 		return $this->routes;
 	}
 
+	/**
+	 *	Adds a list of routes defined in a JSON file.
+	 *	@access		public
+	 *	@param		string		$filePath		Relative or absolute file path of JSON file to load
+	 *	@return		void
+	 *	@throws		OutOfRangeException			if route set has no controller
+	 *	@throws		OutOfRangeException			if route set has no action
+	 *	@throws		OutOfRangeException			if route set has no pattern
+	 *	@throws		OutOfRangeException			if route set has no method
+	 */
 	public function loadFromJsonFile( $filePath ){
 		$data	= \FS_File_JSON_Reader::load( $filePath );
 		foreach( $data as $item ){
+			if( !isset( $item->controller ) )
+				throw new \OutOfRangeException( 'Route set is missing controller' );
+			if( !isset( $item->action ) )
+				throw new \OutOfRangeException( 'Route set is missing action' );
+			if( !isset( $item->pattern ) )
+				throw new \OutOfRangeException( 'Route set is missing pattern' );
+			if( !isset( $item->method ) )
+				throw new \OutOfRangeException( 'Route set is missing method' );
+
 			$route	= new Route(
 				$item->controller,
 				$item->action,
@@ -64,6 +97,14 @@ class Registry{
 		}
 	}
 
+	/**
+	 *	Removes a route from route registry by its ID.
+	 *	@access		public
+	 *	@param		string		$routeId		ID of route
+	 *	@param		boolean		$strict			Throw exception if route ID is invalid
+	 *	@return		boolean		TRUE is route existed and has been removed
+	 *	@throws		DomainException				if route ID has not been found in registry (strict mode only)
+	 */
 	public function remove( $routeId, $strict = TRUE ){
 		if( array_key_exists( $routeId, $this->routes ) ){
 			unset( $this->routes[$routeId] );
@@ -74,6 +115,12 @@ class Registry{
 		return FALSE;
 	}
 
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		string		$filePath		Relative or absolute file path of JSON file
+	 * 	@return		integer		Number of bytes saved
+	 */
 	public function save( $filePath ){
 		$data	= array();
 		foreach( $this->index() as $route ){

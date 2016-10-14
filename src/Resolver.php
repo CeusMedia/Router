@@ -39,11 +39,24 @@ class Resolver{
 
 	protected $registry;
 
+	/**
+	 *	Constructor.
+	 *	@access		public
+	 *	@param		Registry	$registry		Route registry object
+	 *	@return		void
+	 */
 	public function __construct( Registry $registry ){
 		$this->registry	= $registry;
 	}
 
-	static public function getRoutePatternParts( $route ){
+	/**
+	 *	...
+	 *	@static
+	 *	@access		public
+	 *	@param		Route		$route			Route object
+	 *	@return		array		...
+	 */
+	static public function getRoutePatternParts( Route $route ){
 		$parts	= array();
 		foreach( explode( "/", $route->getPattern() ) as $part ){
 			$optional	= FALSE;
@@ -65,6 +78,14 @@ class Resolver{
 		return $parts;
 	}
 
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		string		$path		Path to resolve
+	 *	@param		string		$method		HTTP method used
+	 *	@return		object		...
+	 *	@todo		return Route instead
+	 */
 	public function resolve( $path, $method = "GET" ){
 		$method	= strtoupper( $method );
 		foreach( $this->registry->index() as $route ){

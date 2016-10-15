@@ -24,7 +24,7 @@ $router->addRoute( new Router\Route(
 $router->saveRoutes( 'routes.json' );
 */
 
-$router->loadRoutes( 'routes.json' );
+$router->loadRoutesFromJsonFile( 'routes.json' );
 
 $paths	= array(
 	'failing',
@@ -44,14 +44,14 @@ foreach( $router->getRoutes() as $route ){
 }
 
 foreach( $paths as $path ){
-	remark( "Checking path: ".$path );
-	$result	= $router->resolve( $path );
-	if( $result ){
+	remark( 'Checking path: "'.$path.'"' );
+	try{
+		$result	= $router->resolve( $path );
 		remark( ' - Status: found' );
-		remark( ' - Call: '.$result->controller.'::'.$result->action.'('.join( ', ', $result->arguments ).')' );
+		remark( ' - Call: '.$result->getController().'::'.$result->getAction().'('.join( ', ', $result->getArguments() ).')' );
 	}
-	else{
-		remark( ' - Status: not found' );
+	catch( Router\ResolverException $e ){
+		remark( ' - Status: '.$e->getMessage() );
 	}
 	remark();
 }

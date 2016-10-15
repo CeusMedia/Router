@@ -78,15 +78,24 @@ class Resolver{
 		return $parts;
 	}
 
+	public function hasRouteForPath( $path, $method = 'GET' ){
+		return (bool) $this->resolve( $path, $method, FALSE );
+	}
+
 	/**
-	 *	...
+	 *	Tries to resolve a given path on a given HTTP method into a route.
+	 *	Iterates registered routes and matches given path against route pattern, if HTTP method applies.
+	 *	Having a matching route, this route will be returned augmented by parsed arguments.
+	 *	Otherwise a custom exception will be thrown having strict mode enabled (default).
+	 *	In non-strict mode the returned value will be FALSE.
 	 *	@access		public
 	 *	@param		string		$path		Path to resolve
 	 *	@param		string		$method		HTTP method used
-	 *	@return		object		...
-	 *	@todo		return Route instead
+	 *	@param		boolean		$strict		Throw exception if not resolvable, otherwise return FALSE
+	 *	@return		Route					Route object with inserted arguments
+	 *	@throws		ResolverException		if path is not a resolvable route
 	 */
-	public function resolve( $path, $method = "GET" ){
+	public function resolve( $path, $method = "GET", $strict = TRUE ){
 		$method	= strtoupper( $method );
 		foreach( $this->registry->index() as $route ){
 			if( !$route->isMethod( $method ) )														//  method is not matching
@@ -122,15 +131,13 @@ class Resolver{
 				if( $part->argument )
 					$arguments[$part->key]	= $part->value;
 
-			$match	= (object) array(
-				'controller'	=> $route->getController(),
-				'action'		=> $route->getAction(),
-				'method'		=> $method,
-				'arguments'		=> $arguments,
-			);
-			return $match;
+			$resolvedRoute	= clone( $route );														//  avoid changes in original router registry object
+			$resolvedRoute->setArguments( $arguments );												//  augment route by values for arguments in pattern
+			$resolvedRoute->setMethod( $method );													//  specify used HTTP method
+//			$resolvedRoute->setOrigin( ... );														//  set previous route
+			return $resolvedRoute;																	//  return augmented route object clone
 		}
-		return FALSE;
+		throw new ResolverException( 'Route is not resolvable' );
 	}
 
 }

@@ -41,6 +41,8 @@ class Route{
 	protected $pattern;
 	protected $controller;
 	protected $action;
+	protected $arguments		= array();
+	protected $origin;
 
 	public function __construct( $controller, $action, $pattern, $method = "GET" ){
 		$this->setController( $controller );
@@ -53,6 +55,10 @@ class Route{
 		return $this->action;
 	}
 
+	public function getArguments(){
+		return $this->arguments;
+	}
+
 	public function getController(){
 		return $this->controller;
 	}
@@ -63,6 +69,10 @@ class Route{
 
 	public function getMethod(){
 		return $this->method;
+	}
+
+	public function getOrigin(){
+		return $this->origin;
 	}
 
 	public function getPattern(){
@@ -79,12 +89,20 @@ class Route{
 		$this->action		= $action;
 	}
 
+	public function setArguments( $map ){
+		$this->arguments	= $map;
+	}
+
 	public function setController( $controller ){
 		$this->controller	= $controller;
 	}
 
 	public function setMethod( $method ){
 		$this->method		= strtoupper( $method );
+	}
+
+	public function setOrigin( Route $origin ){
+		$this->origin	= $origin;
 	}
 
 	public function setPattern( $pattern ){

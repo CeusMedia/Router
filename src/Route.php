@@ -80,7 +80,10 @@ class Route{
 	}
 
 	public function isMethod( $method ){
-		if( $this->method === '*' || $this->method === strtoupper( $method ) )
+		if( $this->method === '*' )
+			return TRUE;
+		$methods	= explode( ',', $this->method );
+		if( in_array( strtoupper( $method ), $methods ) )
 			return TRUE;
 		return FALSE;
 	}

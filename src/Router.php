@@ -60,11 +60,15 @@ class Router{
 		return $this->registry->index();
 	}
 
+	public function getRoutesByController( $controller ){
+		return $this->registry->indexByController( $controller );
+	}
+
 	public function loadRoutesFromJsonFile( $filePath ){
 		$this->registry->loadFromJsonFile( $filePath );
 	}
 
-	public function resolve( $path, $method = "GET" ){
+	public function resolve( $path, $method = "GET", $strict = TRUE ){
 		return $this->resolver->resolve( $path, $method );
 	}
 

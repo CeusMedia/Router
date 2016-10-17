@@ -65,6 +65,16 @@ class Registry{
 		return $this->routes;
 	}
 
+	public function indexByController( $controller ){
+		$routes		= array();
+		foreach( $this->routes as $route ){
+			if( $route->getController() === $controller ){
+				$routes[]	= $route;
+			}
+		}
+		return $routes;
+	}
+
 	/**
 	 *	Adds a list of routes defined in a JSON file.
 	 *	@access		public

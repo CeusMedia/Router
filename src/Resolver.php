@@ -78,6 +78,13 @@ class Resolver{
 		return $parts;
 	}
 
+	/**
+	 *	Indicates whether a route can be resolved by path and method.
+	 *	@access		public
+	 *	@param		string		$path			...
+	 *	@param		string		$method			HTTP method (GET|POST|PUT|DELETE)
+	 *	@return		boolean
+	 */
 	public function hasRouteForPath( $path, $method = 'GET' ){
 		return (bool) $this->resolve( $path, $method, FALSE );
 	}
@@ -139,6 +146,5 @@ class Resolver{
 		}
 		throw new ResolverException( 'Route is not resolvable' );
 	}
-
 }
 ?>

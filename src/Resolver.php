@@ -96,11 +96,11 @@ class Resolver{
 	 *	Otherwise a custom exception will be thrown having strict mode enabled (default).
 	 *	In non-strict mode the returned value will be FALSE.
 	 *	@access		public
-	 *	@param		string		$path		Path to resolve
-	 *	@param		string		$method		HTTP method used
-	 *	@param		boolean		$strict		Throw exception if not resolvable, otherwise return FALSE
-	 *	@return		Route					Route object with inserted arguments
-	 *	@throws		ResolverException		if path is not a resolvable route
+	 *	@param		string		$path			Path to resolve
+	 *	@param		string		$method			HTTP method used
+	 *	@param		boolean		$strict			Throw exception if not resolvable, otherwise return FALSE
+	 *	@return		Route						Route object with inserted arguments
+	 *	@throws		ResolverException			if path is not a resolvable route
 	 */
 	public function resolve( $path, $method = "GET", $strict = TRUE ){
 		$method	= strtoupper( $method );

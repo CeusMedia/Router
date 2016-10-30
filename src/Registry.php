@@ -65,6 +65,12 @@ class Registry{
 		return $this->routes;
 	}
 
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		string		$controller		...
+	 *	@return		array  		List of found routes
+	 */
 	public function indexByController( $controller ){
 		$routes		= array();
 		foreach( $this->routes as $route ){

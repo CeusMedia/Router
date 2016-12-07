@@ -103,6 +103,7 @@ class Resolver{
 	 *	@throws		ResolverException			if path is not a resolvable route
 	 */
 	public function resolve( $path, $method = "GET", $strict = TRUE ){
+		$path	= preg_replace( "@^/+@", "/", '/'.$path );
 		$method	= strtoupper( $method );
 		foreach( $this->registry->index() as $route ){
 			if( !$route->isMethod( $method ) )														//  method is not matching

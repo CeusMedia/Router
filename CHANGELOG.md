@@ -1,8 +1,10 @@
 # Changelog for CeusMedia/Router
 
 ## Version 0.3
+- Add this changelog.
 - Extend registry by method to index routes by controller.
 - Allow multiple HTTP methods in route definition, separated by comma.
+- Improve path part replacements.
 
 ## Version 0.2
 - Throw ResolverException if route is not resolvable.

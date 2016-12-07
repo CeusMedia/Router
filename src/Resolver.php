@@ -108,14 +108,13 @@ class Resolver{
 			if( !$route->isMethod( $method ) )														//  method is not matching
 				continue;
 
-			$pattern	= preg_replace( "@/(\(:[^/]+\))@", "/(\S+)?", $route->getPattern() );		//  insert optional argument pattern
-			$pattern	= preg_replace( "@/(:[^/]+)@", "/\S+", $pattern );							//  insert mandatory argument pattern
-			$pattern	= preg_replace( "@/@", "/?", $pattern );									//  make ending slash optional
+			$pattern	= preg_replace( "@(/\(:[^/]+\))@", "(/\S+)?", $route->getPattern() );		//  insert optional argument pattern
+			$pattern	= preg_replace( "@(/:[^/]+)@", "/\S+", $pattern );							//  insert mandatory argument pattern
+			$pattern	= preg_replace( "@/$@", "/?", $pattern );									//  make ending slash optional
 			if( !preg_match( '@^'.$pattern.'$@U', $path ) )											//  path is not matching route pattern
 				continue;
 
 			$partsPattern	= self::getRoutePatternParts( $route );
-
 			$partsPath	= explode( "/", $path );													//  split path into parts
 			if( count( $partsPath ) > count( $partsPattern ) )										//  path has more parts than route pattern
 				continue;

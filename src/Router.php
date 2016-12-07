@@ -63,7 +63,7 @@ class Router{
 	 *	@return		string		ID of added route
 	 */
 	public function add( $controller, $action = 'index', $pattern, $method = '*' ){
-		$route	= new  Route( $controller, $action, $pattern, strtoupper( $method ) );
+		$route	= new Route( $controller, $action, $pattern, strtoupper( $method ) );
 		return $this->registry->add( $route );
 	}
 

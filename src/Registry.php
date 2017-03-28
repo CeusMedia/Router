@@ -56,6 +56,20 @@ class Registry{
 		return $routeId;
 	}
 
+	protected function assembleJsonFileFromFolder( $filePath, $folderPath ){
+		if( !file_exists( $folderPath ) )
+			throw new \RuntimeException( 'Folder "'.$folderPath.'" is not existing' );
+		$list = array();
+		$index	= new \FS_File_RegexFilter( $folderPath, '/\.json$/' );
+		foreach( $index as $item ){
+			$routes	= \FS_File_JSON_Reader::load( $item->getPathname() );
+			foreach( $routes as $route ){
+				$list[]	= $route;
+			}
+		}
+		return \FS_File_JSON_Writer::save( $filePath, $list, TRUE );
+	}
+
 	/**
 	 *	Return routes map.
 	 *	@access		public
@@ -85,13 +99,17 @@ class Registry{
 	 *	Adds a list of routes defined in a JSON file.
 	 *	@access		public
 	 *	@param		string		$filePath		Relative or absolute file path of JSON file to load
+	 *	@param		string		$folderPath		Relative or absolute path to folder containing JSON files to assemble
 	 *	@return		void
 	 *	@throws		OutOfRangeException			if route set has no controller
 	 *	@throws		OutOfRangeException			if route set has no action
 	 *	@throws		OutOfRangeException			if route set has no pattern
 	 *	@throws		OutOfRangeException			if route set has no method
 	 */
-	public function loadFromJsonFile( $filePath ){
+	public function loadFromJsonFile( $filePath, $folderPath = NULL ){
+		if( !file_exists( $filePath ) && $folderPath ){
+			$this->assembleJsonFileFromFolder( $filePath, $folderPath );
+		}
 		$data	= \FS_File_JSON_Reader::load( $filePath );
 		foreach( $data as $item ){
 			if( !isset( $item->controller ) )

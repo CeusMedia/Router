@@ -100,10 +100,11 @@ class Router{
 	 *	...
 	 *	@access		public
 	 *	@param		string		$filePath		Path to routes file
+	 *	@param		string		$folderPath		Path to folder with routes files to assemble
 	 *	@return		void
 	 */
-	public function loadRoutesFromJsonFile( $filePath ){
-		$this->registry->loadFromJsonFile( $filePath );
+	public function loadRoutesFromJsonFile( $filePath, $folderPath = NULL ){
+		$this->registry->loadFromJsonFile( $filePath, $folderPath );
 	}
 
 	/**

@@ -42,13 +42,15 @@ class Route{
 	protected $controller;
 	protected $action;
 	protected $arguments		= array();
+	protected $roles			= array();
 	protected $origin;
 
-	public function __construct( $controller, $action, $pattern, $method = "GET" ){
+	public function __construct( $controller, $action, $pattern, $method = "GET", $roles = array() ){
 		$this->setController( $controller );
 		$this->setAction( $action );
 		$this->setPattern( $pattern );
 		$this->setMethod( $method );
+		$this->setRoles( $roles );
 	}
 
 	public function getAction(){
@@ -77,6 +79,10 @@ class Route{
 
 	public function getPattern(){
 		return $this->pattern;
+	}
+
+	public function getRoles(){
+		return $this->roles;
 	}
 
 	public function isMethod( $method ){
@@ -110,6 +116,10 @@ class Route{
 
 	public function setPattern( $pattern ){
 		$this->pattern		= $pattern;
+	}
+
+	public function setRoles( $roles ){
+		$this->roles		= $roles;
 	}
 }
 ?>

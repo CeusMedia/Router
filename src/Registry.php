@@ -125,7 +125,8 @@ class Registry{
 				$item->controller,
 				$item->action,
 				$item->pattern,
-				$item->method
+				$item->method,
+				isset( $item->roles ) ? preg_split( "/, */", trim( $item->roles ) ) : array()
 			);
 			$this->add( $route );
 		}

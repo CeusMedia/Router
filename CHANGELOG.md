@@ -1,5 +1,8 @@
 # Changelog for CeusMedia/Router
 
+## Version 0.4
+- 0.3.1: Extend route model by roles.
+
 ## Version 0.3
 - Add this changelog.
 - Extend registry by method to index routes by controller.

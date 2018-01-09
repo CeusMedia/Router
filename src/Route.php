@@ -121,5 +121,18 @@ class Route{
 	public function setRoles( $roles ){
 		$this->roles		= $roles;
 	}
+
+	public function toArray(){
+		return array(
+			'id'			=> $this->getId(),
+			'method'		=> $this->method,
+			'pattern'		=> $this->pattern,
+			'controller'	=> $this->controller,
+			'action'		=> $this->action,
+			'arguments'		=> $this->arguments,
+			'roles'			=> $this->roles,
+			'origin'		=> $this->origin,
+		);
+	}
 }
 ?>

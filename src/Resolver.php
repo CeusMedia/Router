@@ -144,7 +144,9 @@ class Resolver{
 //			$resolvedRoute->setOrigin( ... );														//  set previous route
 			return $resolvedRoute;																	//  return augmented route object clone
 		}
-		throw new ResolverException( 'Route is not resolvable' );
+		if( $strict )
+			throw new ResolverException( 'Route is not resolvable' );
+		return FALSE;
 	}
 }
 ?>

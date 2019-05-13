@@ -2,13 +2,13 @@
   {
     "controller": "Controller_Slide",
     "action": "index",
-    "pattern": "slide",
+    "pattern": "/slide",
     "method": "GET"
   },
   {
     "controller": "Controller_Slide",
     "action": "edit",
-    "pattern": "slide\/edit\/:sliderId\/(:slideId)",
+    "pattern": "/slide\/edit\/:sliderId\/(:slideId)",
     "method": "*"
   }
 ]

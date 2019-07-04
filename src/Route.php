@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2007-2016 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2007-2019 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,18 +20,19 @@
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2016 Christian Würker
+ *	@copyright		2007-2019 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 namespace CeusMedia\Router;
+
 /**
  *	...
  *
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2016 Christian Würker
+ *	@copyright		2007-2019 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -45,7 +46,16 @@ class Route{
 	protected $roles			= array();
 	protected $origin;
 
-	public function __construct( $controller, $action, $pattern, $method = "GET", $roles = array() ){
+	protected $supportedMethods	= array(
+		'GET',
+		'HEAD',
+		'POST',
+		'PUT',
+		'DELETE',
+		'OPTIONS',
+	);
+
+	public function __construct( string $controller, string $action, string $pattern, string $method = "GET", array $roles = array() ){
 		$this->setController( $controller );
 		$this->setAction( $action );
 		$this->setPattern( $pattern );
@@ -85,7 +95,7 @@ class Route{
 		return $this->roles;
 	}
 
-	public function isMethod( $method ){
+	public function isMethod( string $method ){
 		if( $this->method === '*' )
 			return TRUE;
 		$methods	= explode( ',', $this->method );
@@ -94,32 +104,103 @@ class Route{
 		return FALSE;
 	}
 
-	public function setAction( $action ){
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		string		$action			Name of method to call on controller class
+	 *	@return		self
+	 */
+	public function setAction( string $action ){
+		if( !preg_match( '/^(_|[a-z0-9])+$/i', $action ) )
+			throw new \InvalidArgumentException( 'Action must be a valid method name' );
 		$this->action		= $action;
+		return $this;
 	}
 
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		array		$map
+	 *	@return		self
+	 */
 	public function setArguments( $map ){
 		$this->arguments	= $map;
+		return $this;
 	}
 
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		string		$controller
+	 *	@return		self
+	 */
 	public function setController( $controller ){
+		if( !preg_match( '/^(_|\\\|[a-z0-9])+$/i', $controller ) )
+			throw new \InvalidArgumentException( 'Controller must be a valid class name' );
 		$this->controller	= $controller;
+		return $this;
 	}
 
-	public function setMethod( $method ){
-		$this->method		= strtoupper( $method );
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		string		$method
+	 *	@return		self
+	 *	@throws		RangeException		if given method is invalid or not supported
+	 */
+	public function setMethod( $method ): self
+	{
+		$validMethods	= array();
+		$methods		= preg_split( '/\s*(,|\|)\s*/', strtoupper( trim( $method ) ) );
+		if( in_array( '*', $methods ) )
+			$validMethods	= array( '*' );
+		else {
+			foreach( $methods as $item ){
+				if( !strlen( trim( $item ) ) )
+					continue;
+				if( !in_array( $item, $this->supportedMethods ) )
+					throw new \RangeException( 'Invalid method: '.$item );
+				$validMethods[]	= $item;
+			}
+		}
+		$this->method		= join( ',', $validMethods );
+		return $this;
 	}
 
-	public function setOrigin( Route $origin ){
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		Route		$route
+	 *	@return		self
+	 */
+	public function setOrigin( Route $origin ): self
+	{
 		$this->origin	= $origin;
+		return $this;
 	}
 
-	public function setPattern( $pattern ){
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		string		$pattern
+	 *	@return		self
+	 */
+	public function setPattern( $pattern ): self
+	{
 		$this->pattern		= $pattern;
+		return $this;
 	}
 
-	public function setRoles( $roles ){
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		array		$roles
+	 *	@return		self
+	 */
+	public function setRoles( $roles ): self
+	{
 		$this->roles		= $roles;
+		return $this;
 	}
 
 	public function toArray(){

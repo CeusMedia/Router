@@ -20,11 +20,12 @@
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2016 Christian Würker
+ *	@copyright		2007-2019 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 namespace CeusMedia\Router;
+
 /**
  *	...
  *
@@ -33,7 +34,7 @@ namespace CeusMedia\Router;
  *	@uses			FS_File_JSON_Reader
  *	@uses			FS_File_JSON_Writer
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2016 Christian Würker
+ *	@copyright		2007-2019 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -46,7 +47,7 @@ class Registry{
 	 *	@access		public
 	 *	@param		Route		$route		Route object
 	 *	@return		string		ID of added route
-	 *	@throws		DomainException			if route is already registered by route ID
+	 *	@throws		\DomainException			if route is already registered by route ID
 	 */
 	public function add( Route $route ){
 		$routeId	= $route->getId();
@@ -106,10 +107,10 @@ class Registry{
 	 *	@param		string		$filePath		Relative or absolute file path of JSON file to load
 	 *	@param		string		$folderPath		Relative or absolute path to folder containing JSON files to assemble
 	 *	@return		void
-	 *	@throws		OutOfRangeException			if route set has no controller
-	 *	@throws		OutOfRangeException			if route set has no action
-	 *	@throws		OutOfRangeException			if route set has no pattern
-	 *	@throws		OutOfRangeException			if route set has no method
+	 *	@throws		\OutOfRangeException			if route set has no controller
+	 *	@throws		\OutOfRangeException			if route set has no action
+	 *	@throws		\OutOfRangeException			if route set has no pattern
+	 *	@throws		\OutOfRangeException			if route set has no method
 	 */
 	public function loadFromJsonFile( $filePath, $folderPath = NULL ){
 		if( !file_exists( $filePath ) && $folderPath ){
@@ -143,7 +144,7 @@ class Registry{
 	 *	@param		string		$routeId		ID of route
 	 *	@param		boolean		$strict			Throw exception if route ID is invalid
 	 *	@return		boolean		TRUE is route existed and has been removed
-	 *	@throws		DomainException				if route ID has not been found in registry (strict mode only)
+	 *	@throws		\DomainException				if route ID has not been found in registry (strict mode only)
 	 */
 	public function remove( $routeId, $strict = TRUE ){
 		if( array_key_exists( $routeId, $this->routes ) ){

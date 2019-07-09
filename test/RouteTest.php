@@ -75,6 +75,19 @@ class RouteTest extends TestCase
 	}
 
 	/**
+	 *	@covers	::getRoles
+	 */
+	public function testGetRoles()
+	{
+		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$this->assertSame( array(), $route->getRoles() );
+
+		$roles	= array( 'role1', 'role2' );
+		$route->setRoles( $roles );
+		$this->assertSame( $roles, $route->getRoles() );
+	}
+
+	/**
 	 *	@covers	::isMethod
 	 */
 	public function testIsMethod()
@@ -264,49 +277,49 @@ class RouteTest extends TestCase
 		$this->assertTrue( is_object( $result ) );
 		$this->assertSame( Route::class, get_class( $result ) );
 
-		$result	= $route->setMethod( 'POST' );
+		$route->setMethod( 'POST' );
 		$this->assertSame( 'POST', $route->getMethod() );
 
-		$result	= $route->setMethod( ' POST' );
+		$route->setMethod( ' POST' );
 		$this->assertSame( 'POST', $route->getMethod() );
 
-		$result	= $route->setMethod( 'POST ' );
+		$route->setMethod( 'POST ' );
 		$this->assertSame( 'POST', $route->getMethod() );
 
-		$result	= $route->setMethod( ',POST,' );
+		$route->setMethod( ',POST,' );
 		$this->assertSame( 'POST', $route->getMethod() );
 
-		$result	= $route->setMethod( 'GET,POST' );
+		$route->setMethod( 'GET,POST' );
 		$this->assertSame( 'GET,POST', $route->getMethod() );
 
-		$result	= $route->setMethod( ',GET,POST,' );
+		$route->setMethod( ',GET,POST,' );
 		$this->assertSame( 'GET,POST', $route->getMethod() );
 
-		$result	= $route->setMethod( ' GET , POST ' );
+		$route->setMethod( ' GET , POST ' );
 		$this->assertSame( 'GET,POST', $route->getMethod() );
 
-		$result	= $route->setMethod( 'GET|POST' );
+		$route->setMethod( 'GET|POST' );
 		$this->assertSame( 'GET,POST', $route->getMethod() );
 
-		$result	= $route->setMethod( '|GET|POST|' );
+		$route->setMethod( '|GET|POST|' );
 		$this->assertSame( 'GET,POST', $route->getMethod() );
 
-		$result	= $route->setMethod( ' GET | POST ' );
+		$route->setMethod( ' GET | POST ' );
 		$this->assertSame( 'GET,POST', $route->getMethod() );
 
-		$result	= $route->setMethod( '*' );
+		$route->setMethod( '*' );
 		$this->assertSame( '*', $route->getMethod() );
 
-		$result	= $route->setMethod( ',*,' );
+		$route->setMethod( ',*,' );
 		$this->assertSame( '*', $route->getMethod() );
 
-		$result	= $route->setMethod( '|*|' );
+		$route->setMethod( '|*|' );
 		$this->assertSame( '*', $route->getMethod() );
 
-		$result	= $route->setMethod( '*,POST' );
+		$route->setMethod( '*,POST' );
 		$this->assertSame( '*', $route->getMethod() );
 
-		$result	= $route->setMethod( ',*|POST|GET,' );
+		$route->setMethod( ',*|POST|GET,' );
 		$this->assertSame( '*', $route->getMethod() );
 	}
 
@@ -318,5 +331,42 @@ class RouteTest extends TestCase
 		$this->expectException( \RangeException::class );
 		$route	= new Route( 'Test', 'test', 'test', 'GET' );
 		$route->setMethod( 'invalid' );
+	}
+
+	/**
+	 *	@covers	::setPattern
+	 */
+	public function testSetPattern()
+	{
+		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$result	= $route->setPattern( '123' );
+		$this->assertTrue( is_object( $result ) );
+		$this->assertSame( Route::class, get_class( $result ) );
+		$this->assertSame( '123', $route->getPattern() );
+
+		$route->setPattern( ' 123' );
+		$this->assertSame( '123', $route->getPattern() );
+
+		$route->setPattern( '123 ' );
+		$this->assertSame( '123', $route->getPattern() );
+
+		$route->setPattern( ' 1 2 3 ' );
+		$this->assertSame( '123', $route->getPattern() );
+	}
+
+	/**
+	 *	@covers	::setRoles
+	 */
+	public function testSetRoles()
+	{
+		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$result	= $route->setRoles( array() );
+		$this->assertTrue( is_object( $result ) );
+		$this->assertSame( Route::class, get_class( $result ) );
+		$this->assertSame( array(), $route->getRoles() );
+
+		$roles	= array( 'role1', 'role2' );
+		$route->setRoles( $roles );
+		$this->assertSame( $roles, $route->getRoles() );
 	}
 }

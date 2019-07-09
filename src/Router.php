@@ -48,7 +48,8 @@ class Router{
 	 *	@param		array		$options	Map of options
 	 *	@return		void
 	 */
-	public function __construct( $options = array() ){
+	public function __construct( $options = array() )
+	{
 		$this->options	= array_merge( $this->options, $options );
 		$this->registry	= new Registry();
 		$this->resolver	= new Resolver( $this->registry );
@@ -62,8 +63,10 @@ class Router{
 	 *	@param		string		$pattern		Pattern to resolve route by
 	 *	@param		string		$method			HTTP method (GET|POST|PUT|DELETE)
 	 *	@return		string		ID of added route
+	 *	@todo		return route instance instead of route ID
 	 */
-	public function add( $controller, $action = 'index', $pattern, $method = '*' ){
+	public function add( $controller, $action = 'index', $pattern, $method = '*' )
+	{
 		$route	= new Route( $controller, $action, $pattern, strtoupper( $method ) );
 		return $this->registry->add( $route );
 	}
@@ -73,8 +76,10 @@ class Router{
 	 *	@access		public
 	 *	@param		Route		$route			Route instance to add
 	 *	@return		string		ID of added route
+	 *	@todo		return route instance instead of route ID
 	 */
-	public function addRoute( Route $route ){
+	public function addRoute( Route $route )
+	{
 		return $this->registry->add( $route );
 	}
 
@@ -83,7 +88,8 @@ class Router{
 	 *	@access		public
 	 *	@return		array 		List of route instances
 	 */
-	public function getRoutes(){
+	public function getRoutes()
+	{
 		return $this->registry->index();
 	}
 
@@ -93,7 +99,8 @@ class Router{
 	 *	@param		string		$controller		...
 	 *	@return		array 		List of route instances
 	 */
-	public function getRoutesByController( $controller ){
+	public function getRoutesByController( $controller )
+	{
 		return $this->registry->indexByController( $controller );
 	}
 
@@ -104,7 +111,8 @@ class Router{
 	 *	@param		string		$folderPath		Path to folder with routes files to assemble
 	 *	@return		void
 	 */
-	public function loadRoutesFromJsonFile( $filePath, $folderPath = NULL ){
+	public function loadRoutesFromJsonFile( $filePath, $folderPath = NULL )
+	{
 		$this->registry->loadFromJsonFile( $filePath, $folderPath );
 	}
 
@@ -116,7 +124,8 @@ class Router{
 	 *	@param		boolean		$strict			Flag: resolve in strict mode
 	 *	@return		Route
 	 */
-	public function resolve( $path, $method = "GET", $strict = TRUE ){
+	public function resolve( $path, $method = "GET", $strict = TRUE )
+	{
 		return $this->resolver->resolve( $path, $method, $strict );
 	}
 
@@ -126,7 +135,8 @@ class Router{
 	 *	@param		string		$filePath		Path to routes file
 	 *	@return		void
 	 */
-	public function saveRoutes( $filePath ){
+	public function saveRoutes( $filePath )
+	{
 		$this->registry->save( $filePath );
 	}
 }

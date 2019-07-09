@@ -76,7 +76,7 @@ class Route{
 	}
 
 	public function getId(){
-		return md5( $this->pattern.'@'.$this->method );
+		return md5( $this->method.'::'.$this->pattern );
 	}
 
 	public function getMethod(){
@@ -120,11 +120,11 @@ class Route{
 	/**
 	 *	...
 	 *	@access		public
-	 *	@param		array		$map
+	 *	@param		array		$arguments		Map of 
 	 *	@return		self
 	 */
-	public function setArguments( $map ){
-		$this->arguments	= $map;
+	public function setArguments( $arguments ){
+		$this->arguments	= $arguments;
 		return $this;
 	}
 
@@ -187,6 +187,7 @@ class Route{
 	 */
 	public function setPattern( $pattern ): self
 	{
+		$pattern			= str_replace( ' ', '', $pattern );
 		$this->pattern		= $pattern;
 		return $this;
 	}

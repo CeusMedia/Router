@@ -93,7 +93,7 @@ class RouteTest extends TestCase
 	 */
 	public function testGetRoles()
 	{
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$this->assertSame( array(), $route->getRoles() );
 
 		$roles	= array( 'role1', 'role2' );
@@ -352,7 +352,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetPattern()
 	{
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$result	= $route->setPattern( '123' );
 		$this->assertTrue( is_object( $result ) );
 		$this->assertSame( Route::class, get_class( $result ) );
@@ -373,7 +373,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetRoles()
 	{
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$result	= $route->setRoles( array() );
 		$this->assertTrue( is_object( $result ) );
 		$this->assertSame( Route::class, get_class( $result ) );

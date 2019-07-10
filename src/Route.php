@@ -64,7 +64,7 @@ class Route{
 	public function __construct( string $pattern, string $method = NULL, int $mode = NULL ){
 		$this->setPattern( $pattern );
 		if( !is_null( $method ) )
-		 	$this->setMethod( $method );
+			$this->setMethod( $method );
 		if( !is_null( $mode ) )
 			$this->setMode( $mode );
 	}

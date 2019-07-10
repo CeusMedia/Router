@@ -38,7 +38,13 @@ namespace CeusMedia\Router;
  */
 class Route{
 
-	protected $method;
+	const MODE_UNKNOWN		= 0;
+	const MODE_CONTROLLER	= 1;
+	const MODE_EVENT		= 2;
+	const MODE_FORWARD		= 3;
+
+	protected $method			= 'GET';
+	protected $mode				= self::MODE_CONTROLLER;
 	protected $pattern;
 	protected $controller;
 	protected $action;
@@ -46,7 +52,7 @@ class Route{
 	protected $roles			= array();
 	protected $origin;
 
-	protected $supportedMethods	= array(
+	public $supportedMethods	= array(
 		'GET',
 		'HEAD',
 		'POST',
@@ -55,12 +61,12 @@ class Route{
 		'OPTIONS',
 	);
 
-	public function __construct( string $controller, string $action, string $pattern, string $method = "GET", array $roles = array() ){
-		$this->setController( $controller );
-		$this->setAction( $action );
+	public function __construct( string $pattern, string $method = NULL, int $mode = NULL ){
 		$this->setPattern( $pattern );
-		$this->setMethod( $method );
-		$this->setRoles( $roles );
+		if( !is_null( $method ) )
+		 	$this->setMethod( $method );
+		if( !is_null( $mode ) )
+			$this->setMode( $mode );
 	}
 
 	public function getAction(){
@@ -81,6 +87,10 @@ class Route{
 
 	public function getMethod(){
 		return $this->method;
+	}
+
+	public function getMode(){
+		return $this->mode;
 	}
 
 	public function getOrigin(){
@@ -131,7 +141,7 @@ class Route{
 	/**
 	 *	...
 	 *	@access		public
-	 *	@param		string		$controller
+	 *	@param		string		$controller		...
 	 *	@return		self
 	 */
 	public function setController( $controller ){
@@ -144,9 +154,9 @@ class Route{
 	/**
 	 *	...
 	 *	@access		public
-	 *	@param		string		$method
+	 *	@param		string		$method			...
 	 *	@return		self
-	 *	@throws		RangeException		if given method is invalid or not supported
+	 *	@throws		RangeException				if given method is invalid or not supported
 	 */
 	public function setMethod( $method ): self
 	{
@@ -164,6 +174,21 @@ class Route{
 			}
 		}
 		$this->method		= join( ',', $validMethods );
+		return $this;
+	}
+
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		int			$mode			Mode as constant value (int)
+	 *	@return		self
+	 *	@throws		InvalidArgumentException	if given mode value is no a valid constant value (int)
+	 */
+	public function setMode( $mode ): self
+	{
+		if( !preg_match( '/^[0-9]+$/', $mode ) )
+			throw new InvalidArgumentException( 'Invalid mode: '.$mode );
+		$this->mode	= $mode;
 		return $this;
 	}
 
@@ -207,6 +232,7 @@ class Route{
 	public function toArray(){
 		return array(
 			'id'			=> $this->getId(),
+			'mode'			=> $this->mode,
 			'method'		=> $this->method,
 			'pattern'		=> $this->pattern,
 			'controller'	=> $this->controller,

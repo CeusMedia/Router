@@ -111,8 +111,9 @@ class Resolver{
 				continue;
 
 			$pattern	= preg_replace( "@(/\(:[^/]+\))@", "(/\S+)?", $route->getPattern() );		//  insert optional argument pattern
-			$pattern	= preg_replace( "@(/:[^/]+)@", "/\S+", $pattern );							//  insert mandatory argument pattern
+			$pattern	= preg_replace( "@(/:[^/(]+)@", "/\S+", $pattern );							//  insert mandatory argument pattern
 			$pattern	= preg_replace( "@/$@", "/?", $pattern );									//  make ending slash optional
+			$pattern	= preg_replace( "/@/", "\@", $pattern );
 			if( !preg_match( '@^'.$pattern.'$@U', $path ) )											//  path is not matching route pattern
 				continue;
 

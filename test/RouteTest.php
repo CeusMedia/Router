@@ -1,18 +1,29 @@
 <?php
 use PHPUnit\Framework\TestCase;
 use CeusMedia\Router\Route;
+use CeusMedia\Router\Route\Factory as RouteFactory;
 
 /**
  *	@coversDefaultClass	\CeusMedia\Router\Route
 */
 class RouteTest extends TestCase
 {
+	protected function setUp()
+	{
+		$this->factory	= new RouteFactory();
+		$this->factory->setDefaultMethod( 'GET' );
+		$this->factory->setDefaultMode( Route::MODE_CONTROLLER );
+	}
+
 	/**
 	 *	@covers	::getAction
 	 */
 	public function testGetAction()
 	{
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
+		$this->assertSame( NULL, $route->getAction() );
+
+		$route->setAction( 'test');
 		$this->assertSame( 'test', $route->getAction() );
 
 		$route->setAction( 'TEST2');
@@ -24,7 +35,10 @@ class RouteTest extends TestCase
 	 */
 	public function testGetController()
 	{
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
+		$this->assertSame( NULL, $route->getController() );
+
+		$route->setController( 'Test');
 		$this->assertSame( 'Test', $route->getController() );
 
 		$route->setController( 'TEST2');
@@ -36,7 +50,7 @@ class RouteTest extends TestCase
 	 */
 	public function testGetMethod()
 	{
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$this->assertSame( 'GET', $route->getMethod() );
 
 		$route->setMethod( 'POST');
@@ -54,7 +68,7 @@ class RouteTest extends TestCase
 	 */
 	public function testGetOrigin()
 	{
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$this->assertSame( NULL, $route->getOrigin() );
 
 		$route->setOrigin( $route );
@@ -66,7 +80,7 @@ class RouteTest extends TestCase
 	 */
 	public function testGetPattern()
 	{
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$this->assertSame( 'test', $route->getPattern() );
 
 		$pattern	= '/_(test|TEST)+_/';
@@ -92,7 +106,7 @@ class RouteTest extends TestCase
 	 */
 	public function testIsMethod()
 	{
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$this->assertTrue( $route->isMethod( 'GET' ) );
 		$this->assertTrue( $route->isMethod( 'get' ) );
 		$this->assertFalse( $route->isMethod( 'POST' ) );
@@ -118,7 +132,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetAction()
 	{
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$result	= $route->setController( 'SomethingElse' );
 		$this->assertTrue( is_object( $result ) );
 		$this->assertSame( Route::class, get_class( $result ) );
@@ -133,7 +147,7 @@ class RouteTest extends TestCase
 	public function testSetActionExceptionOnEmpty()
 	{
 		$this->expectException( \InvalidArgumentException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setAction( '' );
 	}
 
@@ -143,7 +157,7 @@ class RouteTest extends TestCase
 	public function testSetActionExceptionOnContainsWhitespace1()
 	{
 		$this->expectException( \InvalidArgumentException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setAction( ' ' );
 	}
 
@@ -153,7 +167,7 @@ class RouteTest extends TestCase
 	public function testSetActionExceptionOnContainsWhitespace2()
 	{
 		$this->expectException( \InvalidArgumentException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setAction( ' methodName' );
 	}
 
@@ -163,7 +177,7 @@ class RouteTest extends TestCase
 	public function testSetActionExceptionOnContainsWhitespace3()
 	{
 		$this->expectException( \InvalidArgumentException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setAction( 'methodName ' );
 	}
 
@@ -173,7 +187,7 @@ class RouteTest extends TestCase
 	public function testSetActionExceptionOnContainsWhitespace4()
 	{
 		$this->expectException( \InvalidArgumentException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setAction( 'method Name' );
 	}
 
@@ -183,7 +197,7 @@ class RouteTest extends TestCase
 	public function testSetActionExceptionOnContainsInvalidCharacter1()
 	{
 		$this->expectException( \InvalidArgumentException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setAction( 'method-name' );
 	}
 
@@ -192,7 +206,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetController()
 	{
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$result	= $route->setController( 'SomethingElse' );
 		$this->assertTrue( is_object( $result ) );
 		$this->assertSame( Route::class, get_class( $result ) );
@@ -213,7 +227,7 @@ class RouteTest extends TestCase
 	public function testSetControllerExceptionOnEmpty()
 	{
 		$this->expectException( \InvalidArgumentException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setController( '' );
 	}
 
@@ -223,7 +237,7 @@ class RouteTest extends TestCase
 	public function testSetControllerExceptionOnContainsWhitespace1()
 	{
 		$this->expectException( \InvalidArgumentException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setController( ' ' );
 	}
 
@@ -233,7 +247,7 @@ class RouteTest extends TestCase
 	public function testSetControllerExceptionOnContainsWhitespace2()
 	{
 		$this->expectException( \InvalidArgumentException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setController( ' ClassName' );
 	}
 
@@ -243,7 +257,7 @@ class RouteTest extends TestCase
 	public function testSetControllerExceptionOnContainsWhitespace3()
 	{
 		$this->expectException( \InvalidArgumentException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setController( 'ClassName ' );
 	}
 
@@ -253,7 +267,7 @@ class RouteTest extends TestCase
 	public function testSetControllerExceptionOnContainsWhitespace4()
 	{
 		$this->expectException( \InvalidArgumentException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setController( 'Class Name' );
 	}
 
@@ -263,7 +277,7 @@ class RouteTest extends TestCase
 	public function testSetControllerExceptionOnContainsInvalidCharacter1()
 	{
 		$this->expectException( \InvalidArgumentException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setController( 'class-name' );
 	}
 
@@ -272,7 +286,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetMethod()
 	{
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$result	= $route->setController( 'GET' );
 		$this->assertTrue( is_object( $result ) );
 		$this->assertSame( Route::class, get_class( $result ) );
@@ -329,7 +343,7 @@ class RouteTest extends TestCase
 	public function testSetMethodExceptionOnInvalidMethod()
 	{
 		$this->expectException( \RangeException::class );
-		$route	= new Route( 'Test', 'test', 'test', 'GET' );
+		$route	= $this->factory->create( 'test' );
 		$route->setMethod( 'invalid' );
 	}
 

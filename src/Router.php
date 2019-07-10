@@ -64,10 +64,13 @@ class Router{
 	 *	@param		string		$method			HTTP method (GET|POST|PUT|DELETE)
 	 *	@return		string		ID of added route
 	 *	@todo		return route instance instead of route ID
+	 *	@deprecated	use Router::add with Route\Factory::create instead
 	 */
 	public function add( $controller, $action = 'index', $pattern, $method = '*' )
 	{
-		$route	= new Route( $controller, $action, $pattern, strtoupper( $method ) );
+		$route	= new Route( $pattern, strtoupper( $method ) );
+		$route->setController( $controller );
+		$route->setAction( $action );
 		return $this->registry->add( $route );
 	}
 

@@ -365,7 +365,7 @@ class RouteTest extends TestCase
 	}
 
 	/**
-	 *	@covers	::setMethod
+	 *	@covers	::setMode
 	 */
 	public function testSetMode()
 	{

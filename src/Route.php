@@ -44,7 +44,7 @@ class Route{
 	const MODE_FORWARD		= 3;
 
 	protected $method			= 'GET';
-	protected $mode				= self::MODE_CONTROLLER;
+	protected $mode				= self::MODE_UNKNOWN;
 	protected $pattern;
 	protected $controller;
 	protected $action;
@@ -130,7 +130,7 @@ class Route{
 	/**
 	 *	...
 	 *	@access		public
-	 *	@param		array		$arguments		Map of 
+	 *	@param		array		$arguments		Map of
 	 *	@return		self
 	 */
 	public function setArguments( $arguments ){
@@ -156,7 +156,7 @@ class Route{
 	 *	@access		public
 	 *	@param		string		$method			...
 	 *	@return		self
-	 *	@throws		RangeException				if given method is invalid or not supported
+	 *	@throws		DomainException				if given method is invalid or not supported
 	 */
 	public function setMethod( $method ): self
 	{
@@ -169,7 +169,7 @@ class Route{
 				if( !strlen( trim( $item ) ) )
 					continue;
 				if( !in_array( $item, $this->supportedMethods ) )
-					throw new \RangeException( 'Invalid method: '.$item );
+					throw new \DomainException( 'Invalid method: '.$item );
 				$validMethods[]	= $item;
 			}
 		}
@@ -182,12 +182,12 @@ class Route{
 	 *	@access		public
 	 *	@param		int			$mode			Mode as constant value (int)
 	 *	@return		self
-	 *	@throws		InvalidArgumentException	if given mode value is no a valid constant value (int)
+	 *	@throws		DomainException	if given mode value is no a valid constant value (int)
 	 */
 	public function setMode( $mode ): self
 	{
 		if( !preg_match( '/^[0-9]+$/', $mode ) )
-			throw new InvalidArgumentException( 'Invalid mode: '.$mode );
+			throw new \DomainException( 'Invalid mode: '.$mode );
 		$this->mode	= $mode;
 		return $this;
 	}

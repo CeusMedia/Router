@@ -12,7 +12,6 @@ class RouteTest extends TestCase
 	{
 		$this->factory	= new RouteFactory();
 		$this->factory->setDefaultMethod( 'GET' );
-		$this->factory->setDefaultMode( Route::MODE_CONTROLLER );
 	}
 
 	/**
@@ -61,6 +60,24 @@ class RouteTest extends TestCase
 
 		$route->setMethod( 'POST|GET');
 		$this->assertSame( 'POST,GET', $route->getMethod() );
+	}
+
+	/**
+	 *	@covers	::getMode
+	 */
+	public function testGetMode()
+	{
+		$route	= $this->factory->create( 'test' );
+		$this->assertSame( Route::MODE_UNKNOWN, $route->getMode() );
+
+		$route->setMode( Route::MODE_CONTROLLER );
+		$this->assertSame( Route::MODE_CONTROLLER, $route->getMode() );
+
+		$route->setMode( Route::MODE_EVENT );
+		$this->assertSame( Route::MODE_EVENT, $route->getMode() );
+
+		$route->setMode( Route::MODE_FORWARD );
+		$this->assertSame( Route::MODE_FORWARD, $route->getMode() );
 	}
 
 	/**
@@ -287,7 +304,7 @@ class RouteTest extends TestCase
 	public function testSetMethod()
 	{
 		$route	= $this->factory->create( 'test' );
-		$result	= $route->setController( 'GET' );
+		$result	= $route->setMethod( 'GET' );
 		$this->assertTrue( is_object( $result ) );
 		$this->assertSame( Route::class, get_class( $result ) );
 
@@ -342,9 +359,40 @@ class RouteTest extends TestCase
 	 */
 	public function testSetMethodExceptionOnInvalidMethod()
 	{
-		$this->expectException( \RangeException::class );
+		$this->expectException( \DomainException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setMethod( 'invalid' );
+	}
+
+	/**
+	 *	@covers	::setMethod
+	 */
+	public function testSetMode()
+	{
+		$route	= $this->factory->create( 'test' );
+		$result	= $route->setMode( Route::MODE_UNKNOWN );
+		$this->assertTrue( is_object( $result ) );
+		$this->assertSame( Route::class, get_class( $result ) );
+		$this->assertSame( Route::MODE_UNKNOWN, $route->getMode() );
+
+		$route->setMode( Route::MODE_CONTROLLER );
+		$this->assertSame( Route::MODE_CONTROLLER, $route->getMode() );
+
+		$route->setMode( Route::MODE_EVENT );
+		$this->assertSame( Route::MODE_EVENT, $route->getMode() );
+
+		$route->setMode( Route::MODE_FORWARD );
+		$this->assertSame( Route::MODE_FORWARD, $route->getMode() );
+	}
+
+	/**
+	 *	@covers	::setMode
+	 */
+	public function testSetModeExceptionOnInvalidMode()
+	{
+		$this->expectException( \DomainException::class );
+		$route	= $this->factory->create( 'test' );
+		$route->setMode( 'invalid' );
 	}
 
 	/**

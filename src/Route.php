@@ -38,16 +38,16 @@ namespace CeusMedia\Router;
  */
 class Route{
 
-	const MODE_UNKNOWN		= 0;
-	const MODE_CONTROLLER	= 1;
-	const MODE_EVENT		= 2;
-	const MODE_FORWARD		= 3;
+	const MODE_UNKNOWN			= 0;
+	const MODE_CONTROLLER		= 1;
+	const MODE_EVENT			= 2;
+	const MODE_FORWARD			= 3;
 
 	protected $method			= 'GET';
 	protected $mode				= self::MODE_UNKNOWN;
-	protected $pattern;
-	protected $controller;
-	protected $action;
+	protected $pattern			= '';
+	protected $controller		= '';
+	protected $action			= '';
 	protected $arguments		= array();
 	protected $roles			= array();
 	protected $origin;
@@ -61,7 +61,8 @@ class Route{
 		'OPTIONS',
 	);
 
-	public function __construct( string $pattern, string $method = NULL, int $mode = NULL ){
+	public function __construct( string $pattern, string $method = NULL, int $mode = NULL )
+	{
 		$this->setPattern( $pattern );
 		if( !is_null( $method ) )
 			$this->setMethod( $method );
@@ -69,43 +70,53 @@ class Route{
 			$this->setMode( $mode );
 	}
 
-	public function getAction(){
+	public function getAction(): string
+	{
 		return $this->action;
 	}
 
-	public function getArguments(){
+	public function getArguments(): array
+	{
 		return $this->arguments;
 	}
 
-	public function getController(){
+	public function getController(): string
+	{
 		return $this->controller;
 	}
 
-	public function getId(){
+	public function getId(): string
+	{
 		return md5( $this->method.'::'.$this->pattern );
 	}
 
-	public function getMethod(){
+	public function getMethod(): string
+	{
 		return $this->method;
 	}
 
-	public function getMode(){
+	public function getMode(): int
+	{
 		return $this->mode;
 	}
 
-	public function getOrigin(){
+	public function getOrigin()
+	{
 		return $this->origin;
 	}
 
-	public function getPattern(){
+	public function getPattern(): string
+	{
 		return $this->pattern;
 	}
 
-	public function getRoles(){
+	public function getRoles(): array
+	{
 		return $this->roles;
 	}
 
-	public function isMethod( string $method ){
+	public function isMethod( string $method ): bool
+	{
 		if( $this->method === '*' )
 			return TRUE;
 		$methods	= explode( ',', $this->method );
@@ -118,9 +129,10 @@ class Route{
 	 *	...
 	 *	@access		public
 	 *	@param		string		$action			Name of method to call on controller class
-	 *	@return		self
+	 *	@return		Route
 	 */
-	public function setAction( string $action ){
+	public function setAction( string $action ): self
+	{
 		if( !preg_match( '/^(_|[a-z0-9])+$/i', $action ) )
 			throw new \InvalidArgumentException( 'Action must be a valid method name' );
 		$this->action		= $action;
@@ -131,9 +143,10 @@ class Route{
 	 *	...
 	 *	@access		public
 	 *	@param		array		$arguments		Map of
-	 *	@return		self
+	 *	@return		Route
 	 */
-	public function setArguments( $arguments ){
+	public function setArguments( $arguments ): self
+	{
 		$this->arguments	= $arguments;
 		return $this;
 	}
@@ -142,9 +155,10 @@ class Route{
 	 *	...
 	 *	@access		public
 	 *	@param		string		$controller		...
-	 *	@return		self
+	 *	@return		Route
 	 */
-	public function setController( $controller ){
+	public function setController( $controller ): self
+	{
 		if( !preg_match( '/^(_|\\\|[a-z0-9])+$/i', $controller ) )
 			throw new \InvalidArgumentException( 'Controller must be a valid class name' );
 		$this->controller	= $controller;
@@ -155,8 +169,8 @@ class Route{
 	 *	...
 	 *	@access		public
 	 *	@param		string		$method			...
-	 *	@return		self
-	 *	@throws		DomainException				if given method is invalid or not supported
+	 *	@return		Route
+	 *	@throws		\DomainException			if given method is invalid or not supported
 	 */
 	public function setMethod( $method ): self
 	{
@@ -181,8 +195,8 @@ class Route{
 	 *	...
 	 *	@access		public
 	 *	@param		int			$mode			Mode as constant value (int)
-	 *	@return		self
-	 *	@throws		DomainException	if given mode value is no a valid constant value (int)
+	 *	@return		Route
+	 *	@throws		\DomainException	if given mode value is no a valid constant value (int)
 	 */
 	public function setMode( $mode ): self
 	{
@@ -196,7 +210,7 @@ class Route{
 	 *	...
 	 *	@access		public
 	 *	@param		Route		$route
-	 *	@return		self
+	 *	@return		Route
 	 */
 	public function setOrigin( Route $origin ): self
 	{
@@ -208,7 +222,7 @@ class Route{
 	 *	...
 	 *	@access		public
 	 *	@param		string		$pattern
-	 *	@return		self
+	 *	@return		Route
 	 */
 	public function setPattern( $pattern ): self
 	{
@@ -221,7 +235,7 @@ class Route{
 	 *	...
 	 *	@access		public
 	 *	@param		array		$roles
-	 *	@return		self
+	 *	@return		Route
 	 */
 	public function setRoles( $roles ): self
 	{
@@ -229,7 +243,13 @@ class Route{
 		return $this;
 	}
 
-	public function toArray(){
+	/**
+	 *	Returns route as array.
+	 *	@access		public
+	 *	@return		array
+	 */
+	public function toArray(): array
+	{
 		return array(
 			'id'			=> $this->getId(),
 			'mode'			=> $this->mode,

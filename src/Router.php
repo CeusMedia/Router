@@ -78,12 +78,13 @@ class Router{
 	 *	...
 	 *	@access		public
 	 *	@param		Route		$route			Route instance to add
-	 *	@return		string		ID of added route
+	 *	@return		Router
 	 *	@todo		return route instance instead of route ID
 	 */
-	public function addRoute( Route $route )
+	public function addRoute( Route $route ): self
 	{
-		return $this->registry->add( $route );
+		$this->registry->add( $route );
+		return $this;
 	}
 
 	/**
@@ -91,7 +92,7 @@ class Router{
 	 *	@access		public
 	 *	@return		array 		List of route instances
 	 */
-	public function getRoutes()
+	public function getRoutes(): array
 	{
 		return $this->registry->index();
 	}
@@ -102,7 +103,7 @@ class Router{
 	 *	@param		string		$controller		...
 	 *	@return		array 		List of route instances
 	 */
-	public function getRoutesByController( $controller )
+	public function getRoutesByController( $controller ): array
 	{
 		return $this->registry->indexByController( $controller );
 	}

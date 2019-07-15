@@ -5,7 +5,7 @@ use CeusMedia\Router\Route\Factory as RouteFactory;
 
 /**
  *	@coversDefaultClass	\CeusMedia\Router\Route
-*/
+ */
 class RouteTest extends TestCase
 {
 	protected function setUp()
@@ -20,7 +20,7 @@ class RouteTest extends TestCase
 	public function testGetAction()
 	{
 		$route	= $this->factory->create( 'test' );
-		$this->assertSame( NULL, $route->getAction() );
+		$this->assertSame( '', $route->getAction() );
 
 		$route->setAction( 'test');
 		$this->assertSame( 'test', $route->getAction() );
@@ -35,7 +35,7 @@ class RouteTest extends TestCase
 	public function testGetController()
 	{
 		$route	= $this->factory->create( 'test' );
-		$this->assertSame( NULL, $route->getController() );
+		$this->assertSame( '', $route->getController() );
 
 		$route->setController( 'Test');
 		$this->assertSame( 'Test', $route->getController() );

@@ -56,9 +56,9 @@ class Registry{
 		$routeId	= $route->getId();
 		if( array_key_exists( $routeId, $this->routes ) ){
 			throw new \DomainException( sprintf(
-				'A route for pattern and method is already registered: %2$s %1$s',
-				$route->getPattern(),
-				$route->getMethod()
+				'A route for method and pattern is already registered: %1$s %2$s',
+				$route->getMethod(),
+				$route->getPattern()
 			) );
 		}
 		$this->routes[$routeId]	= $route;
@@ -156,6 +156,7 @@ class Registry{
 		$data	= array();
 		foreach( $this->index() as $route ){
 			$data[]	= array(
+				'mode'			=> $route->getMode(),
 				'controller'	=> $route->getController(),
 				'action'		=> $route->getAction(),
 				'pattern'		=> $route->getPattern(),

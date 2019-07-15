@@ -46,7 +46,8 @@ class Resolver{
 	 *	@param		Registry	$registry		Route registry object
 	 *	@return		void
 	 */
-	public function __construct( Registry $registry ){
+	public function __construct( Registry $registry )
+	{
 		$this->registry	= $registry;
 	}
 
@@ -57,7 +58,8 @@ class Resolver{
 	 *	@param		Route		$route			Route object
 	 *	@return		array		...
 	 */
-	static public function getRoutePatternParts( Route $route ){
+	static public function getRoutePatternParts( Route $route ): array
+	{
 		$parts	= array();
 		foreach( explode( "/", $route->getPattern() ) as $part ){
 			$optional	= FALSE;
@@ -86,7 +88,8 @@ class Resolver{
 	 *	@param		string		$method			HTTP method (GET|POST|PUT|DELETE)
 	 *	@return		boolean
 	 */
-	public function hasRouteForPath( $path, $method = 'GET' ){
+	public function hasRouteForPath( $path, $method = 'GET' ): bool
+	{
 		return (bool) $this->resolve( $path, $method, FALSE );
 	}
 
@@ -103,7 +106,8 @@ class Resolver{
 	 *	@return		Route						Route object with inserted arguments
 	 *	@throws		ResolverException			if path is not a resolvable route
 	 */
-	public function resolve( $path, $method = "GET", $strict = TRUE ){
+	public function resolve( $path, $method = "GET", $strict = TRUE )
+	{
 		$path	= preg_replace( "@^/+@", "/", '/'.$path );
 		$method	= strtoupper( $method );
 		foreach( $this->registry->index() as $route ){

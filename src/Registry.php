@@ -181,16 +181,16 @@ class Registry{
 		return \FS_File_JSON_Writer::save( $filePath, $list, TRUE );
 	}
 
-	protected function getModeFromString(): int
+	protected function getModeFromString( $mode ): int
 	{
-		if( preg_match( '/^[a-z]+$/', $mode ) ){
+		if( preg_match( '/^[a-z]+$/i', $mode ) ){
 			$mode	= strtolower( $mode );
 			if( $mode === 'controller' )
-				$mode	= self::MODE_CONTROLLER;
+				$mode	= Route::MODE_CONTROLLER;
 			else if( $mode === 'event' )
-				$mode	= self::MODE_EVENT;
+				$mode	= Route::MODE_EVENT;
 			else if( $mode === 'forward' )
-				$mode	= self::MODE_FORWARD;
+				$mode	= Route::MODE_FORWARD;
 			else
 				throw new RangeException( 'Invalid mode: '.$mode );
 		}

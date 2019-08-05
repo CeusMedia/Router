@@ -25,7 +25,7 @@
     "ceus-media/common": "*",
     "ceus-media/cache": "*",
     "ceus-media/doc-creator": "*",
-    "phpunit/phpunit": "^7"
+    "phpunit/phpunit": "*"
   },
   "autoload": {
     "psr-4": {

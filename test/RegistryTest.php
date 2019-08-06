@@ -4,9 +4,9 @@ use CeusMedia\Router\Registry;
 use CeusMedia\Router\Route;
 
 /**
- *	@coversDefaultClass	\CeusMedia\Router\Resolver
+ *	@coversDefaultClass	\CeusMedia\Router\Registry
  */
-class ResolverTest extends TestCase
+class RegistryTest extends TestCase
 {
 	protected function setUp()
 	{
@@ -36,20 +36,35 @@ class ResolverTest extends TestCase
 		$this->markTestIncomplete();
 	}
 
+	/**
+	 *	@covers	::getModeFromString
+	 */
 	public function testGetModeFromString(){
 		$registry	= new RegistryMock();
 
 		$expected = Route::MODE_CONTROLLER;
-		$actual	= $registry->getModeFromString_public( 'controller' );
-		$this->assertEquals( $expected, $actual );
+		$this->assertEquals( $expected, $registry->getModeFromString_public( 'controller' ) );
+		$this->assertEquals( $expected, $registry->getModeFromString_public( 'Controller' ) );
+		$this->assertEquals( $expected, $registry->getModeFromString_public( 'CONTROLLER' ) );
 
-		$actual	= $registry->getModeFromString_public( 'Controller' );
-		$this->assertEquals( $expected, $actual );
+		$expected = Route::MODE_EVENT;
+		$this->assertEquals( $expected, $registry->getModeFromString_public( 'event' ) );
+		$this->assertEquals( $expected, $registry->getModeFromString_public( 'Event' ) );
+		$this->assertEquals( $expected, $registry->getModeFromString_public( 'EVENT' ) );
 
-		$actual	= $registry->getModeFromString_public( 'CONTROLLER' );
-		$this->assertEquals( $expected, $actual );
+		$expected = Route::MODE_FORWARD;
+		$this->assertEquals( $expected, $registry->getModeFromString_public( 'forward' ) );
+		$this->assertEquals( $expected, $registry->getModeFromString_public( 'Forward' ) );
+		$this->assertEquals( $expected, $registry->getModeFromString_public( 'FORWARD' ) );
+	}
 
-//		$this->markTestIncomplete();
+	/**
+	 *	@covers	::getModeFromString
+	 *	@expectedException \RangeException
+	 */
+	public function testGetModeFromStringException(){
+		$registry	= new RegistryMock();
+		$registry->getModeFromString_public( 'invalid' );
 	}
 }
 class RegistryMock extends Registry{

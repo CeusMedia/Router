@@ -1,0 +1,14 @@
+[
+    {
+        "controller": "Controller_Test",
+        "action": "test1",
+        "pattern": "\/test1",
+        "method": "GET"
+    },
+    {
+        "controller": "Controller_Test",
+        "action": "test2",
+        "pattern": "\/test2",
+        "method": "GET"
+    }
+]

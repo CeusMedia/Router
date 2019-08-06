@@ -114,10 +114,16 @@ class Router{
 	 *	@param		string		$filePath		Path to routes file
 	 *	@param		string		$folderPath		Path to folder with routes files to assemble
 	 *	@return		void
+	 *	@deprecated use Registry::addSource( new JsonFile($filePath) ) instead
 	 */
 	public function loadRoutesFromJsonFile( $filePath, $folderPath = NULL )
 	{
-		$this->registry->loadFromJsonFile( $filePath, $folderPath );
+		$sourceFile	= new \CeusMedia\Router\Registry\Source\JsonFile( $filePath );
+		$sourceFile->setOption( \CeusMedia\Router\Registry\Source\SourceInterface::OPTION_AUTOSAVE, TRUE );
+		$sourceFolder = new \CeusMedia\Router\Registry\Source\JsonFolder( $folderPath );
+		$this->registry->addSource( $sourceFile );
+		$this->registry->addSource( $sourceFolder );
+//		$this->registry->loadFromJsonFile( $filePath, $folderPath );
 	}
 
 	/**

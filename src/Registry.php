@@ -27,6 +27,8 @@
 namespace CeusMedia\Router;
 
 use CeusMedia\Router\Route\Factory as RouteFactory;
+use CeusMedia\Router\Registry\Source as RegistrySource;
+use CeusMedia\Router\Registry\Source\SourceInterface as RegistrySourceInterface;
 
 /**
  *	...
@@ -42,7 +44,23 @@ use CeusMedia\Router\Route\Factory as RouteFactory;
  */
 class Registry{
 
+	const STATUS_NEW		= 0;
+	const STATUS_CLEAN		= 1;
+	const STATUS_LOADING	= 2;
+	const STATUS_CHANGED	= 2;
+	const STATUS_SAVING		= 3;
+
 	protected $routes	= array();
+	protected $status	= 0;
+
+	public function __construct()
+	{
+		$this->source	= new RegistrySource();
+	}
+
+	public function addSource( RegistrySourceInterface $source ){
+		return $this->source->addSource( $source );
+	}
 
 	/**
 	 *	Adds route to route registry by route object.
@@ -53,6 +71,7 @@ class Registry{
 	 */
 	public function add( Route $route ): string
 	{
+		$this->loadFromSources();
 		$routeId	= $route->getId();
 		if( array_key_exists( $routeId, $this->routes ) ){
 			throw new \DomainException( sprintf(
@@ -62,6 +81,8 @@ class Registry{
 			) );
 		}
 		$this->routes[$routeId]	= $route;
+		$this->status = self::STATUS_CHANGED;
+		$this->saveToSources();
 		return $routeId;
 	}
 
@@ -72,6 +93,7 @@ class Registry{
 	 */
 	public function index(): array
 	{
+		$this->loadFromSources();
 		return $this->routes;
 	}
 
@@ -83,6 +105,7 @@ class Registry{
 	 */
 	public function indexByController( $controller ): array
 	{
+		$this->loadFromSources();
 		$routes		= array();
 		foreach( $this->routes as $route ){
 			if( $route->getController() === $controller ){
@@ -90,40 +113,6 @@ class Registry{
 			}
 		}
 		return $routes;
-	}
-
-	/**
-	 *	Adds a list of routes defined in a JSON file.
-	 *	@access		public
-	 *	@param		string		$filePath		Relative or absolute file path of JSON file to load
-	 *	@param		string		$folderPath		Relative or absolute path to folder containing JSON files to assemble
-	 *	@return		void
-	 *	@throws		\OutOfRangeException			if route set has no controller
-	 *	@throws		\OutOfRangeException			if route set has no action
-	 *	@throws		\OutOfRangeException			if route set has no pattern
-	 *	@throws		\OutOfRangeException			if route set has no method
-	 */
-	public function loadFromJsonFile( $filePath, $folderPath = NULL )
-	{
-		if( !file_exists( $filePath ) && $folderPath ){
-			$this->assembleJsonFileFromFolder( $filePath, $folderPath );
-		}
-		$data	= \FS_File_JSON_Reader::load( $filePath );
-		$factory	= new RouteFactory();
-		foreach( $data as $item ){
-			if( !isset( $item->pattern ) )
-				throw new \OutOfRangeException( 'Route set is missing pattern' );
-			$options	= array(
-				'method'		=> isset( $item->method ) ? $item->method : NULL,
-				'controller'	=> isset( $item->controller ) ? $item->controller : NULL,
-				'action'		=> isset( $item->action ) ? $item->action : NULL,
-			);
-			if( isset( $item->mode ) && strlen( trim( $item->mode ) ) )
-				$options['mode']	= $this->getModeFromString( $item->mode );
-			if( isset( $item->roles ) && strlen( trim( $item->roles ) ) )
-				$options['roles']	= preg_split( "/, */", trim( $item->roles ) );
-			$this->add( $factory->create( $item->pattern, $options ) );
-		}
 	}
 
 	/**
@@ -136,8 +125,11 @@ class Registry{
 	 */
 	public function remove( $routeId, $strict = TRUE ): bool
 	{
+		$this->loadFromSources();
 		if( array_key_exists( $routeId, $this->routes ) ){
 			unset( $this->routes[$routeId] );
+			$this->status = self::STATUS_CHANGED;
+			$this->saveToSources();
 			return TRUE;
 		}
 		if( $strict )
@@ -145,43 +137,7 @@ class Registry{
 		return FALSE;
 	}
 
-	/**
-	 *	...
-	 *	@access		public
-	 *	@param		string		$filePath		Relative or absolute file path of JSON file
-	 * 	@return		integer		Number of bytes saved
-	 */
-	public function save( $filePath ): int
-	{
-		$data	= array();
-		foreach( $this->index() as $route ){
-			$data[]	= array(
-				'mode'			=> $route->getMode(),
-				'controller'	=> $route->getController(),
-				'action'		=> $route->getAction(),
-				'pattern'		=> $route->getPattern(),
-				'method'		=> $route->getMethod(),
-			);
-		}
-		return \FS_File_JSON_Writer::save( $filePath, $data, TRUE );
-	}
-
-	protected function assembleJsonFileFromFolder( string $filePath, string $folderPath ): int
-	{
-		if( !file_exists( $folderPath ) )
-			throw new \RuntimeException( 'Folder "'.$folderPath.'" is not existing' );
-		$list = array();
-		$index	= new \FS_File_RegexFilter( $folderPath, '/\.json$/' );
-		foreach( $index as $item ){
-			$routes	= \FS_File_JSON_Reader::load( $item->getPathname() );
-			foreach( $routes as $route ){
-				$list[]	= $route;
-			}
-		}
-		return \FS_File_JSON_Writer::save( $filePath, $list, TRUE );
-	}
-
-	protected function getModeFromString( $mode ): int
+	public static function getModeAsIntegerFromString( string $mode ): int
 	{
 		if( preg_match( '/^[a-z]+$/i', $mode ) ){
 			$mode	= strtolower( $mode );
@@ -192,9 +148,38 @@ class Registry{
 			else if( $mode === 'forward' )
 				$mode	= Route::MODE_FORWARD;
 			else
-				throw new RangeException( 'Invalid mode: '.$mode );
+				throw new \RangeException( 'Invalid mode: '.$mode );
 		}
 		return $mode;
+	}
+
+	public static function getModeAsStringFromInteger( int $mode ): string
+	{
+		if( $mode === Route::MODE_CONTROLLER )
+			return 'controller';
+		if( $mode === Route::MODE_EVENT )
+			return 'event';
+		if( $mode === Route::MODE_FORWARD )
+			return 'forward';
+		return '';
+	}
+
+	protected function loadFromSources( $forceFreshLoad = FALSE )
+	{
+		if( $this->status === self::STATUS_NEW || $forceFreshLoad ){
+			$this->status	= self::STATUS_LOADING;
+			$this->source->load( $this );
+			$this->status	= self::STATUS_CLEAN;
+		}
+	}
+
+	protected function saveToSources( $forceFreshSave = FALSE )
+	{
+		if( $this->status === self::STATUS_CHANGED || $forceFreshSave ){
+			$this->status	= self::STATUS_SAVING;
+			$this->source->save( $this );
+			$this->status	= self::STATUS_CLEAN;
+		}
 	}
 }
 ?>

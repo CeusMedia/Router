@@ -43,14 +43,14 @@ abstract class AbstractSource
 	protected $options	= array();
 	protected $resource;
 
-	public function __construct( ?string $resource = NULL )
+	public function __construct( string $resource = NULL )
 	{
 		if( $resource )
 			$this->setResource( $resource );
 		$this->setOption( SourceInterface::OPTION_AUTOLOAD, TRUE );
 	}
 
-	public static function getNewInstance( ?string $resource = NULL ): SourceInterface
+	public static function getNewInstance( string $resource = NULL ): SourceInterface
 	{
 		return new static;
 	}

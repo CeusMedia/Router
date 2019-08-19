@@ -50,7 +50,6 @@ class Source
 		for( $i=0; $i<count($this->sources); $i++ ){
 			$loadSource	= $this->sources[$i];
 			try{
-				remark( 'Source: '.get_class( $loadSource ));
 				if( $loadSource->getOption( SourceInterface::OPTION_AUTOLOAD ) ){
 					$result 	= $loadSource->load( $registry );
 					if( $result >= 0 ){

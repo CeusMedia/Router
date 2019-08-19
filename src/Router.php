@@ -88,6 +88,16 @@ class Router{
 	}
 
 	/**
+	 *	Returns router registry object.
+	 *	@access		public
+	 *	@return		Registry 	Router registry object
+	 */
+	public function getRegistry(): Registry
+	{
+		return $this->registry;
+	}
+
+	/**
 	 *	...
 	 *	@access		public
 	 *	@return		array 		List of route instances
@@ -114,7 +124,12 @@ class Router{
 	 *	@param		string		$filePath		Path to routes file
 	 *	@param		string		$folderPath		Path to folder with routes files to assemble
 	 *	@return		void
-	 *	@deprecated use Registry::addSource( new JsonFile($filePath) ) instead
+	 *	@deprecated use Registry::addSource( new JsonFile( $filePath ) ) instead
+	 *	@example
+	 *	use \CeusMedia\Router\Router;
+	 *	use \CeusMedia\Router\Registry\Source\JsonFile;
+	 *	$router	= new Router();
+	 *	$router->getRegistry()->addSource( new JsonFile( $source ) );
 	 */
 	public function loadRoutesFromJsonFile( $filePath, $folderPath = NULL )
 	{

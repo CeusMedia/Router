@@ -43,9 +43,9 @@ interface SourceInterface
 	const OPTION_AUTOLOAD		= 1;
 	const OPTION_AUTOSAVE		= 2;
 
-	public static function getNewInstance( ?string $resource = NULL ): self;
+	public static function getNewInstance( string $resource = NULL ): self;
 
-	public function __construct( ?string $resource = NULL );
+	public function __construct( string $resource = NULL );
 	public function getOption( int $key );
 	public function load( Registry $registry ): int;
 	public function setOption( int $key, $value = NULL );

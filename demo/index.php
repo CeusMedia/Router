@@ -1,30 +1,32 @@
 <?php
 (@include '../vendor/autoload.php') or die('Please use composer to install required packages.' . PHP_EOL);
 
+/*  --  IMPORT  ------------------------------------------------------------  */
 use \CeusMedia\Router as Router;
+use \CeusMedia\Router\Registry;
+use \CeusMedia\Router\Registry\Source\SourceInterface as RegistrySourceInterface;
+//use \CeusMedia\Router\Registry\Source\Memcache as RegistryMemcacheSource;
+use \CeusMedia\Router\Registry\Source\JsonFile as RegistryJsonFileSource;
+//use \CeusMedia\Router\Registry\Source\JsonFolder as RegistryJsonFolderSource;
 
+/*  --  INIT  --------------------------------------------------------------  */
 new UI_DevOutput;
 error_reporting( E_ALL );
 
+$filePathCollectedRoutes	= 'routes.json';
+
+$sourceJsonFile		= RegistryJsonFileSource::getNewInstance()
+	->setResource( $filePathCollectedRoutes )
+//	->setOption( RegistrySourceInterface::OPTION_AUTOSAVE, TRUE )
+//	->setOption( RegistrySourceInterface::OPTION_AUTOLOAD, FALSE )
+	;
+
+
 $options	= array( 'a' => FALSE );
-$router = new Router\Router( $options );
+$router		= new Router\Router( $options );
 
-/*$router->addRoute( new Router\Route(
-	'Controller_Slide',
-	'index',
-	'slide',
-	'*'
-) );
-$router->addRoute( new Router\Route(
-	'Controller_Slide',
-	'edit',
-	'slide/edit/:sliderId/(:slideId)',
-	'*'
-) );
-$router->saveRoutes( 'routes.json' );
-*/
-
-$router->loadRoutesFromJsonFile( 'routes.json' );
+$registry	= $router->getRegistry();
+$registry->addSource( $sourceJsonFile );
 
 $paths	= array(
 	'failing',

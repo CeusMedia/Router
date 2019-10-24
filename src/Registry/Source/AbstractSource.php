@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2007-2016 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2007-2019 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@
  */
 namespace CeusMedia\Router\Registry\Source;
 
-use \CeusMedia\Router\Registry\Source\SourceInterface;
+use CeusMedia\Router\Registry;
+use CeusMedia\Router\Registry\Source\SourceInterface;
 
 /**
  *	...
@@ -61,6 +62,10 @@ abstract class AbstractSource
 			return $this->options[$key];
 		return NULL;
 	}
+
+	abstract public function load( Registry $registry ): int;
+
+	abstract public function save( Registry $registry ): int;
 
 	public function setOption( int $key, $value = NULL ): self
 	{

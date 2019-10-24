@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2007-2016 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2007-2019 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -58,10 +58,6 @@ class Registry{
 		$this->source	= new RegistrySource();
 	}
 
-	public function addSource( RegistrySourceInterface $source ){
-		return $this->source->addSource( $source );
-	}
-
 	/**
 	 *	Adds route to route registry by route object.
 	 *	@access		public
@@ -84,6 +80,37 @@ class Registry{
 		$this->status = self::STATUS_CHANGED;
 		$this->saveToSources();
 		return $routeId;
+	}
+
+	public function addSource( RegistrySourceInterface $source ){
+		return $this->source->addSource( $source );
+	}
+
+	public static function getModeAsIntegerFromString( string $mode ): int
+	{
+		if( preg_match( '/^[a-z]+$/i', $mode ) ){
+			$mode	= strtolower( $mode );
+			if( $mode === 'controller' )
+				$mode	= Route::MODE_CONTROLLER;
+			else if( $mode === 'event' )
+				$mode	= Route::MODE_EVENT;
+			else if( $mode === 'forward' )
+				$mode	= Route::MODE_FORWARD;
+			else
+				throw new \RangeException( 'Invalid mode: '.$mode );
+		}
+		return $mode;
+	}
+
+	public static function getModeAsStringFromInteger( int $mode ): string
+	{
+		if( $mode === Route::MODE_CONTROLLER )
+			return 'controller';
+		if( $mode === Route::MODE_EVENT )
+			return 'event';
+		if( $mode === Route::MODE_FORWARD )
+			return 'forward';
+		return '';
 	}
 
 	/**
@@ -137,32 +164,7 @@ class Registry{
 		return FALSE;
 	}
 
-	public static function getModeAsIntegerFromString( string $mode ): int
-	{
-		if( preg_match( '/^[a-z]+$/i', $mode ) ){
-			$mode	= strtolower( $mode );
-			if( $mode === 'controller' )
-				$mode	= Route::MODE_CONTROLLER;
-			else if( $mode === 'event' )
-				$mode	= Route::MODE_EVENT;
-			else if( $mode === 'forward' )
-				$mode	= Route::MODE_FORWARD;
-			else
-				throw new \RangeException( 'Invalid mode: '.$mode );
-		}
-		return $mode;
-	}
-
-	public static function getModeAsStringFromInteger( int $mode ): string
-	{
-		if( $mode === Route::MODE_CONTROLLER )
-			return 'controller';
-		if( $mode === Route::MODE_EVENT )
-			return 'event';
-		if( $mode === Route::MODE_FORWARD )
-			return 'forward';
-		return '';
-	}
+	/*  --  PROTECTED  --  */
 
 	protected function loadFromSources( $forceFreshLoad = FALSE )
 	{

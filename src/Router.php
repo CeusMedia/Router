@@ -38,6 +38,8 @@ namespace CeusMedia\Router;
  */
 class Router{
 
+	protected $method;
+
 	protected $registry;
 
 	protected $options	= array();
@@ -52,7 +54,7 @@ class Router{
 	{
 		$this->options	= array_merge( $this->options, $options );
 		$this->registry	= new Registry();
-		$this->resolver	= new Resolver( $this->registry );
+		$this->method	= PHP_SAPI === 'cli' ? 'CLI' : NULL;
 	}
 
 	/**
@@ -149,9 +151,10 @@ class Router{
 	 *	@param		boolean		$strict			Flag: resolve in strict mode
 	 *	@return		Route
 	 */
-	public function resolve( $path, $method = "GET", $strict = TRUE )
+	public function resolve( $path, $strict = TRUE )
 	{
-		return $this->resolver->resolve( $path, $method, $strict );
+		$resolver	= new Resolver( $this->registry );
+		return $resolver->resolve( $path, $this->method, $strict );
 	}
 
 	/**
@@ -163,6 +166,30 @@ class Router{
 	public function saveRoutes( $filePath )
 	{
 		$this->registry->save( $filePath );
+	}
+
+	/**
+	 *	Returns router registry object.
+	 *	@access		public
+	 *	@param		Registry	$registry		Registry object to set
+	 *	@return		Route	 	Router registry object
+	 */
+	public function setRegistry(Registry $registry): self
+	{
+		$this->registry	= $registry;
+		return $this;
+	}
+
+	/**
+	 *	Set HTTP method of call to resolve.
+	 *	@access		public
+	 *	@param		string		$method			HTTP method of call to resolve
+	 *	@return		Route 		Router registry object
+	 */
+	public function setMethod( string $method ): self
+	{
+		$this->method	= $method;
+		return $this;
 	}
 }
 ?>

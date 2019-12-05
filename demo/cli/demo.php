@@ -7,6 +7,10 @@ use \CeusMedia\Router\Registry\Source\SourceInterface as RegistrySourceInterface
 use \CeusMedia\Router\Registry\Source\Memcache as RegistryMemcacheSource;
 use \CeusMedia\Router\Registry\Source\JsonFile as RegistryJsonFileSource;
 use \CeusMedia\Router\Registry\Source\JsonFolder as RegistryJsonFolderSource;
+use \CeusMedia\Router\Router;
+use \CeusMedia\Router\Router\ResolverException as ResolverException;
+
+require_once '../Controller/Test.php';
 
 /*  --  INIT  --------------------------------------------------------------  */
 new UI_DevOutput;
@@ -14,7 +18,7 @@ error_reporting( E_ALL );
 
 /*  --  CONFIG  ------------------------------------------------------------  */
 $filePathCollectedRoutes	= 'all_collected_routes.json';
-$folderPathSplitRoutes		= 'routes/';
+$folderPathSplitRoutes		= '../routes/';
 $forceFreshLoad				= TRUE;
 
 /*  --  RUN  ---------------------------------------------------------------  */
@@ -42,8 +46,47 @@ $registry->addSource( $sourceMemcache );
 $registry->addSource( $sourceJsonFile );
 $registry->addSource( $sourceJsonFolder );
 
-$watch	= new \Alg_Time_Clock();
-$routes	= $registry->index();
+$watch		= new \Alg_Time_Clock();
+
+$router		= new Router();
+$router->setRegistry( $registry );
+
+remark( 'Routes:' );
+foreach( $router->getRoutes() as $route ){
+//	print_m( $route->toArray() );
+	print_m( array(
+		'Pattern'		=> $route->getPattern(),
+		'Method'		=> $route->getMethod(),
+		'Controller'	=> $route->getController(),
+		'Action'		=> $route->getAction(),
+	) );
+}
+
+$paths	= array(
+	'test a1 b2',
+//	'/test',
+//	'/test/1',
+//	'/test/1/2',
+);
+
+foreach( $paths as $path ){
+	remark( 'Checking path: "'.$path.'"' );
+	try{
+		$result	= $router->resolve( $path );
+		remark( ' - Status: found' );
+		remark( ' - Call: '.$result->getController().'::'.$result->getAction().'('.join( ', ', $result->getArguments() ).')' );
+		remark( ' - Arguments: '.json_encode( $result->getArguments() ) );
+
+		$controller	= Alg_Object_MethodFactory::callClassMethod(
+			$result->getController(),
+			$result->getAction(),
+			array(),
+			$result->getArguments()
+		);
+	}
+	catch( \Exception $e ){
+		remark( ' - Status: '.$e->getMessage() );
+	}
+	remark();
+}
 remark( 'Time: '.$watch->stop( 3, 1 ).'ms'.PHP_EOL );
-foreach( $routes as $route )
-	print_m($route->toArray());

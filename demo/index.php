@@ -9,11 +9,13 @@ use \CeusMedia\Router\Registry\Source\SourceInterface as RegistrySourceInterface
 use \CeusMedia\Router\Registry\Source\JsonFile as RegistryJsonFileSource;
 //use \CeusMedia\Router\Registry\Source\JsonFolder as RegistryJsonFolderSource;
 
+require_once 'Controller/Test.php';
+
 /*  --  INIT  --------------------------------------------------------------  */
 new UI_DevOutput;
 error_reporting( E_ALL );
 
-$filePathCollectedRoutes	= 'routes.json';
+$filePathCollectedRoutes	= 'routes/test.json';
 
 $sourceJsonFile		= RegistryJsonFileSource::getNewInstance()
 	->setResource( $filePathCollectedRoutes )
@@ -21,18 +23,18 @@ $sourceJsonFile		= RegistryJsonFileSource::getNewInstance()
 //	->setOption( RegistrySourceInterface::OPTION_AUTOLOAD, FALSE )
 	;
 
-
 $options	= array( 'a' => FALSE );
 $router		= new Router\Router( $options );
+$router->setMethod( 'GET' );
 
 $registry	= $router->getRegistry();
 $registry->addSource( $sourceJsonFile );
 
 $paths	= array(
 	'failing',
-	'slide',
-	'slide/edit/1',
-	'slide/edit/1/2-Hallo_Welt',
+	'/test',
+	'/test/1',
+	'/test/1/2',
 );
 
 remark( 'Routes:' );
@@ -51,6 +53,13 @@ foreach( $paths as $path ){
 		$result	= $router->resolve( $path );
 		remark( ' - Status: found' );
 		remark( ' - Call: '.$result->getController().'::'.$result->getAction().'('.join( ', ', $result->getArguments() ).')' );
+
+		$controller	= Alg_Object_MethodFactory::callClassMethod(
+			$result->getController(),
+			$result->getAction(),
+			array(),
+			$result->getArguments()
+		);
 	}
 	catch( Router\ResolverException $e ){
 		remark( ' - Status: '.$e->getMessage() );

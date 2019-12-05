@@ -53,6 +53,7 @@ class Route{
 	protected $origin;
 
 	public $supportedMethods	= array(
+		'CLI',
 		'GET',
 		'HEAD',
 		'POST',
@@ -226,7 +227,7 @@ class Route{
 	 */
 	public function setPattern( $pattern ): self
 	{
-		$pattern			= str_replace( ' ', '', $pattern );
+//		$pattern			= str_replace( ' ', '', $pattern );
 		$this->pattern		= $pattern;
 		return $this;
 	}

@@ -61,22 +61,43 @@ class Resolver{
 	static public function getRoutePatternParts( Route $route ): array
 	{
 		$parts	= array();
-		foreach( explode( "/", $route->getPattern() ) as $part ){
-			$optional	= FALSE;
-			$argument	= FALSE;
-			if( preg_match( "@\(:.+\)@", $part ) ){													//  optional argument found
-				$part		= substr( $part, 1, -1 );												//  cut argument key
-				$optional	= TRUE;																	//  note that is optional
+		if( $route->getMethod() === 'CLI' ){
+			foreach( explode( " ", $route->getPattern() ) as $part ){
+				$optional	= FALSE;
+				$argument	= FALSE;
+				if( preg_match( "@\(:.+\)@U", $part ) ){											//  optional argument found
+					$part		= substr( $part, 1, -1 );											//  cut argument key
+					$optional	= TRUE;																//  note that is optional
+				}
+				if( substr( $part, 0, 1 ) === ":" ){												//  argument found
+					$part		= substr( $part, 1 );												//  cut argument key
+					$argument	= TRUE;																//  note that is argument
+				}
+				$parts[]	= (object) array(														//  prepare route pattern part object
+					'key'		=> $part,
+					'optional'	=> $optional,
+					'argument'	=> $argument,
+				);
 			}
-			if( substr( $part, 0, 1 ) === ":" ){													//  argument found
-				$part		= substr( $part, 1 );													//  cut argument key
-				$argument	= TRUE;																	//  note that is argument
+		}
+		else{
+			foreach( explode( "/", $route->getPattern() ) as $part ){
+				$optional	= FALSE;
+				$argument	= FALSE;
+				if( preg_match( "@\(:.+\)@U", $part ) ){											//  optional argument found
+					$part		= substr( $part, 1, -1 );											//  cut argument key
+					$optional	= TRUE;																//  note that is optional
+				}
+				if( substr( $part, 0, 1 ) === ":" ){												//  argument found
+					$part		= substr( $part, 1 );												//  cut argument key
+					$argument	= TRUE;																//  note that is argument
+				}
+				$parts[]	= (object) array(														//  prepare route pattern part object
+					'key'		=> $part,
+					'optional'	=> $optional,
+					'argument'	=> $argument,
+				);
 			}
-			$parts[]	= (object) array(															//  prepare route pattern part object
-				'key'		=> $part,
-				'optional'	=> $optional,
-				'argument'	=> $argument,
-			);
 		}
 		return $parts;
 	}
@@ -108,21 +129,34 @@ class Resolver{
 	 */
 	public function resolve( $path, $method = "GET", $strict = TRUE )
 	{
-		$path	= preg_replace( "@^/+@", "/", '/'.$path );
+		if( $method === 'CLI' ){
+			$delimiter	= ' ';
+		}
+		else{
+			$delimiter	= '/';
+			$path		= preg_replace( "@^/+@", "/", '/'.$path );
+		}
 		$method	= strtoupper( $method );
 		foreach( $this->registry->index() as $route ){
 			if( !$route->isMethod( $method ) )														//  method is not matching
 				continue;
 
-			$pattern	= preg_replace( "@(/\(:[^/]+\))@", "(/\S+)?", $route->getPattern() );		//  insert optional argument pattern
-			$pattern	= preg_replace( "@(/:[^/(]+)@", "/\S+", $pattern );							//  insert mandatory argument pattern
-			$pattern	= preg_replace( "@/$@", "/?", $pattern );									//  make ending slash optional
-			$pattern	= preg_replace( "/@/", "\@", $pattern );
+			$pattern	= $route->getPattern();
+			if( $route->getMethod() === 'CLI' ){
+				$pattern	= preg_replace( "@\(:[\S]+\)@", "(\S+)", $pattern );					//  insert mandatory argument pattern
+				$pattern	= preg_replace( "@:[\S]+@", "\S+", $pattern );							//  insert mandatory argument pattern
+			}
+			else{
+				$pattern	= preg_replace( "@(/\(:[^/]+\))@", "(/\S+)?", $pattern );				//  insert optional argument pattern
+				$pattern	= preg_replace( "@(/:[^/(]+)@", "/\S+", $pattern );						//  insert mandatory argument pattern
+				$pattern	= preg_replace( "@/$@", "/?", $pattern );								//  make ending slash optional
+				$pattern	= preg_replace( "/@/", "\@", $pattern );
+			}
 			if( !preg_match( '@^'.$pattern.'$@U', $path ) )											//  path is not matching route pattern
 				continue;
 
 			$partsPattern	= self::getRoutePatternParts( $route );
-			$partsPath	= explode( "/", $path );													//  split path into parts
+			$partsPath	= explode( $delimiter, $path );												//  split path into parts
 			if( count( $partsPath ) > count( $partsPattern ) )										//  path has more parts than route pattern
 				continue;
 

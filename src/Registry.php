@@ -52,6 +52,7 @@ class Registry
 
 	protected $routes	= array();
 	protected $status	= 0;
+	protected $source;
 
 	public function __construct()
 	{

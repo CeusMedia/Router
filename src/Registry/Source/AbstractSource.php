@@ -41,7 +41,8 @@ use CeusMedia\Router\Registry\Source\SourceInterface;
  */
 abstract class AbstractSource
 {
-	protected $options	= array();
+	protected static $instances	= array();
+	protected $options			= array();
 	protected $resource;
 
 	public function __construct( string $resource = NULL )
@@ -51,9 +52,14 @@ abstract class AbstractSource
 		$this->setOption( SourceInterface::OPTION_AUTOLOAD, TRUE );
 	}
 
-	public static function getNewInstance( string $resource = NULL ): SourceInterface
+	public static function getInstance( string $resource = NULL ): SourceInterface
 	{
-		return new static;
+		$class	= get_called_class();
+		if( $class === self::CLASS )
+			throw new \RuntimeException( '...' );
+		if( !isset( self::$instances[$class] ) )
+			self::$instances[$class]	= new $class();
+		return self::$instances[$class];
 	}
 
 	public function getOption( int $key )

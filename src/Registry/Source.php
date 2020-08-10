@@ -47,6 +47,7 @@ class Source
 	{
 		if( !$this->sources )
 			throw new \RuntimeException( 'No registry sources set' );
+		$loadSource	= NULL;
 		for( $i=0; $i<count($this->sources); $i++ ){
 			$loadSource	= $this->sources[$i];
 			try{

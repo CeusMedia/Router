@@ -43,6 +43,9 @@ use CeusMedia\Router\Route\Factory as RouteFactory;
  */
 class Memcache extends AbstractSource implements SourceInterface
 {
+	protected $cacheKey;
+	protected $server;
+
 	public function load( Registry $registry ): int
 	{
 		$counter	= 0;

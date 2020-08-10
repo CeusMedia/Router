@@ -127,7 +127,7 @@ class Resolver{
 	 *	@return		Route|null					Route object with inserted arguments
 	 *	@throws		ResolverException			if path is not a resolvable route
 	 */
-	public function resolve( strin $path, string $method = "GET", bool $strict = TRUE ): ?Route
+	public function resolve( string $path, string $method = "GET", bool $strict = TRUE ): ?Route
 	{
 		if( $method === 'CLI' ){
 			$delimiter	= ' ';

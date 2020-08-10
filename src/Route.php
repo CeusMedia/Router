@@ -121,7 +121,7 @@ class Route
 		if( $this->method === '*' )
 			return TRUE;
 		$methods	= explode( ',', $this->method );
-		return in_array( strtoupper( $method ), $methods ) );
+		return in_array( strtoupper( $method ), $methods );
 	}
 
 	/**
@@ -208,7 +208,7 @@ class Route
 	/**
 	 *	...
 	 *	@access		public
-	 *	@param		Route		$route
+	 *	@param		Route		$origin
 	 *	@return		Route
 	 */
 	public function setOrigin( Route $origin ): self

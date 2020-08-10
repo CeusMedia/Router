@@ -20,3 +20,9 @@ dev-test: composer-install-dev
 
 dev-test-syntax:
 	@find src -type f -print0 | xargs -0 -n1 xargs php -l
+
+dev-phpstan:
+	@vendor/bin/phpstan analyse src tests
+
+dev-phpstan-full:
+	@vendor/bin/phpstan analyse src tests --level 8

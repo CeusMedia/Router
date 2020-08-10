@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2007-2019 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2020 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2019 Christian Würker
+ *	@copyright		2016-2020 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -38,12 +38,12 @@ use CeusMedia\Router\Registry\Source\SourceInterface as RegistrySourceInterface;
  *	@uses			FS_File_JSON_Reader
  *	@uses			FS_File_JSON_Writer
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2019 Christian Würker
+ *	@copyright		2016-2020 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
-class Registry{
-
+class Registry
+{
 	const STATUS_NEW		= 0;
 	const STATUS_CLEAN		= 1;
 	const STATUS_LOADING	= 2;
@@ -61,7 +61,7 @@ class Registry{
 	/**
 	 *	Adds route to route registry by route object.
 	 *	@access		public
-	 *	@param		Route		$route		Route object
+	 *	@param		Route		$route			Route object
 	 *	@return		string		ID of added route
 	 *	@throws		\DomainException			if route is already registered by route ID
 	 */
@@ -82,7 +82,8 @@ class Registry{
 		return $routeId;
 	}
 
-	public function addSource( RegistrySourceInterface $source ){
+	public function addSource( RegistrySourceInterface $source )
+	{
 		return $this->source->addSource( $source );
 	}
 
@@ -130,7 +131,7 @@ class Registry{
 	 *	@param		string		$controller		...
 	 *	@return		array  		List of found routes
 	 */
-	public function indexByController( $controller ): array
+	public function indexByController( string $controller ): array
 	{
 		$this->loadFromSources();
 		$routes		= array();
@@ -150,7 +151,7 @@ class Registry{
 	 *	@return		boolean		TRUE is route existed and has been removed
 	 *	@throws		\DomainException				if route ID has not been found in registry (strict mode only)
 	 */
-	public function remove( $routeId, $strict = TRUE ): bool
+	public function remove( string $routeId, bool $strict = TRUE ): bool
 	{
 		$this->loadFromSources();
 		if( array_key_exists( $routeId, $this->routes ) ){
@@ -166,7 +167,7 @@ class Registry{
 
 	/*  --  PROTECTED  --  */
 
-	protected function loadFromSources( $forceFreshLoad = FALSE )
+	protected function loadFromSources( bool $forceFreshLoad = FALSE )
 	{
 		if( $this->status === self::STATUS_NEW || $forceFreshLoad ){
 			$this->status	= self::STATUS_LOADING;
@@ -175,7 +176,7 @@ class Registry{
 		}
 	}
 
-	protected function saveToSources( $forceFreshSave = FALSE )
+	protected function saveToSources( bool $forceFreshSave = FALSE )
 	{
 		if( $this->status === self::STATUS_CHANGED || $forceFreshSave ){
 			$this->status	= self::STATUS_SAVING;
@@ -184,4 +185,3 @@ class Registry{
 		}
 	}
 }
-?>

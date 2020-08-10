@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2007-2019 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2020 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2019 Christian Würker
+ *	@copyright		2016-2020 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -32,7 +32,7 @@ namespace CeusMedia\Router;
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2019 Christian Würker
+ *	@copyright		2016-2020 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -109,7 +109,7 @@ class Resolver{
 	 *	@param		string		$method			HTTP method (GET|POST|PUT|DELETE)
 	 *	@return		boolean
 	 */
-	public function hasRouteForPath( $path, $method = 'GET' ): bool
+	public function hasRouteForPath( string $path, string $method = 'GET' ): bool
 	{
 		return (bool) $this->resolve( $path, $method, FALSE );
 	}
@@ -124,10 +124,10 @@ class Resolver{
 	 *	@param		string		$path			Path to resolve
 	 *	@param		string		$method			HTTP method used
 	 *	@param		boolean		$strict			Throw exception if not resolvable, otherwise return FALSE
-	 *	@return		Route						Route object with inserted arguments
+	 *	@return		Route|null					Route object with inserted arguments
 	 *	@throws		ResolverException			if path is not a resolvable route
 	 */
-	public function resolve( $path, $method = "GET", $strict = TRUE )
+	public function resolve( strin $path, string $method = "GET", bool $strict = TRUE ): ?Route
 	{
 		if( $method === 'CLI' ){
 			$delimiter	= ' ';
@@ -186,7 +186,6 @@ class Resolver{
 		}
 		if( $strict )
 			throw new ResolverException( 'Route is not resolvable' );
-		return FALSE;
+		return NULL;
 	}
 }
-?>

@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2007-2019 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2020 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,11 +20,15 @@
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2019 Christian Würker
+ *	@copyright		2016-2020 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 namespace CeusMedia\Router;
+
+use \CeusMedia\Router\Registry\Source\JsonFile as JsonFileSource;
+use \CeusMedia\Router\Registry\Source\JsonFolder as JsonFolderSource;
+use \CeusMedia\Router\Registry\Source\SourceInterface;
 
 /**
  *	...
@@ -32,12 +36,12 @@ namespace CeusMedia\Router;
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2019 Christian Würker
+ *	@copyright		2016-2020 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
-class Router{
-
+class Router
+{
 	protected $method;
 
 	protected $registry;
@@ -50,7 +54,7 @@ class Router{
 	 *	@param		array		$options	Map of options
 	 *	@return		void
 	 */
-	public function __construct( $options = array() )
+	public function __construct( array $options = array() )
 	{
 		$this->options	= array_merge( $this->options, $options );
 		$this->registry	= new Registry();
@@ -68,7 +72,7 @@ class Router{
 	 *	@todo		return route instance instead of route ID
 	 *	@deprecated	use Router::add with Route\Factory::create instead
 	 */
-	public function add( $controller, $action = 'index', $pattern, $method = '*' )
+	public function add( string $controller, string $action = 'index', string $pattern, string $method = '*' ): string
 	{
 		$route	= new Route( $pattern, strtoupper( $method ) );
 		$route->setController( $controller );
@@ -80,7 +84,7 @@ class Router{
 	 *	...
 	 *	@access		public
 	 *	@param		Route		$route			Route instance to add
-	 *	@return		Router
+	 *	@return		self 		This instance for method chaining
 	 *	@todo		return route instance instead of route ID
 	 */
 	public function addRoute( Route $route ): self
@@ -115,7 +119,7 @@ class Router{
 	 *	@param		string		$controller		...
 	 *	@return		array 		List of route instances
 	 */
-	public function getRoutesByController( $controller ): array
+	public function getRoutesByController( string $controller ): array
 	{
 		return $this->registry->indexByController( $controller );
 	}
@@ -133,11 +137,11 @@ class Router{
 	 *	$router	= new Router();
 	 *	$router->getRegistry()->addSource( new JsonFile( $source ) );
 	 */
-	public function loadRoutesFromJsonFile( $filePath, $folderPath = NULL )
+	public function loadRoutesFromJsonFile( string $filePath, ?string $folderPath = NULL )
 	{
-		$sourceFile	= new \CeusMedia\Router\Registry\Source\JsonFile( $filePath );
-		$sourceFile->setOption( \CeusMedia\Router\Registry\Source\SourceInterface::OPTION_AUTOSAVE, TRUE );
-		$sourceFolder = new \CeusMedia\Router\Registry\Source\JsonFolder( $folderPath );
+		$sourceFile	= new JsonFileSource( $filePath );
+		$sourceFile->setOption( SourceInterface::OPTION_AUTOSAVE, TRUE );
+		$sourceFolder = new JsonFolderSource( $folderPath );
 		$this->registry->addSource( $sourceFile );
 		$this->registry->addSource( $sourceFolder );
 //		$this->registry->loadFromJsonFile( $filePath, $folderPath );
@@ -147,11 +151,11 @@ class Router{
 	 *	...
 	 *	@access		public
 	 *	@param		string		$path			...
-	 *	@param		string		$method			HTTP method (GET|POST|PUT|DELETE)
 	 *	@param		boolean		$strict			Flag: resolve in strict mode
 	 *	@return		Route
+	 *	@throws		ResolverException			if path is not a resolvable route
 	 */
-	public function resolve( $path, $strict = TRUE )
+	public function resolve( string $path, bool $strict = TRUE ): Route
 	{
 		$resolver	= new Resolver( $this->registry );
 		return $resolver->resolve( $path, $this->method, $strict );
@@ -161,20 +165,21 @@ class Router{
 	 *	...
 	 *	@access		public
 	 *	@param		string		$filePath		Path to routes file
-	 *	@return		void
+	 *	@return		self 		This instance for method chaining
 	 */
-	public function saveRoutes( $filePath )
+	public function saveRoutes( string $filePath ): self
 	{
 		$this->registry->save( $filePath );
+		return $this;
 	}
 
 	/**
 	 *	Returns router registry object.
 	 *	@access		public
 	 *	@param		Registry	$registry		Registry object to set
-	 *	@return		Route	 	Router registry object
+	 *	@return		self 		This instance for method chaining
 	 */
-	public function setRegistry(Registry $registry): self
+	public function setRegistry( Registry $registry ): self
 	{
 		$this->registry	= $registry;
 		return $this;
@@ -183,8 +188,8 @@ class Router{
 	/**
 	 *	Set HTTP method of call to resolve.
 	 *	@access		public
-	 *	@param		string		$method			HTTP method of call to resolve
-	 *	@return		Route 		Router registry object
+	 *	@param		string		$method			HTTP method of call to resolve (GET|POST|PUT|DELETE)
+	 *	@return		self 		This instance for method chaining
 	 */
 	public function setMethod( string $method ): self
 	{
@@ -192,4 +197,3 @@ class Router{
 		return $this;
 	}
 }
-?>

@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2007-2019 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2020 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2019 Christian Würker
+ *	@copyright		2016-2020 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -32,12 +32,12 @@ namespace CeusMedia\Router;
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2019 Christian Würker
+ *	@copyright		2016-2020 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
-class Route{
-
+class Route
+{
 	const MODE_UNKNOWN			= 0;
 	const MODE_CONTROLLER		= 1;
 	const MODE_EVENT			= 2;
@@ -121,9 +121,7 @@ class Route{
 		if( $this->method === '*' )
 			return TRUE;
 		$methods	= explode( ',', $this->method );
-		if( in_array( strtoupper( $method ), $methods ) )
-			return TRUE;
-		return FALSE;
+		return in_array( strtoupper( $method ), $methods ) );
 	}
 
 	/**
@@ -146,7 +144,7 @@ class Route{
 	 *	@param		array		$arguments		Map of
 	 *	@return		Route
 	 */
-	public function setArguments( $arguments ): self
+	public function setArguments( array $arguments ): self
 	{
 		$this->arguments	= $arguments;
 		return $this;
@@ -158,7 +156,7 @@ class Route{
 	 *	@param		string		$controller		...
 	 *	@return		Route
 	 */
-	public function setController( $controller ): self
+	public function setController( string $controller ): self
 	{
 		if( !preg_match( '/^(_|\\\|[a-z0-9])+$/i', $controller ) )
 			throw new \InvalidArgumentException( 'Controller must be a valid class name' );
@@ -173,7 +171,7 @@ class Route{
 	 *	@return		Route
 	 *	@throws		\DomainException			if given method is invalid or not supported
 	 */
-	public function setMethod( $method ): self
+	public function setMethod( string $method ): self
 	{
 		$validMethods	= array();
 		$methods		= preg_split( '/\s*(,|\|)\s*/', strtoupper( trim( $method ) ) );
@@ -197,9 +195,9 @@ class Route{
 	 *	@access		public
 	 *	@param		int			$mode			Mode as constant value (int)
 	 *	@return		Route
-	 *	@throws		\DomainException	if given mode value is no a valid constant value (int)
+	 *	@throws		\DomainException			if given mode value is no a valid constant value (int)
 	 */
-	public function setMode( $mode ): self
+	public function setMode( int $mode ): self
 	{
 		if( !preg_match( '/^[0-9]+$/', $mode ) )
 			throw new \DomainException( 'Invalid mode: '.$mode );
@@ -225,7 +223,7 @@ class Route{
 	 *	@param		string		$pattern
 	 *	@return		Route
 	 */
-	public function setPattern( $pattern ): self
+	public function setPattern( string $pattern ): self
 	{
 //		$pattern			= str_replace( ' ', '', $pattern );
 		$this->pattern		= $pattern;
@@ -238,7 +236,7 @@ class Route{
 	 *	@param		array		$roles
 	 *	@return		Route
 	 */
-	public function setRoles( $roles ): self
+	public function setRoles( array $roles ): self
 	{
 		$this->roles		= $roles;
 		return $this;
@@ -264,4 +262,3 @@ class Route{
 		);
 	}
 }
-?>

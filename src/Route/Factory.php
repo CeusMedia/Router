@@ -40,7 +40,10 @@ use CeusMedia\Router\Route;
  */
 class Factory
 {
+	/** @var	?int		$defaultMode	Mode to set by default for new route */
 	protected $defaultMode;
+
+	/** @var	?string		$defaultMethod	Request method  to set by default for new route */
 	protected $defaultMethod;
 
 	public function create( string $pattern, array $options = array() ): Route

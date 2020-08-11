@@ -22,7 +22,7 @@ dev-test-syntax:
 	@find src -type f -print0 | xargs -0 -n1 xargs php -l
 
 dev-phpstan:
-	@vendor/bin/phpstan analyse src tests
+	@vendor/bin/phpstan analyse src
 
 dev-phpstan-full:
-	@vendor/bin/phpstan analyse src tests --level 8
+	@vendor/bin/phpstan analyse src --level 8

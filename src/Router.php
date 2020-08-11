@@ -42,10 +42,13 @@ use \CeusMedia\Router\Registry\Source\SourceInterface;
  */
 class Router
 {
+	/** @var	?string		$method			Request method, set by setMethod */
 	protected $method;
 
+	/** @var	Registry	$registry		Registry for routes and route sources */
 	protected $registry;
 
+	/** @var	array		$options		Map of options, usable by inherenting classes */
 	protected $options	= array();
 
 	/**
@@ -152,11 +155,13 @@ class Router
 	 *	@access		public
 	 *	@param		string		$path			...
 	 *	@param		boolean		$strict			Flag: resolve in strict mode
-	 *	@return		Route
+	 *	@return		Route|NULL
 	 *	@throws		ResolverException			if path is not a resolvable route
 	 */
-	public function resolve( string $path, bool $strict = TRUE ): Route
+	public function resolve( string $path, bool $strict = TRUE ): ?Route
 	{
+		if( !$this->method )
+			throw new \RuntimeException( 'No nethod set' );
 		$resolver	= new Resolver( $this->registry );
 		return $resolver->resolve( $path, $this->method, $strict );
 	}
@@ -167,11 +172,11 @@ class Router
 	 *	@param		string		$filePath		Path to routes file
 	 *	@return		self 		This instance for method chaining
 	 */
-	public function saveRoutes( string $filePath ): self
+/*	public function saveRoutes( string $filePath ): self
 	{
 		$this->registry->save( $filePath );
 		return $this;
-	}
+	}*/
 
 	/**
 	 *	Returns router registry object.

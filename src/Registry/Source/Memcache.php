@@ -68,7 +68,7 @@ class Memcache extends AbstractSource implements SourceInterface
 		return 1;
 	}
 
-	public function setResource( string $resource ): SourceInterface
+	public function setResource( string $resource ): AbstractSource
 	{
 		$matches	= array();
 		$result		= preg_match( '/^([^:]+):([^:]+):(.+)$/U', $resource, $matches );

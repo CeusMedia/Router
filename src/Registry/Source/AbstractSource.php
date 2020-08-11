@@ -45,21 +45,22 @@ abstract class AbstractSource
 	protected $options			= array();
 	protected $resource;
 
-	public function __construct( string $resource = NULL )
+	public function __construct( string $resource = NULL, array $options = array() )
 	{
 		if( $resource )
 			$this->setResource( $resource );
-		$this->setOption( SourceInterface::OPTION_AUTOLOAD, TRUE );
+		$defaultOptions	= array( SourceInterface::OPTION_AUTOLOAD => TRUE );
+		$mergedOptions	= array_merge( $defaultOptions, $options );
+		foreach( $mergedOptions as $key => $value )
+			$this->setOption( $key, $value );
 	}
 
-	public static function getInstance( string $resource = NULL ): SourceInterface
+	public static function create( string $resource = NULL, array $options = array() ): AbstractSource
 	{
 		$class	= get_called_class();
 		if( $class === self::CLASS )
-			throw new \RuntimeException( '...' );
-		if( !isset( self::$instances[$class] ) )
-			self::$instances[$class]	= new $class();
-		return self::$instances[$class];
+			throw new \RuntimeException( 'Cannot create instance of abstract class' );
+		return new $class( $resource, $options );
 	}
 
 	public function getOption( int $key )
@@ -67,6 +68,11 @@ abstract class AbstractSource
 		if( array_key_exists( $key, $this->options ) )
 			return $this->options[$key];
 		return NULL;
+	}
+
+	public function getResource(): ?string
+	{
+		return $this->resource;
 	}
 
 	abstract public function load( Registry $registry ): int;
@@ -82,7 +88,7 @@ abstract class AbstractSource
 		return $this;
 	}
 
-	public function setResource( string $resource ): SourceInterface
+	public function setResource( string $resource ): AbstractSource
 	{
 		$this->resource	= $resource;
 		return $this;

@@ -43,12 +43,13 @@ interface SourceInterface
 	const OPTION_AUTOLOAD		= 1;
 	const OPTION_AUTOSAVE		= 2;
 
-	public static function getInstance( string $resource = NULL ): self;
+	public static function create( string $resource = NULL ): AbstractSource;
 
 	public function __construct( string $resource = NULL );
 	public function getOption( int $key );
+	public function getResource(): ?string;
 	public function load( Registry $registry ): int;
 	public function setOption( int $key, $value = NULL );
-	public function setResource( string $resource ): self;
+	public function setResource( string $resource ): AbstractSource;
 	public function save( Registry $registry ): int;
 }

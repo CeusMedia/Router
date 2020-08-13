@@ -57,12 +57,19 @@ class Factory
 		), $options );
 
 		$route	= new Route( $pattern, $options['method'], $options['mode'] );
-		if( !empty( $options['controller'] ) )
+		if( isset( $options['controller'] ) && strlen( trim( $options['controller'] ) ) > 0 )
 			$route->setController( $options['controller'] );
-		if( !empty( $options['action'] ) )
+		if( isset( $options['action'] ) && strlen( trim( $options['action'] ) ) > 0 )
 			$route->setAction( $options['action'] );
-		if( !empty( $options['roles'] ) )
-			$route->setRoles( $options['roles'] );
+		if( isset( $options['roles'] ) ){
+			if( is_array( $options['roles'] ) && count( $options['roles'] ) > 0 )
+				$route->setRoles( $options['roles'] );
+			else if( is_string( $options['roles'] ) ){
+				if( strlen( trim( $options['roles'] ) ) > 0 )
+					if( preg_split( '/\s*,\s*/', $options['roles'] ) !== FALSE )
+						$route->setRoles( preg_split( '/\s*,\s*/', $options['roles'] ) );
+			}
+		}
 		return $route;
 	}
 

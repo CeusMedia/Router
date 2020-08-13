@@ -41,18 +41,26 @@ use CeusMedia\Router\Registry\Source\SourceInterface;
  */
 abstract class AbstractSource
 {
+	/** @var	array		$instances		List of ... */
 	protected static $instances	= array();
+
+	/** @var	array		$options		Map of ... */
 	protected $options			= array();
+
+	/** @var	string		$resource		... */
 	protected $resource;
 
 	public function __construct( string $resource = NULL, array $options = array() )
 	{
-		if( $resource )
-			$this->setResource( $resource );
+		if( strlen( trim( (string) $resource ) ) > 0 )
+			$this->setResource( (string) $resource );
 		$defaultOptions	= array( SourceInterface::OPTION_AUTOLOAD => TRUE );
 		$mergedOptions	= array_merge( $defaultOptions, $options );
-		foreach( $mergedOptions as $key => $value )
+		foreach( $mergedOptions as $key => $value ){
+			if( !is_int( $key ) )
+				throw new \InvalidArgumentException( 'Option key must be integer' );
 			$this->setOption( $key, $value );
+		}
 	}
 
 	public static function create( string $resource = NULL, array $options = array() ): AbstractSource

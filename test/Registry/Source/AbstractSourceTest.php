@@ -10,11 +10,11 @@ use CeusMedia\Router\Registry\Source\SourceInterface;
  */
 class AbstractSourceTest extends TestCase
 {
-	protected function setUp()
+	protected function setUp(): void
 	{
 	}
 
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 	}
 

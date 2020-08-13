@@ -41,14 +41,29 @@ use \CeusMedia\Router\Registry\Source\SourceInterface as SourceInterface;
  */
 class Source
 {
-	protected $sources			= array();
+	/** @var	array		$sources		List of ... */
+	protected $sources		= array();
 
-	public function load( Registry $registry )
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		SourceInterface		$source		...
+	 *	@return		self
+	 */
+	public function addSource( SourceInterface $source ): self
 	{
-		if( !$this->sources )
+		$this->sources[] = $source;
+		return $this;
+	}
+
+	public function load( Registry $registry, bool $strict = TRUE ): int
+	{
+		$nrLoadedSources	= 0;
+		if( count( $this->sources ) === 0 )
 			throw new \RuntimeException( 'No registry sources set' );
 		$loadSource	= NULL;
 		for( $i=0; $i<count($this->sources); $i++ ){
+			$result		= 0;
 			$loadSource	= $this->sources[$i];
 			try{
 				if( $loadSource->getOption( SourceInterface::OPTION_AUTOLOAD ) ){
@@ -63,12 +78,14 @@ class Source
 						break;
 					}
 				}
+				$nrLoadedSources	+= $result;
 			}
 			catch( \Exception $e ){
-
+				if( $strict )
+					throw new \RuntimeException( 'Loading source failed', 0, $e );
 			}
 		}
-		return $loadSource;
+		return $nrLoadedSources;
 	}
 
 	/**
@@ -88,11 +105,5 @@ class Source
 			}
 		}
 		return $counter;
-	}
-
-	public function addSource( SourceInterface $source ): self
-	{
-		$this->sources[] = $source;
-		return $this;
 	}
 }

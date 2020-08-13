@@ -50,8 +50,13 @@ class Registry
 	const STATUS_CHANGED	= 2;
 	const STATUS_SAVING		= 3;
 
+	/** @var	array			$routes			List of registered routes */
 	protected $routes	= array();
+
+	/** @var	integer			$status			Current status of registry */
 	protected $status	= 0;
+
+	/** @var	RegistrySource	$source			List of registered routes */
 	protected $source;
 
 	public function __construct()
@@ -83,36 +88,10 @@ class Registry
 		return $routeId;
 	}
 
-	public function addSource( RegistrySourceInterface $source )
+	public function addSource( RegistrySourceInterface $source ): self
 	{
-		return $this->source->addSource( $source );
-	}
-
-	public static function getModeAsIntegerFromString( string $mode ): int
-	{
-		if( preg_match( '/^[a-z]+$/i', $mode ) ){
-			$mode	= strtolower( $mode );
-			if( $mode === 'controller' )
-				$mode	= Route::MODE_CONTROLLER;
-			else if( $mode === 'event' )
-				$mode	= Route::MODE_EVENT;
-			else if( $mode === 'forward' )
-				$mode	= Route::MODE_FORWARD;
-			else
-				throw new \RangeException( 'Invalid mode: '.$mode );
-		}
-		return $mode;
-	}
-
-	public static function getModeAsStringFromInteger( int $mode ): string
-	{
-		if( $mode === Route::MODE_CONTROLLER )
-			return 'controller';
-		if( $mode === Route::MODE_EVENT )
-			return 'event';
-		if( $mode === Route::MODE_FORWARD )
-			return 'forward';
-		return '';
+		$this->source->addSource( $source );
+		return $this;
 	}
 
 	/**
@@ -168,21 +147,25 @@ class Registry
 
 	/*  --  PROTECTED  --  */
 
-	protected function loadFromSources( bool $forceFreshLoad = FALSE )
+	protected function loadFromSources( bool $forceFreshLoad = FALSE ): bool
 	{
 		if( $this->status === self::STATUS_NEW || $forceFreshLoad ){
 			$this->status	= self::STATUS_LOADING;
 			$this->source->load( $this );
 			$this->status	= self::STATUS_CLEAN;
+			return TRUE;
 		}
+		return FALSE;
 	}
 
-	protected function saveToSources( bool $forceFreshSave = FALSE )
+	protected function saveToSources( bool $forceFreshSave = FALSE ): bool
 	{
 		if( $this->status === self::STATUS_CHANGED || $forceFreshSave ){
 			$this->status	= self::STATUS_SAVING;
 			$this->source->save( $this );
 			$this->status	= self::STATUS_CLEAN;
+			return TRUE;
 		}
+		return FALSE;
 	}
 }

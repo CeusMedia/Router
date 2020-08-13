@@ -8,7 +8,9 @@ use CeusMedia\Router\Route\Factory as RouteFactory;
  */
 class RouteTest extends TestCase
 {
-	protected function setUp()
+	protected $factory;
+
+	protected function setUp(): void
 	{
 		$this->factory	= new RouteFactory();
 		$this->factory->setDefaultMethod( 'GET' );
@@ -390,7 +392,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetModeExceptionOnInvalidMode()
 	{
-		$this->expectException( \DomainException::class );
+		$this->expectException( \TypeError::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setMode( 'invalid' );
 	}
@@ -406,14 +408,31 @@ class RouteTest extends TestCase
 		$this->assertSame( Route::class, get_class( $result ) );
 		$this->assertSame( '123', $route->getPattern() );
 
+		$result	= $route->setPattern( '/path/to/some/action[/:action]' );
+		$this->assertTrue( is_object( $result ) );
+		$this->assertSame( Route::class, get_class( $result ) );
+		$this->assertSame( '/path/to/some/action[/:action]', $route->getPattern() );
+
+	}
+
+	/**
+	 *	@covers	::setPattern
+	 */
+	public function testSetPatternException1()
+	{
+		$this->expectException( \InvalidArgumentException::class );
+		$route	= $this->factory->create( 'test' );
 		$route->setPattern( ' 123' );
-		$this->assertSame( '123', $route->getPattern() );
+	}
 
-		$route->setPattern( '123 ' );
-		$this->assertSame( '123', $route->getPattern() );
-
-		$route->setPattern( ' 1 2 3 ' );
-		$this->assertSame( '123', $route->getPattern() );
+	/**
+	 *	@covers	::setPattern
+	 */
+	public function testSetPatternException2()
+	{
+		$this->expectException( \InvalidArgumentException::class );
+		$route	= $this->factory->create( 'test' );
+		$route->setPattern( '1 2 3' );
 	}
 
 	/**
@@ -431,4 +450,38 @@ class RouteTest extends TestCase
 		$route->setRoles( $roles );
 		$this->assertSame( $roles, $route->getRoles() );
 	}
+
+	/**
+	 *	@covers	::getModeFromKey
+	 */
+	public function testGetModeFromKey(){
+		$route	= $this->factory->create( 'test' );
+
+		$expected = Route::MODE_CONTROLLER;
+		$this->assertEquals( $expected, $route->getModeFromKey( 'controller' ) );
+		$this->assertEquals( $expected, $route->getModeFromKey( 'Controller' ) );
+		$this->assertEquals( $expected, $route->getModeFromKey( 'CONTROLLER' ) );
+
+		$expected = Route::MODE_EVENT;
+		$this->assertEquals( $expected, $route->getModeFromKey( 'event' ) );
+		$this->assertEquals( $expected, $route->getModeFromKey( 'Event' ) );
+		$this->assertEquals( $expected, $route->getModeFromKey( 'EVENT' ) );
+
+		$expected = Route::MODE_FORWARD;
+		$this->assertEquals( $expected, $route->getModeFromKey( 'forward' ) );
+		$this->assertEquals( $expected, $route->getModeFromKey( 'Forward' ) );
+		$this->assertEquals( $expected, $route->getModeFromKey( 'FORWARD' ) );
+	}
+
+	/**
+	 *	@covers	::getModeFromKey
+	 *	@expectedException \RangeException
+	 */
+	public function testGetModeFromKeyException(){
+		$this->expectException( \RangeException::class );
+		$route	= $this->factory->create( 'test' );
+		$route->getModeFromKey( 'invalid' );
+	}
+}
+class RouteMock extends Route{
 }

@@ -10,7 +10,11 @@ use CeusMedia\Router\Resolver;
  */
 class ResolverTest extends TestCase
 {
-	protected function setUp()
+	protected $factory;
+	protected $registry;
+	protected $resolver;
+
+	protected function setUp(): void
 	{
 		$this->factory	= new RouteFactory();
 		$this->factory->setDefaultMethod( 'GET' );

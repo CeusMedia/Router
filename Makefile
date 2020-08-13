@@ -22,7 +22,10 @@ dev-test-syntax:
 	@find src -type f -print0 | xargs -0 -n1 xargs php -l
 
 dev-phpstan:
-	@vendor/bin/phpstan analyse src
+#	@vendor/bin/phpstan analyse --configuration phpstan.neon --no-progress --xdebug --error-format=prettyJson > phpstan.json || true
+#	@vendor/bin/phpstan analyse --configuration phpstan.neon --no-progress --xdebug --error-format=github > phpstan.gh.log || true
+#	@vendor/bin/phpstan analyse --configuration phpstan.neon --no-progress --xdebug --error-format=gitlab > phpstan.gl.log || true
+	@vendor/bin/phpstan analyse --configuration phpstan.neon --xdebug || true
 
-dev-phpstan-full:
-	@vendor/bin/phpstan analyse src --level 8
+dev-phpstan-save-baseline:
+	@vendor/bin/phpstan analyse --configuration phpstan.neon --generate-baseline phpstan-baseline.neon || true

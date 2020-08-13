@@ -38,6 +38,7 @@ namespace CeusMedia\Router;
  */
 class Resolver{
 
+	/** @var	Registry		$registry		Registry instance */
 	protected $registry;
 
 	/**
@@ -65,7 +66,7 @@ class Resolver{
 			foreach( explode( " ", $route->getPattern() ) as $part ){
 				$optional	= FALSE;
 				$argument	= FALSE;
-				if( preg_match( "@\(:.+\)@U", $part ) ){											//  optional argument found
+				if( preg_match( "@\(:.+\)@U", $part ) > 0 ){										//  optional argument found
 					$part		= substr( $part, 1, -1 );											//  cut argument key
 					$optional	= TRUE;																//  note that is optional
 				}
@@ -84,7 +85,7 @@ class Resolver{
 			foreach( explode( "/", $route->getPattern() ) as $part ){
 				$optional	= FALSE;
 				$argument	= FALSE;
-				if( preg_match( "@\(:.+\)@U", $part ) ){											//  optional argument found
+				if( preg_match( "@\(:.+\)@U", $part ) > 0 ){										//  optional argument found
 					$part		= substr( $part, 1, -1 );											//  cut argument key
 					$optional	= TRUE;																//  note that is optional
 				}
@@ -134,7 +135,8 @@ class Resolver{
 		}
 		else{
 			$delimiter	= '/';
-			$path		= preg_replace( "@^/+@", "/", '/'.$path );
+			$path		= '/'.$path;
+			self::regExpReplaceInString( "@^/+@", "/", $path );
 		}
 		$method	= strtoupper( $method );
 		foreach( $this->registry->index() as $route ){
@@ -143,24 +145,40 @@ class Resolver{
 
 			$pattern	= $route->getPattern();
 			if( $route->getMethod() === 'CLI' ){
-				$pattern	= preg_replace( "@\(:[\S]+\)@", "(\S+)", $pattern );					//  insert mandatory argument pattern
-				$pattern	= preg_replace( "@:[\S]+@", "\S+", $pattern );							//  insert mandatory argument pattern
+				self::regExpReplaceInString( "@\(:[\S]+\)@", "(\S+)", $pattern );					//  insert mandatory argument pattern
+				self::regExpReplaceInString( "@:[\S]+@", "\S+", $pattern );							//  insert mandatory argument pattern
 			}
 			else{
-				$pattern	= preg_replace( "@(/\(:[^/]+\))@", "(/\S+)?", $pattern );				//  insert optional argument pattern
-				$pattern	= preg_replace( "@(/:[^/(]+)@", "/\S+", $pattern );						//  insert mandatory argument pattern
-				$pattern	= preg_replace( "@/$@", "/?", $pattern );								//  make ending slash optional
-				$pattern	= preg_replace( "/@/", "\@", $pattern );
+				self::regExpReplaceInString( "@(/\(:[^/]+\))@", "(/\S+)?", $pattern );				//  insert optional argument pattern
+				self::regExpReplaceInString( "@(/:[^/(]+)@", "/\S+", $pattern );					//  insert mandatory argument pattern
+				self::regExpReplaceInString( "@/$@", "/?", $pattern );								//  make ending slash optional
+//				self::regExpReplaceInString( "/@/", "\@", $pattern );
 			}
-			if( !preg_match( '@^'.$pattern.'$@U', $path ) )											//  path is not matching route pattern
+			$pattern	= preg_quote( $pattern, '@' );
+			if( preg_match( '@^'.$pattern.'$@U', $path ) === 0 )									//  path is not matching route pattern
 				continue;
 
 			$partsPattern	= self::getRoutePatternParts( $route );
-			$partsPath	= explode( $delimiter, $path );												//  split path into parts
+			$partsPath		= explode( $delimiter, $path );											//  split path into parts
 			if( count( $partsPath ) > count( $partsPattern ) )										//  path has more parts than route pattern
 				continue;
 
 			$matches	= TRUE;
+
+			/** @todo may be better impl of following for-loop ?! */
+/*			$nr	= 0;
+			foreach( $partsPattern as $nr => $part ){
+				if( empty( $part->argument ) && !empty( $part->key) ){								//  part is not an argument
+					if( $partsPath[$nr] !== $part->key )
+						break;
+				}
+				else if( empty( $part->optional ) && !isset( $partsPath[$nr] ) )					//  part is argument but mandatory and not set
+					break;
+				$part->value	= isset( $partsPath[$nr] ) ? $partsPath[$nr] : NULL;
+			}*/
+
+			/** @todo replace this loop by code above if tests are available ?! */
+			$i	= 0;
 			for( $i=0; $i<count( $partsPattern ); $i++ ){
 				if( !$partsPattern[$i]->argument ){													//  part is not an argument
 					if( $partsPath[$i] !== $partsPattern[$i]->key )
@@ -187,5 +205,15 @@ class Resolver{
 		if( $strict )
 			throw new ResolverException( 'Route is not resolvable' );
 		return NULL;
+	}
+
+	//  --  PROTECTED  --  //
+
+	protected static function regExpReplaceInString( string $regExp, string $replace, string & $string ): void
+	{
+		$result	= preg_replace( $regExp, $replace, $string );
+		if( $result === NULL )
+			throw new \InvalidArgumentException( 'Error on replace of regex in pattern' );
+		$string	= $result;
 	}
 }

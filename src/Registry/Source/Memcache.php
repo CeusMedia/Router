@@ -43,20 +43,23 @@ use CeusMedia\Router\Route\Factory as RouteFactory;
  */
 class Memcache extends AbstractSource implements SourceInterface
 {
+	/** @var	string		$cacheKey		Key in cache */
 	protected $cacheKey;
+
+	/** @var	\Memcache	$server			Memcache instance */
 	protected $server;
 
 	public function load( Registry $registry ): int
 	{
 		$counter	= 0;
 		$serial		= $this->server->get( $this->cacheKey );
-		if( $serial === FALSE || strlen( $serial ) < 3 )
-			return -1;
-		$object	= unserialize( $serial );
-		if( $object instanceof Registry ){
-			foreach( $object->index() as $route ){
-				$registry->add( $route );
-				$counter++;
+		if( is_string( $serial ) && strlen( $serial ) > 2 ){
+			$object	= unserialize( $serial );
+			if( $object instanceof Registry ){
+				foreach( $object->index() as $route ){
+					$registry->add( $route );
+					$counter++;
+				}
 			}
 		}
 		return $counter;
@@ -78,9 +81,8 @@ class Memcache extends AbstractSource implements SourceInterface
 		$port			= $matches[2];
 		$this->cacheKey	= $matches[3];
 		$this->resource	= $resource;
-		$this->server = new \Memcache;
+		$this->server	= new \Memcache;
 		$this->server->connect( $server, $port );
-
 		return $this;
 	}
 }

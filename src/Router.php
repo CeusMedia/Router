@@ -160,8 +160,8 @@ class Router
 	 */
 	public function resolve( string $path, bool $strict = TRUE ): ?Route
 	{
-		if( !$this->method )
-			throw new \RuntimeException( 'No nethod set' );
+		if( is_null( $this->method ) || strlen( $this->method ) === 0 )
+			throw new \RuntimeException( 'No method set' );
 		$resolver	= new Resolver( $this->registry );
 		return $resolver->resolve( $path, $this->method, $strict );
 	}

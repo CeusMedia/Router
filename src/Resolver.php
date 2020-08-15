@@ -151,15 +151,20 @@ class Resolver{
 			else{
 				self::regExpReplaceInString( "@(/\(:[^/]+\))@", "(/\S+)?", $pattern );				//  insert optional argument pattern
 				self::regExpReplaceInString( "@(/:[^/(]+)@", "/\S+", $pattern );					//  insert mandatory argument pattern
+				self::regExpReplaceInString( "/@/", "\@", $pattern );
 				self::regExpReplaceInString( "@/$@", "/?", $pattern );								//  make ending slash optional
-//				self::regExpReplaceInString( "/@/", "\@", $pattern );
 			}
-			$pattern	= preg_quote( $pattern, '@' );
+			Log::debug( 'Pattern: '.$pattern );
+			Log::debug( 'Path: '.$path );
 			if( preg_match( '@^'.$pattern.'$@U', $path ) === 0 )									//  path is not matching route pattern
 				continue;
 
 			$partsPattern	= self::getRoutePatternParts( $route );
 			$partsPath		= explode( $delimiter, $path );											//  split path into parts
+
+			Log::debug( 'Pattern Parts: '.json_encode( $partsPattern ) );
+			Log::debug( 'Path Parts: '.json_encode( $partsPath ) );
+
 			if( count( $partsPath ) > count( $partsPattern ) )										//  path has more parts than route pattern
 				continue;
 

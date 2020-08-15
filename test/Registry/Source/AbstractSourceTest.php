@@ -6,7 +6,7 @@ use CeusMedia\Router\Registry\Source\JsonFolder as JsonFolderSource;
 use CeusMedia\Router\Registry\Source\SourceInterface;
 
 /**
- *	@coversDefaultClass	\CeusMedia\Router\source\AbstractSource
+ *	@coversDefaultClass	\CeusMedia\Router\Source\AbstractSource
  */
 class AbstractSourceTest extends TestCase
 {
@@ -18,7 +18,7 @@ class AbstractSourceTest extends TestCase
 	{
 	}
 
-	public function testGetInstance()
+	public function testCreate()
 	{
 		$instance1	= JsonFileSource::create( 'resA' );
 		$this->assertEquals( JsonFileSource::CLASS, get_class( $instance1 ) );
@@ -31,12 +31,29 @@ class AbstractSourceTest extends TestCase
 		$instance3	= JsonFileSource::create( 'resC' );
 		$this->assertEquals( JsonFileSource::CLASS, get_class( $instance3 ) );
 		$this->assertEquals( 'resC', $instance3->getResource() );
+
+		$instance3	= JsonFileSource::create( 'resD', array(
+			SourceInterface::OPTION_AUTOLOAD	=> FALSE,
+			SourceInterface::OPTION_AUTOSAVE	=> TRUE,
+		) );
+		$this->assertEquals( JsonFileSource::CLASS, get_class( $instance3 ) );
+		$this->assertEquals( 'resD', $instance3->getResource() );
+		$this->assertEquals( FALSE, $instance3->getOption( SourceInterface::OPTION_AUTOLOAD ) );
+		$this->assertEquals( TRUE, $instance3->getOption( SourceInterface::OPTION_AUTOSAVE ) );
 	}
 
-	public function testGetInstanceException()
+	public function testCreateException1()
 	{
 		$this->expectException( \RuntimeException::CLASS );
 		AbstractSource::create();
+	}
+
+	public function testCreateException2()
+	{
+		$this->expectException( \InvalidArgumentException::CLASS );
+		$instance3	= JsonFileSource::create( 'resD', array(
+			'invalid'	=> TRUE,
+		) );
 	}
 
 	public function testGetOption()
@@ -47,6 +64,7 @@ class AbstractSourceTest extends TestCase
 		) );
 		$this->assertEquals( TRUE, $instance->getOption( SourceInterface::OPTION_AUTOLOAD ) );
 		$this->assertEquals( TRUE, $instance->getOption( SourceInterface::OPTION_AUTOSAVE ) );
+		$this->assertEquals( NULL, $instance->getOption( 1024 ) );
 
 		$instance	= JsonFileSource::create( 'resA', array(
 			SourceInterface::OPTION_AUTOLOAD	=> FALSE,
@@ -68,5 +86,9 @@ class AbstractSourceTest extends TestCase
 		$this->assertEquals( FALSE, $instance->getOption( SourceInterface::OPTION_AUTOLOAD ) );
 		$this->assertEquals( FALSE, $instance->getOption( SourceInterface::OPTION_AUTOSAVE ) );
 
+		$instance->setOption( SourceInterface::OPTION_AUTOLOAD, NULL );
+		$instance->setOption( SourceInterface::OPTION_AUTOSAVE, NULL );
+		$this->assertEquals( NULL, $instance->getOption( SourceInterface::OPTION_AUTOLOAD ) );
+		$this->assertEquals( NULL, $instance->getOption( SourceInterface::OPTION_AUTOSAVE ) );
 	}
 }

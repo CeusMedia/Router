@@ -1,0 +1,26 @@
+[
+    {
+        "controller": "Controller_Test",
+        "action": "test",
+        "pattern": "test (:a) (:b)",
+        "method": "CLI"
+    },
+    {
+        "controller": "Controller_Test",
+        "action": "test",
+        "pattern": "\/test",
+        "method": "GET"
+    },
+    {
+        "controller": "Controller_Test",
+        "action": "test",
+        "pattern": "\/test\/:a",
+        "method": "GET"
+    },
+    {
+        "controller": "Controller_Test",
+        "action": "test",
+        "pattern": "\/test\/:a\/(:b)",
+        "method": "GET"
+    }
+]

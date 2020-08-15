@@ -87,7 +87,7 @@ class Route
 	protected $origin;
 
 	/** @var	array			$supportedMethods	Allowed request methods */
-	public $supportedMethods	= array(
+	protected $supportedMethods	= array(
 		'CLI',
 		'GET',
 		'HEAD',
@@ -97,33 +97,13 @@ class Route
 		'OPTIONS',
 	);
 
-	public static function getModeFromKey( string $mode, bool $strict = TRUE ): int
-	{
-		$mode	= strtolower( $mode );
-		if( array_key_exists( $mode, self::MODES_BY_KEYS ) )
-			return self::MODES_BY_KEYS[$mode];
-		if( $strict )
-			throw new \RangeException( 'Invalid mode key: '.$mode );
-		return self::MODE_UNKNOWN;
-	}
-
-	public static function getModeKey( int $mode, bool $strict = TRUE ): string
-	{
-		if( array_key_exists( $mode, self::MODE_KEYS) )
-			return self::MODE_KEYS[$mode];
-		if( $strict )
-			throw new \RangeException( 'Invalid mode: '.$mode );
-		return self::MODE_KEY_UNKNOWN;
-	}
-
-
 	public function __construct( string $pattern, string $method = NULL, int $mode = NULL )
 	{
-		$this->setPattern( $pattern );
 		if( !is_null( $method ) )
 			$this->setMethod( $method );
 		if( !is_null( $mode ) )
 			$this->setMode( $mode );
+		$this->setPattern( $pattern );
 	}
 
 	public function getAction(): string
@@ -154,6 +134,25 @@ class Route
 	public function getMode(): int
 	{
 		return $this->mode;
+	}
+
+	public static function getModeFromKey( string $mode, bool $strict = TRUE ): int
+	{
+		$mode	= strtolower( $mode );
+		if( array_key_exists( $mode, self::MODES_BY_KEYS ) )
+			return self::MODES_BY_KEYS[$mode];
+		if( $strict )
+			throw new \RangeException( 'Invalid mode key: '.$mode );
+		return self::MODE_UNKNOWN;
+	}
+
+	public static function getModeKey( int $mode, bool $strict = TRUE ): string
+	{
+		if( array_key_exists( $mode, self::MODE_KEYS) )
+			return self::MODE_KEYS[$mode];
+		if( $strict )
+			throw new \RangeException( 'Invalid mode: '.$mode );
+		return self::MODE_KEY_UNKNOWN;
 	}
 
 	public function getOrigin(): ?Route
@@ -282,8 +281,8 @@ class Route
 	 */
 	public function setPattern( string $pattern ): self
 	{
-		if( preg_match( '/\s/', $pattern ) > 0 )
-			throw new \InvalidArgumentException( 'Route pattern must not contain whitespace' );
+		if( $this->method !== 'CLI' && preg_match( '/\s/', $pattern ) > 0 )
+			throw new \InvalidArgumentException( 'Route pattern must not contain whitespace ('.$pattern.')' );
 		$this->pattern		= $pattern;
 		return $this;
 	}

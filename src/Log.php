@@ -57,32 +57,32 @@ class Log
 
 	public static $file;
 
-	public static function add( $levelOrLevelKey, $message ): bool
+	public static function add( $levelOrLevelKey, string $message, $data = NULL ): bool
 	{
-		return static::_logByLevelOrLEvelKey( $levelOrLevelKey, $message );
+		return static::_logByLevelOrLevelKey( $levelOrLevelKey, $message, $data );
 	}
 
-	public static function debug( $message ): bool
+	public static function debug( string $message, $data = NULL ): bool
 	{
-		return static::_logByLevel( self::LEVEL_DEBUG, $message );
+		return static::_logByLevel( self::LEVEL_DEBUG, $message, $data );
 	}
 
-	public static function error( $message ): bool
+	public static function error( string $message, $data = NULL ): bool
 	{
-		return static::_logByLevel( self::LEVEL_ERROR, $message );
+		return static::_logByLevel( self::LEVEL_ERROR, $message, $data );
 	}
 
-	public static function info( $message ): bool
+	public static function info( string $message, $data = NULL ): bool
 	{
-		return static::_logByLevel( self::LEVEL_INFO, $message );
+		return static::_logByLevel( self::LEVEL_INFO, $message, $data );
 	}
 
-	public static function warn( $message ): bool
+	public static function warn( string $message, $data = NULL ): bool
 	{
-		return static::_logByLevel( self::LEVEL_WARN, $message );
+		return static::_logByLevel( self::LEVEL_WARN, $message, $data );
 	}
 
-	protected static function _logByLevel( $level, $message ): bool
+	protected static function _logByLevel( int $level, string $message, $data = NULL ): bool
 	{
 		if( !( self::$level & $level ) )
 			return FALSE;
@@ -95,10 +95,12 @@ class Log
 			$message
 		) );
 		error_log( $entry.PHP_EOL, 3, self::$file );
+		if( $data )
+			error_log( print_r( $data, TRUE ).PHP_EOL, 3, self::$file );
 		return TRUE;
 	}
 
-	protected static function _logByLevelOrLEvelKey( $level, $message ): bool
+	protected static function _logByLevelOrLevelKey( $level, string $message, $data = NULL ): bool
 	{
 		if( is_string( $level ) ){
 			if( !in_array( $level, self::LEVEL_KEYS ) )
@@ -110,6 +112,6 @@ class Log
 		if( !in_array( $level, self::LEVELS ) )
 			throw new \DomainException( 'Invalid log level' );
 
-		return static::_logByLevel( $level, $message );
+		return static::_logByLevel( $level, $message, $data );
 	}
 }

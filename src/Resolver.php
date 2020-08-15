@@ -130,6 +130,8 @@ class Resolver{
 	 */
 	public function resolve( string $path, string $method = "GET", bool $strict = TRUE ): ?Route
 	{
+		Log::debug( 'Router Resolver: resolve' );
+		Log::debug( '> path: '.$path );
 		if( $method === 'CLI' ){
 			$delimiter	= ' ';
 		}
@@ -138,7 +140,9 @@ class Resolver{
 			$path		= '/'.$path;
 			self::regExpReplaceInString( "@^/+@", "/", $path );
 		}
-		$method	= strtoupper( $method );
+		$partsPath	= explode( $delimiter, $path );													//  split path into parts
+		Log::debug( '> path parts: '.json_encode( $partsPath ) );
+		$method		= strtoupper( $method );
 		foreach( $this->registry->index() as $route ){
 			if( !$route->isMethod( $method ) )														//  method is not matching
 				continue;
@@ -154,16 +158,13 @@ class Resolver{
 				self::regExpReplaceInString( "/@/", "\@", $pattern );
 				self::regExpReplaceInString( "@/$@", "/?", $pattern );								//  make ending slash optional
 			}
-			Log::debug( 'Pattern: '.$pattern );
-			Log::debug( 'Path: '.$path );
+			Log::debug( '> try pattern: '.$pattern );
 			if( preg_match( '@^'.$pattern.'$@U', $path ) === 0 )									//  path is not matching route pattern
 				continue;
 
 			$partsPattern	= self::getRoutePatternParts( $route );
-			$partsPath		= explode( $delimiter, $path );											//  split path into parts
 
-			Log::debug( 'Pattern Parts: '.json_encode( $partsPattern ) );
-			Log::debug( 'Path Parts: '.json_encode( $partsPath ) );
+			Log::debug( '> pattern parts: ', $partsPattern );
 
 			if( count( $partsPath ) > count( $partsPattern ) )										//  path has more parts than route pattern
 				continue;

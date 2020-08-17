@@ -86,6 +86,9 @@ class Route
 	/** @var	?Route			$origin				... */
 	protected $origin;
 
+	/** @var	string			$target				Target address for route of type "forward" */
+	protected $target;
+
 	/** @var	array			$supportedMethods	Allowed request methods */
 	protected $supportedMethods	= array(
 		'CLI',
@@ -168,6 +171,16 @@ class Route
 	public function getRoles(): array
 	{
 		return $this->roles;
+	}
+
+	/**
+	 *	Get target address for route of type "forward".
+	 *	@access		public
+	 *	@return		string
+	 */
+	public function getTarget(): string
+	{
+		return $this->target;
 	}
 
 	public function isMethod( string $method ): bool
@@ -300,6 +313,18 @@ class Route
 	}
 
 	/**
+	 *	Set target address for route of type "forward".
+	 *	@access		public
+	 *	@param		string		$target
+	 *	@return		Route
+	 */
+	public function setTarget( string $target ): self
+	{
+		$this->target	= $target;
+		return $this;
+	}
+
+	/**
 	 *	Returns route as array.
 	 *	@access		public
 	 *	@return		array
@@ -316,6 +341,7 @@ class Route
 			'arguments'		=> $this->arguments,
 			'roles'			=> $this->roles,
 			'origin'		=> $this->origin,
+			'target'		=> $this->target,
 		);
 	}
 }

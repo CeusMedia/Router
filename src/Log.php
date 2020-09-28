@@ -84,9 +84,9 @@ class Log
 
 	protected static function _logByLevel( int $level, string $message, $data = NULL ): bool
 	{
-		if( !( self::$level & $level ) )
+		if( ( self::$level & $level ) !== $level )
 			return FALSE;
-		if( !self::$file )
+		if( is_null( self::$file ) || strlen( trim( self::$file ) ) === 0 )
 			throw new \RuntimeException( 'No log file set' );
 		$date	= new \DateTime( 'now', new \DateTimeZone( 'Europe/Berlin' ) );
 		$entry	= vsprintf( '%s %s %s', array(
@@ -103,13 +103,13 @@ class Log
 	protected static function _logByLevelOrLevelKey( $level, string $message, $data = NULL ): bool
 	{
 		if( is_string( $level ) ){
-			if( !in_array( $level, self::LEVEL_KEYS ) )
+			if( !in_array( $level, self::LEVEL_KEYS, TRUE ) )
 				throw new \DomainException( 'Invalid log level key' );
 			$level	= self::LEVELS_BY_KEY[$level];
 		}
 		if( !is_int( $level ) )
 			throw new \InvalidArgumentException( 'Invalid log level' );
-		if( !in_array( $level, self::LEVELS ) )
+		if( !in_array( $level, self::LEVELS, TRUE ) )
 			throw new \DomainException( 'Invalid log level' );
 
 		return static::_logByLevel( $level, $message, $data );

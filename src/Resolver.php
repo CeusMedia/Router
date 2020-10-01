@@ -155,10 +155,11 @@ class Resolver{
 			else{
 				self::regExpReplaceInString( "@(/\(:[^/]+\))@", "(/\S+)?", $pattern );				//  insert optional argument pattern
 				self::regExpReplaceInString( "@(/:[^/(]+)@", "/\S+", $pattern );					//  insert mandatory argument pattern
-				self::regExpReplaceInString( "/@/", "\@", $pattern );
+				self::regExpReplaceInString( "/@/", "\@", $pattern );								//  excape @ to \@
 				self::regExpReplaceInString( "@/$@", "/?", $pattern );								//  make ending slash optional
 			}
 			Log::debug( '> try pattern: '.$pattern );
+			self::regExpReplaceInString( "@/$@", "", $path );
 			if( preg_match( '@^'.$pattern.'$@U', $path ) === 0 )									//  path is not matching route pattern
 				continue;
 
@@ -171,8 +172,7 @@ class Resolver{
 
 			$matches	= TRUE;
 
-			/** @todo may be better impl of following for-loop ?! */
-/*			$nr	= 0;
+			$nr	= 0;
 			foreach( $partsPattern as $nr => $part ){
 				if( empty( $part->argument ) && !empty( $part->key) ){								//  part is not an argument
 					if( $partsPath[$nr] !== $part->key )
@@ -181,20 +181,9 @@ class Resolver{
 				else if( empty( $part->optional ) && !isset( $partsPath[$nr] ) )					//  part is argument but mandatory and not set
 					break;
 				$part->value	= isset( $partsPath[$nr] ) ? $partsPath[$nr] : NULL;
-			}*/
-
-			/** @todo replace this loop by code above if tests are available ?! */
-			$i	= 0;
-			for( $i=0; $i<count( $partsPattern ); $i++ ){
-				if( !$partsPattern[$i]->argument ){													//  part is not an argument
-					if( $partsPath[$i] !== $partsPattern[$i]->key )
-						break;
-				}
-				else if( !$partsPattern[$i]->optional && !isset( $partsPath[$i] ) )					//  part is argument but mandatory and not set
-					break;
-				$partsPattern[$i]->value	= isset( $partsPath[$i] ) ? $partsPath[$i] : NULL;
 			}
-			if( $i < count( $partsPattern ) - 1 )													//  loop has been broken
+
+			if( $nr < count( $partsPattern ) - 1 )													//  loop has been broken
 				continue;
 
 			$arguments	= array();

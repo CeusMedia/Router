@@ -55,7 +55,7 @@ abstract class AbstractSource
 		if( strlen( trim( (string) $resource ) ) > 0 )
 			$this->setResource( (string) $resource );
 		$defaultOptions	= array( SourceInterface::OPTION_AUTOLOAD => TRUE );
-		$mergedOptions	= array_merge( $defaultOptions, $options );
+		$mergedOptions	= $options + $defaultOptions;
 		foreach( $mergedOptions as $key => $value ){
 			if( !is_int( $key ) )
 				throw new \InvalidArgumentException( 'Option key must be integer' );
@@ -76,6 +76,11 @@ abstract class AbstractSource
 		if( array_key_exists( $key, $this->options ) )
 			return $this->options[$key];
 		return NULL;
+	}
+
+	public function getOptions(): array
+	{
+		return $this->options;
 	}
 
 	public function getResource(): ?string

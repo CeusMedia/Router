@@ -59,7 +59,7 @@ class Router
 	 */
 	public function __construct( array $options = [] )
 	{
-		$this->options	= array_merge( $this->options, $options );
+		$this->options	= $options + $this->options;
 		$this->registry	= new Registry();
 		$this->method	= PHP_SAPI === 'cli' ? 'CLI' : NULL;
 	}

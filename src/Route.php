@@ -94,7 +94,7 @@ class Route
 	protected $target;
 
 	/** @var	array				$supportedMethods	Allowed request methods */
-	protected $supportedMethods		= [
+	public array $supportedMethods		= [
 		'CLI',
 		'GET',
 		'HEAD',
@@ -122,7 +122,6 @@ class Route
 			throw new RangeException( 'Invalid mode: '.$mode );
 		return self::MODE_KEY_UNKNOWN;
 	}
-
 
 	public function __construct( string $pattern, string $method = NULL, int $mode = NULL )
 	{
@@ -161,25 +160,6 @@ class Route
 	public function getMode(): int
 	{
 		return $this->mode;
-	}
-
-	public static function getModeFromKey( string $mode, bool $strict = TRUE ): int
-	{
-		$mode	= strtolower( $mode );
-		if( array_key_exists( $mode, self::MODES_BY_KEYS ) )
-			return self::MODES_BY_KEYS[$mode];
-		if( $strict )
-			throw new \RangeException( 'Invalid mode key: '.$mode );
-		return self::MODE_UNKNOWN;
-	}
-
-	public static function getModeKey( int $mode, bool $strict = TRUE ): string
-	{
-		if( array_key_exists( $mode, self::MODE_KEYS) )
-			return self::MODE_KEYS[$mode];
-		if( $strict )
-			throw new \RangeException( 'Invalid mode: '.$mode );
-		return self::MODE_KEY_UNKNOWN;
 	}
 
 	public function getOrigin(): ?Route
@@ -366,6 +346,6 @@ class Route
 			'roles'			=> $this->roles,
 			'origin'		=> $this->origin,
 			'target'		=> $this->target,
-		);
+		];
 	}
 }

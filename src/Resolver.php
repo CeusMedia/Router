@@ -173,6 +173,7 @@ class Resolver
 			$matches	= TRUE;
 
 			$nr	= 0;
+			/* @phpstan-ignore-next-line */
 			foreach( $partsPattern as $nr => $part ){
 				if( empty( $part->argument ) && !empty( $part->key) ){								//  part is not an argument
 					if( $partsPath[$nr] !== $part->key )

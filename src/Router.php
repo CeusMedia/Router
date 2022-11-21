@@ -26,6 +26,7 @@
  */
 namespace CeusMedia\Router;
 
+use \CeusMedia\Router\Log;
 use \CeusMedia\Router\Registry\Source\JsonFile as JsonFileSource;
 use \CeusMedia\Router\Registry\Source\JsonFolder as JsonFolderSource;
 use \CeusMedia\Router\Registry\Source\SourceInterface;
@@ -160,6 +161,7 @@ class Router
 	 */
 	public function resolve( string $path, bool $strict = TRUE ): ?Route
 	{
+		Log::debug( 'Router > resolve: path => '.$path );
 		if( is_null( $this->method ) || strlen( $this->method ) === 0 )
 			throw new \RuntimeException( 'No method set' );
 		$resolver	= new Resolver( $this->registry );

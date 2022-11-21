@@ -83,7 +83,22 @@ class RouteTest extends TestCase
 	}
 
 	/**
-	 *	@covers	::getOrigin
+	*	@covers	::getArguments
+	*	@covers	::setArguments
+	 */
+	public function testGetArguments()
+	{
+		$route	= $this->factory->create( 'test' );
+		$this->assertSame( [], $route->getArguments() );
+
+		$arguments	= ['a' => 'a1', 'b' => 'b2'];
+		$route->setArguments( $arguments );
+		$this->assertSame( $arguments, $route->getArguments() );
+	}
+
+	/**
+	*	@covers	::getOrigin
+	*	@covers	::setOrigin
 	 */
 	public function testGetOrigin()
 	{

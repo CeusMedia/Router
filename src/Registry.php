@@ -71,7 +71,7 @@ class Registry
 	 */
 	public function add( Route $route ): string
 	{
-		$this->loadFromSources();
+//		$this->loadFromSources();
 		$routeId	= $route->getId();
 		if( array_key_exists( $routeId, $this->routes ) ){
 			throw new DomainException( sprintf(
@@ -89,6 +89,7 @@ class Registry
 	public function addSource( RegistrySourceInterface $source ): self
 	{
 		$this->source->addSource( $source );
+		$source->load( $this );
 		return $this;
 	}
 
@@ -99,7 +100,7 @@ class Registry
 	 */
 	public function index(): array
 	{
-		$this->loadFromSources();
+//		$this->loadFromSources();
 		return $this->routes;
 	}
 
@@ -131,7 +132,7 @@ class Registry
 	 */
 	public function remove( string $routeId, bool $strict = TRUE ): bool
 	{
-		$this->loadFromSources();
+//		$this->loadFromSources();
 		if( array_key_exists( $routeId, $this->routes ) ){
 			unset( $this->routes[$routeId] );
 			$this->status = self::STATUS_CHANGED;

@@ -130,6 +130,8 @@ class Resolver
 	 */
 	public function resolve( string $path, string $method = "GET", bool $strict = TRUE ): ?Route
 	{
+		Log::debug( 'Router Resolver: resolve' );
+		Log::debug( '> path: '.$path );
 		if( $method === 'CLI' ){
 			$delimiter	= ' ';
 		}
@@ -138,7 +140,9 @@ class Resolver
 			$path		= '/'.$path;
 			self::regExpReplaceInString( "@^/+@", "/", $path );
 		}
-		$method	= strtoupper( $method );
+		$partsPath	= explode( $delimiter, $path );													//  split path into parts
+		Log::debug( '> path parts: '.json_encode( $partsPath ) );
+		$method		= strtoupper( $method );
 		foreach( $this->registry->index() as $route ){
 			if( !$route->isMethod( $method ) )														//  method is not matching
 				continue;
@@ -151,22 +155,24 @@ class Resolver
 			else{
 				self::regExpReplaceInString( "@(/\(:[^/]+\))@", "(/\S+)?", $pattern );				//  insert optional argument pattern
 				self::regExpReplaceInString( "@(/:[^/(]+)@", "/\S+", $pattern );					//  insert mandatory argument pattern
+				self::regExpReplaceInString( "/@/", "\@", $pattern );								//  excape @ to \@
 				self::regExpReplaceInString( "@/$@", "/?", $pattern );								//  make ending slash optional
-//				self::regExpReplaceInString( "/@/", "\@", $pattern );
 			}
-			$pattern	= preg_quote( $pattern, '@' );
+			Log::debug( '> try pattern: '.$pattern );
+			self::regExpReplaceInString( "@/$@", "", $path );
 			if( preg_match( '@^'.$pattern.'$@U', $path ) === 0 )									//  path is not matching route pattern
 				continue;
 
 			$partsPattern	= self::getRoutePatternParts( $route );
-			$partsPath		= explode( $delimiter, $path );											//  split path into parts
+
+			Log::debug( '> pattern parts: ', $partsPattern );
+
 			if( count( $partsPath ) > count( $partsPattern ) )										//  path has more parts than route pattern
 				continue;
 
 			$matches	= TRUE;
 
-			/** @todo may be better impl of following for-loop ?! */
-/*			$nr	= 0;
+			$nr	= 0;
 			foreach( $partsPattern as $nr => $part ){
 				if( empty( $part->argument ) && !empty( $part->key) ){								//  part is not an argument
 					if( $partsPath[$nr] !== $part->key )
@@ -175,20 +181,9 @@ class Resolver
 				else if( empty( $part->optional ) && !isset( $partsPath[$nr] ) )					//  part is argument but mandatory and not set
 					break;
 				$part->value	= isset( $partsPath[$nr] ) ? $partsPath[$nr] : NULL;
-			}*/
-
-			/** @todo replace this loop by code above if tests are available ?! */
-			$i	= 0;
-			for( $i=0; $i<count( $partsPattern ); $i++ ){
-				if( !$partsPattern[$i]->argument ){													//  part is not an argument
-					if( $partsPath[$i] !== $partsPattern[$i]->key )
-						break;
-				}
-				else if( !$partsPattern[$i]->optional && !isset( $partsPath[$i] ) )					//  part is argument but mandatory and not set
-					break;
-				$partsPattern[$i]->value	= isset( $partsPath[$i] ) ? $partsPath[$i] : NULL;
 			}
-			if( $i < count( $partsPattern ) - 1 )													//  loop has been broken
+
+			if( $nr < count( $partsPattern ) - 1 )													//  loop has been broken
 				continue;
 
 			$arguments	= [];

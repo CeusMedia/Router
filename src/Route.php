@@ -90,8 +90,11 @@ class Route
 	/** @var	?Route				$origin				... */
 	protected ?Route $origin		= NULL;
 
+	/** @var	string				$target				Target address for route of type "forward" */
+	protected $target;
+
 	/** @var	array				$supportedMethods	Allowed request methods */
-	public array $supportedMethods	= [
+	protected $supportedMethods		= [
 		'CLI',
 		'GET',
 		'HEAD',
@@ -123,11 +126,11 @@ class Route
 
 	public function __construct( string $pattern, string $method = NULL, int $mode = NULL )
 	{
-		$this->setPattern( $pattern );
 		if( !is_null( $method ) )
 			$this->setMethod( $method );
 		if( !is_null( $mode ) )
 			$this->setMode( $mode );
+		$this->setPattern( $pattern );
 	}
 
 	public function getAction(): string
@@ -160,6 +163,25 @@ class Route
 		return $this->mode;
 	}
 
+	public static function getModeFromKey( string $mode, bool $strict = TRUE ): int
+	{
+		$mode	= strtolower( $mode );
+		if( array_key_exists( $mode, self::MODES_BY_KEYS ) )
+			return self::MODES_BY_KEYS[$mode];
+		if( $strict )
+			throw new \RangeException( 'Invalid mode key: '.$mode );
+		return self::MODE_UNKNOWN;
+	}
+
+	public static function getModeKey( int $mode, bool $strict = TRUE ): string
+	{
+		if( array_key_exists( $mode, self::MODE_KEYS) )
+			return self::MODE_KEYS[$mode];
+		if( $strict )
+			throw new \RangeException( 'Invalid mode: '.$mode );
+		return self::MODE_KEY_UNKNOWN;
+	}
+
 	public function getOrigin(): ?Route
 	{
 		return $this->origin;
@@ -173,6 +195,16 @@ class Route
 	public function getRoles(): array
 	{
 		return $this->roles;
+	}
+
+	/**
+	 *	Get target address for route of type "forward".
+	 *	@access		public
+	 *	@return		string
+	 */
+	public function getTarget(): string
+	{
+		return $this->target;
 	}
 
 	public function isMethod( string $method ): bool
@@ -286,8 +318,8 @@ class Route
 	 */
 	public function setPattern( string $pattern ): self
 	{
-		if( preg_match( '/\s/', $pattern ) > 0 )
-			throw new InvalidArgumentException( 'Route pattern must not contain whitespace' );
+		if( $this->method !== 'CLI' && preg_match( '/\s/', $pattern ) > 0 )
+			throw new \InvalidArgumentException( 'Route pattern must not contain whitespace ('.$pattern.')' );
 		$this->pattern		= $pattern;
 		return $this;
 	}
@@ -301,6 +333,18 @@ class Route
 	public function setRoles( array $roles ): self
 	{
 		$this->roles		= $roles;
+		return $this;
+	}
+
+	/**
+	 *	Set target address for route of type "forward".
+	 *	@access		public
+	 *	@param		string		$target
+	 *	@return		Route
+	 */
+	public function setTarget( string $target ): self
+	{
+		$this->target	= $target;
 		return $this;
 	}
 
@@ -321,6 +365,7 @@ class Route
 			'arguments'		=> $this->arguments,
 			'roles'			=> $this->roles,
 			'origin'		=> $this->origin,
-		];
+			'target'		=> $this->target,
+		);
 	}
 }

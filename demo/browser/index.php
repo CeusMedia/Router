@@ -1,5 +1,5 @@
 <?php
-(@include '../vendor/autoload.php') or die('Please use composer to install required packages.' . PHP_EOL);
+(@include '../../vendor/autoload.php') or die('Please use composer to install required packages.' . PHP_EOL);
 
 /*  --  IMPORT  ------------------------------------------------------------  */
 use \CeusMedia\Router as Router;
@@ -9,15 +9,16 @@ use \CeusMedia\Router\Registry\Source\SourceInterface as RegistrySourceInterface
 use \CeusMedia\Router\Registry\Source\JsonFile as RegistryJsonFileSource;
 //use \CeusMedia\Router\Registry\Source\JsonFolder as RegistryJsonFolderSource;
 
-require_once 'Controller/Test.php';
+require_once '../Controller/Test.php';
 
 /*  --  INIT  --------------------------------------------------------------  */
 new UI_DevOutput;
 error_reporting( E_ALL );
+ini_set( 'display_errors', 'On' );
 
-$filePathCollectedRoutes	= 'routes/test.json';
+$filePathCollectedRoutes	= '../routes/test.json';
 
-$sourceJsonFile		= RegistryJsonFileSource::getNewInstance()
+$sourceJsonFile		= RegistryJsonFileSource::create()
 	->setResource( $filePathCollectedRoutes )
 //	->setOption( RegistrySourceInterface::OPTION_AUTOSAVE, TRUE )
 //	->setOption( RegistrySourceInterface::OPTION_AUTOLOAD, FALSE )

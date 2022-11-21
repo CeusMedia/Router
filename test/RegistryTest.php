@@ -1,6 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
 use CeusMedia\Router\Registry;
+use CeusMedia\Router\Registry\Source as RegistrySource;
 use CeusMedia\Router\Route;
 
 /**
@@ -12,27 +13,55 @@ class RegistryTest extends TestCase
 	{
 	}
 
-	public function testAdd(){
+	protected function tearDown(): void
+	{
+	}
+
+	/**
+	 *	@covers	::add
+	 */
+	public function testAdd()
+	{
 		$this->markTestIncomplete();
 	}
 
-	public function testIndex(){
+	/**
+	 *	@covers	::index
+	 */
+	public function testIndex()
+	{
 		$this->markTestIncomplete();
 	}
 
-	public function testIndexByController(){
+	/**
+	 *	@covers	::indexByController
+	 */
+	public function testIndexByController()
+	{
 		$this->markTestIncomplete();
 	}
 
-	public function testLoadFromJsonFile(){
+	/**
+	 *	@covers	::loadFromJsonFile
+	 */
+	public function testLoadFromJsonFile()
+	{
 		$this->markTestIncomplete();
 	}
 
-	public function testRemove(){
+	/**
+	 *	@covers	::remove
+	 */
+	public function testRemove()
+	{
 		$this->markTestIncomplete();
 	}
 
-	public function testAssembleJsonFileFromFolder(){
+	/**
+	 *	@covers	::assembleJsonFileFromFolder
+	 */
+	public function testAssembleJsonFileFromFolder()
+	{
 		$this->markTestIncomplete();
 	}
 }

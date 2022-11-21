@@ -92,6 +92,11 @@ abstract class AbstractSource
 		return NULL;
 	}
 
+	public function getOptions(): array
+	{
+		return $this->options;
+	}
+
 	/**
 	 *	@return		string|NULL
 	 */

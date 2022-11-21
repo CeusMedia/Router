@@ -43,13 +43,50 @@ interface SourceInterface
 	const OPTION_AUTOLOAD		= 1;
 	const OPTION_AUTOSAVE		= 2;
 
+	/**
+	 *	@param		string|NULL		$resource
+	 *	@return		AbstractSource
+	 */
 	public static function create( string $resource = NULL ): AbstractSource;
 
+	/**
+	 *	@param		string|NULL		$resource
+	 */
 	public function __construct( string $resource = NULL );
+
+	/**
+	 *	@param		int			$key
+	 *	@return		mixed|NULL
+	 */
 	public function getOption( int $key );
+
+	/**
+	 *	@return		string|NULL
+	 */
 	public function getResource(): ?string;
+
+	/**
+	 *	@param		Registry		$registry
+	 *	@return		int
+	 */
 	public function load( Registry $registry ): int;
+
+	/**
+	 *	@param		int				$key
+	 *	@param		mixed|NULL		$value
+	 *	@return		mixed
+	 */
 	public function setOption( int $key, $value = NULL );
+
+	/**
+	 *	@param		string			$resource
+	 *	@return		AbstractSource
+	 */
 	public function setResource( string $resource ): AbstractSource;
+
+	/**
+	 *	@param		Registry		$registry
+	 *	@return		int
+	 */
 	public function save( Registry $registry ): int;
 }

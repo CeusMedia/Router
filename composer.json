@@ -18,20 +18,64 @@
   "minimum-stability": "dev",
   "require": {
     "php": ">=7.4",
-    "ceus-media/common": "*",
-    "ceus-media/cache": "*"
+    "ext-memcache": "*",
+    "ceus-media/common": "^0.9 | 0.9.x-dev",
+    "ceus-media/cache": "^0.4 | dev-0.4-dev"
   },
   "require-dev": {
-    "ceus-media/common": "*",
-    "ceus-media/cache": "*",
     "ceus-media/doc-creator": "*",
     "phpunit/phpunit": "*",
     "phpstan/phpstan": "*",
-    "phpstan/phpstan-strict-rules": "*"
+    "phpstan/phpstan-strict-rules": "*",
+    "php-parallel-lint/php-parallel-lint": "*"
   },
   "autoload": {
     "psr-4": {
         "CeusMedia\\Router\\": ["src/"]
     }
+  },
+  "scripts": {
+    "dev:install-quiet": "composer install --quiet",
+    "dev:update-quiet": "composer update --quiet",
+    "dev:stan": [
+      "@dev:install-quiet",
+      "vendor/bin/phpstan analyze --configuration=phpstan.neon --memory-limit=1G --xdebug --verbose"
+    ],
+    "dev:stan-clear": [
+      "@dev:install-quiet",
+      "vendor/bin/phpstan clear-result-cache --configuration=phpstan.neon --xdebug --verbose"
+    ],
+    "dev:stan-save": [
+      "@dev:install-quiet",
+      "vendor/bin/phpstan analyse --configuration=phpstan.neon --generate-baseline phpstan-baseline.neon --xdebug --verbose"
+    ],
+    "dev:rector": [
+      "@dev:install-quiet",
+      "vendor/bin/rector process --config=util/rector.php --dry-run"
+    ],
+    "dev:rector-fix": [
+      "@dev:install-quiet",
+      "vendor/bin/rector process --config=util/rector.php"
+    ],
+    "dev:test-syntax": [
+      "@dev:install-quiet",
+      "vendor/bin/parallel-lint . -j 10 --colors --exclude vendor"
+    ],
+    "dev:test-units": [
+      "@dev:install-quiet",
+      "XDEBUG_MODE=coverage php vendor/bin/phpunit --configuration phpunit.xml --testsuite units"
+    ]
+  },
+  "scripts-descriptions": {
+    "dev:install": "Installs project dependencies for Development stage",
+    "dev:update": "Updates project dependencies for Development stage",
+    "dev:stan": "Validate codebase with PHPStan",
+    "dev:stan-clear": "Clear PHPStan cache",
+    "dev:stan-save": "Store current results in ignore list",
+    "dev:rector": "Shows suggestions of configured Rector rules",
+    "dev:rector-fix": "Apply currently configured Rector rules to codebase",
+    "dev:test-syntax": "Validate code base syntax using PHP linter",
+    "dev:test-units": "Run unit tests"
   }
+
 }

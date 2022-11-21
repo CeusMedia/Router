@@ -42,14 +42,14 @@ use \CeusMedia\Router\Registry\Source\SourceInterface;
  */
 class Router
 {
-	/** @var	?string		$method			Request method, set by setMethod */
-	protected $method;
+	/** @var	string|NULL		$method			Request method, set by setMethod */
+	protected ?string $method;
 
-	/** @var	Registry	$registry		Registry for routes and route sources */
-	protected $registry;
+	/** @var	Registry		$registry		Registry for routes and route sources */
+	protected Registry $registry;
 
-	/** @var	array		$options		Map of options, usable by inherenting classes */
-	protected $options	= array();
+	/** @var	array			$options		Map of options, usable by inhereting classes */
+	protected array $options	= [];
 
 	/**
 	 *	Constructor.
@@ -57,7 +57,7 @@ class Router
 	 *	@param		array		$options	Map of options
 	 *	@return		void
 	 */
-	public function __construct( array $options = array() )
+	public function __construct( array $options = [] )
 	{
 		$this->options	= array_merge( $this->options, $options );
 		$this->registry	= new Registry();

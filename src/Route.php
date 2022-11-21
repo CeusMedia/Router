@@ -26,6 +26,10 @@
  */
 namespace CeusMedia\Router;
 
+use DomainException;
+use InvalidArgumentException;
+use RangeException;
+
 /**
  *	...
  *
@@ -55,39 +59,39 @@ class Route
 		'forward'				=> self::MODE_FORWARD,
 	);
 
-	const MODE_KEYS				= array(
+	const MODE_KEYS				= [
 		self::MODE_UNKNOWN		=> 'unknown',
 		self::MODE_CONTROLLER	=> 'controller',
 		self::MODE_EVENT		=> 'event',
 		self::MODE_FORWARD		=> 'forward',
-	);
+	];
 
-	/** @var	string			$method				Request method of route */
-	protected $method			= 'GET';
+	/** @var	string				$method				Request method of route */
+	protected string $method		= 'GET';
 
-	/** @var	integer			$mode				Mode of route: 1:controller, 2:event: 3: forward */
-	protected $mode				= self::MODE_UNKNOWN;
+	/** @var	integer				$mode				Mode of route: 1:controller, 2:event: 3: forward */
+	protected int $mode				= self::MODE_UNKNOWN;
 
-	/** @var	string			$pattern			... */
-	protected $pattern			= '';
+	/** @var	string				$pattern			... */
+	protected string $pattern		= '';
 
-	/** @var	string			$controller			Controller class attached to route */
-	protected $controller		= '';
+	/** @var	string				$controller			Controller class attached to route */
+	protected string $controller	= '';
 
-	/** @var	string			$action				Action if controller attached to route */
-	protected $action			= '';
+	/** @var	string				$action				Action if controller attached to route */
+	protected string $action		= '';
 
-	/** @var	array			$arguments			Key in cache */
-	protected $arguments		= array();
+	/** @var	array				$arguments			Key in cache */
+	protected array $arguments		= [];
 
-	/** @var	array			$roles				List of role keys to limit route access to, empty means no limits */
-	protected $roles			= array();
+	/** @var	array				$roles				List of role keys to limit route access to, empty means no limits */
+	protected array $roles			= [];
 
-	/** @var	?Route			$origin				... */
-	protected $origin;
+	/** @var	?Route				$origin				... */
+	protected ?Route $origin		= NULL;
 
-	/** @var	array			$supportedMethods	Allowed request methods */
-	public $supportedMethods	= array(
+	/** @var	array				$supportedMethods	Allowed request methods */
+	public array $supportedMethods	= [
 		'CLI',
 		'GET',
 		'HEAD',
@@ -95,7 +99,7 @@ class Route
 		'PUT',
 		'DELETE',
 		'OPTIONS',
-	);
+	];
 
 	public static function getModeFromKey( string $mode, bool $strict = TRUE ): int
 	{
@@ -103,7 +107,7 @@ class Route
 		if( array_key_exists( $mode, self::MODES_BY_KEYS ) )
 			return self::MODES_BY_KEYS[$mode];
 		if( $strict )
-			throw new \RangeException( 'Invalid mode key: '.$mode );
+			throw new RangeException( 'Invalid mode key: '.$mode );
 		return self::MODE_UNKNOWN;
 	}
 
@@ -112,7 +116,7 @@ class Route
 		if( array_key_exists( $mode, self::MODE_KEYS) )
 			return self::MODE_KEYS[$mode];
 		if( $strict )
-			throw new \RangeException( 'Invalid mode: '.$mode );
+			throw new RangeException( 'Invalid mode: '.$mode );
 		return self::MODE_KEY_UNKNOWN;
 	}
 
@@ -188,7 +192,7 @@ class Route
 	public function setAction( string $action ): self
 	{
 		if( preg_match( '/^(_|[a-z0-9])+$/i', $action ) === 0 )
-			throw new \InvalidArgumentException( 'Action must be a valid method name' );
+			throw new InvalidArgumentException( 'Action must be a valid method name' );
 		$this->action		= $action;
 		return $this;
 	}
@@ -214,7 +218,7 @@ class Route
 	public function setController( string $controller ): self
 	{
 		if( preg_match( '/^(_|\\\|[a-z0-9])+$/i', $controller ) === 0 )
-			throw new \InvalidArgumentException( 'Controller must be a valid class name' );
+			throw new InvalidArgumentException( 'Controller must be a valid class name' );
 		$this->controller	= $controller;
 		return $this;
 	}
@@ -224,11 +228,11 @@ class Route
 	 *	@access		public
 	 *	@param		string		$method			...
 	 *	@return		Route
-	 *	@throws		\DomainException			if given method is invalid or not supported
+	 *	@throws		DomainException			if given method is invalid or not supported
 	 */
 	public function setMethod( string $method ): self
 	{
-		$validMethods	= array();
+		$validMethods	= [];
 		$methods		= preg_split( '/\s*(,|\|)\s*/', strtoupper( trim( $method ) ) );
 		if( $methods !== FALSE ){
 			if( in_array( '*', $methods, TRUE ) )
@@ -238,7 +242,7 @@ class Route
 					if( strlen( trim( $item ) ) === 0 )
 						continue;
 					if( !in_array( $item, $this->supportedMethods, TRUE ) )
-						throw new \DomainException( 'Invalid method: '.$item );
+						throw new DomainException( 'Invalid method: '.$item );
 					$validMethods[]	= $item;
 				}
 			}
@@ -252,12 +256,12 @@ class Route
 	 *	@access		public
 	 *	@param		int			$mode			Mode as constant value (int)
 	 *	@return		Route
-	 *	@throws		\DomainException			if given mode value is no a valid constant value (int)
+	 *	@throws		DomainException			if given mode value is no a valid constant value (int)
 	 */
 	public function setMode( int $mode ): self
 	{
 		if( preg_match( '/^[0-9]+$/', (string) $mode ) === 0 )
-			throw new \DomainException( 'Invalid mode: '.$mode );
+			throw new DomainException( 'Invalid mode: '.$mode );
 		$this->mode	= $mode;
 		return $this;
 	}
@@ -283,7 +287,7 @@ class Route
 	public function setPattern( string $pattern ): self
 	{
 		if( preg_match( '/\s/', $pattern ) > 0 )
-			throw new \InvalidArgumentException( 'Route pattern must not contain whitespace' );
+			throw new InvalidArgumentException( 'Route pattern must not contain whitespace' );
 		$this->pattern		= $pattern;
 		return $this;
 	}
@@ -307,7 +311,7 @@ class Route
 	 */
 	public function toArray(): array
 	{
-		return array(
+		return [
 			'id'			=> $this->getId(),
 			'mode'			=> $this->mode,
 			'method'		=> $this->method,
@@ -317,6 +321,6 @@ class Route
 			'arguments'		=> $this->arguments,
 			'roles'			=> $this->roles,
 			'origin'		=> $this->origin,
-		);
+		];
 	}
 }

@@ -36,10 +36,10 @@ namespace CeusMedia\Router;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
-class Resolver{
-
+class Resolver
+{
 	/** @var	Registry		$registry		Registry instance */
-	protected $registry;
+	protected Registry $registry;
 
 	/**
 	 *	Constructor.
@@ -61,7 +61,7 @@ class Resolver{
 	 */
 	static public function getRoutePatternParts( Route $route ): array
 	{
-		$parts	= array();
+		$parts	= [];
 		if( $route->getMethod() === 'CLI' ){
 			foreach( explode( " ", $route->getPattern() ) as $part ){
 				$optional	= FALSE;
@@ -119,7 +119,7 @@ class Resolver{
 	 *	Tries to resolve a given path on a given HTTP method into a route.
 	 *	Iterates registered routes and matches given path against route pattern, if HTTP method applies.
 	 *	Having a matching route, this route will be returned augmented by parsed arguments.
-	 *	Otherwise a custom exception will be thrown having strict mode enabled (default).
+	 *	Otherwise, a custom exception will be thrown having strict mode enabled (default).
 	 *	In non-strict mode the returned value will be FALSE.
 	 *	@access		public
 	 *	@param		string		$path			Path to resolve
@@ -191,7 +191,7 @@ class Resolver{
 			if( $i < count( $partsPattern ) - 1 )													//  loop has been broken
 				continue;
 
-			$arguments	= array();
+			$arguments	= [];
 			foreach( $partsPattern as $part )
 				if( $part->argument )
 					$arguments[$part->key]	= $part->value;

@@ -26,17 +26,15 @@
  */
 namespace CeusMedia\Router;
 
-use CeusMedia\Router\Route\Factory as RouteFactory;
 use CeusMedia\Router\Registry\Source as RegistrySource;
 use CeusMedia\Router\Registry\Source\SourceInterface as RegistrySourceInterface;
+use DomainException;
 
 /**
  *	...
  *
  *	@category		Library
  *	@package		CeusMedia_Router
- *	@uses			FS_File_JSON_Reader
- *	@uses			FS_File_JSON_Writer
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2016-2020 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
@@ -51,13 +49,13 @@ class Registry
 	const STATUS_SAVING		= 3;
 
 	/** @var	array			$routes			List of registered routes */
-	protected $routes	= array();
+	protected array $routes		= [];
 
 	/** @var	integer			$status			Current status of registry */
-	protected $status	= 0;
+	protected int $status		= 0;
 
 	/** @var	RegistrySource	$source			List of registered routes */
-	protected $source;
+	protected RegistrySource $source;
 
 	public function __construct()
 	{
@@ -69,14 +67,14 @@ class Registry
 	 *	@access		public
 	 *	@param		Route		$route			Route object
 	 *	@return		string		ID of added route
-	 *	@throws		\DomainException			if route is already registered by route ID
+	 *	@throws		DomainException			if route is already registered by route ID
 	 */
 	public function add( Route $route ): string
 	{
 		$this->loadFromSources();
 		$routeId	= $route->getId();
 		if( array_key_exists( $routeId, $this->routes ) ){
-			throw new \DomainException( sprintf(
+			throw new DomainException( sprintf(
 				'A route for method and pattern is already registered: %1$s %2$s',
 				$route->getMethod(),
 				$route->getPattern()
@@ -114,7 +112,7 @@ class Registry
 	public function indexByController( string $controller ): array
 	{
 		$this->loadFromSources();
-		$routes		= array();
+		$routes		= [];
 		foreach( $this->routes as $route ){
 			if( $route->getController() === $controller ){
 				$routes[]	= $route;
@@ -129,7 +127,7 @@ class Registry
 	 *	@param		string		$routeId		ID of route
 	 *	@param		boolean		$strict			Throw exception if route ID is invalid
 	 *	@return		boolean		TRUE is route existed and has been removed
-	 *	@throws		\DomainException				if route ID has not been found in registry (strict mode only)
+	 *	@throws		DomainException				if route ID has not been found in registry (strict mode only)
 	 */
 	public function remove( string $routeId, bool $strict = TRUE ): bool
 	{
@@ -141,7 +139,7 @@ class Registry
 			return TRUE;
 		}
 		if( $strict )
-			throw new \DomainException( 'No route found for this route ID' );
+			throw new DomainException( 'No route found for this route ID' );
 		return FALSE;
 	}
 

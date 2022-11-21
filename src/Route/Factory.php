@@ -40,21 +40,21 @@ use CeusMedia\Router\Route;
  */
 class Factory
 {
-	/** @var	?int		$defaultMode	Mode to set by default for new route */
-	protected $defaultMode;
+	/** @var	int|NULL				$defaultMode	Mode to set by default for new route */
+	protected ?int $defaultMode			= NULL;
 
-	/** @var	?string		$defaultMethod	Request method  to set by default for new route */
-	protected $defaultMethod;
+	/** @var	string|NULL				$defaultMethod	Request method  to set by default for new route */
+	protected ?string $defaultMethod	= NULL;
 
-	public function create( string $pattern, array $options = array() ): Route
+	public function create( string $pattern, array $options = [] ): Route
 	{
-		$options	= array_merge( array(
+		$options	= array_merge( [
 			'method'		=> $this->defaultMethod,
 			'mode'			=> $this->defaultMode,
 			'controller'	=> NULL,
 			'action'		=> NULL,
-			'roles'			=> array(),
-		), $options );
+			'roles'			=> [],
+		], $options );
 
 		$route	= new Route( $pattern, $options['method'], $options['mode'] );
 		if( isset( $options['controller'] ) && strlen( trim( $options['controller'] ) ) > 0 )

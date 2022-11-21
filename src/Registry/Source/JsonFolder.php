@@ -26,10 +26,9 @@
  */
 namespace CeusMedia\Router\Registry\Source;
 
+use CeusMedia\Common\FS\File\RegexFilter as FileRegexFilter;
 use CeusMedia\Router\Registry;
-use CeusMedia\Router\Registry\Source\AbstractSource;
-use CeusMedia\Router\Registry\Source\JsonFile;
-use CeusMedia\Router\Registry\Source\SourceInterface;
+use SplFileObject;
 
 /**
  *	...
@@ -49,7 +48,8 @@ class JsonFolder extends AbstractSource implements SourceInterface
 			return -1;
 //			throw new \RuntimeException( 'Folder "'.$this->resource.'" is not existing' );
 		$counter	= 0;
-		$index	= new \FS_File_RegexFilter( $this->resource, '/\.json$/' );
+		$index	= new FileRegexFilter( $this->resource, '/\.json$/' );
+		/** @var SplFileObject $item */
 		foreach( $index as $item ){
 			$source	= new JsonFile();
 			$source->setResource( $item->getPathname() );

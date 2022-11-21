@@ -26,12 +26,11 @@
  */
 namespace CeusMedia\Router\Registry\Source;
 
+use CeusMedia\Common\FS\File\JSON\Reader as JsonFileReader;
+use CeusMedia\Common\FS\File\JSON\Writer as JsonFileWriter;
 use CeusMedia\Router\Registry;
-use CeusMedia\Router\Registry\Source\AbstractSource;
-use CeusMedia\Router\Registry\Source\SourceInterface;
 use CeusMedia\Router\Route;
 use CeusMedia\Router\Route\Factory as RouteFactory;
-use FS_File_JSON_Reader as JsonFileReader;
 
 /**
  *	...
@@ -73,10 +72,10 @@ class JsonFile extends AbstractSource implements SourceInterface
 
 	public function save( Registry $registry ): int
 	{
-		$data	= array();
+		$data	= [];
 		foreach( $registry->index() as $route ){
 			$mode	= Route::getModeKey( $route->getMode() );
-			$item	= array();
+			$item	= [];
 			if( strlen( $mode ) > 0 )
 				$item['mode']	= $mode;
 			$item['controller']	= $route->getController();
@@ -85,6 +84,6 @@ class JsonFile extends AbstractSource implements SourceInterface
 			$item['method']		= $route->getMethod();
 			$data[]	= $item;
 		}
-		return \FS_File_JSON_Writer::save( $this->resource, $data, TRUE );
+		return JsonFileWriter::save( $this->resource, $data, TRUE );
 	}
 }

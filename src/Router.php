@@ -26,10 +26,11 @@
  */
 namespace CeusMedia\Router;
 
-use \CeusMedia\Router\Log;
-use \CeusMedia\Router\Registry\Source\JsonFile as JsonFileSource;
-use \CeusMedia\Router\Registry\Source\JsonFolder as JsonFolderSource;
-use \CeusMedia\Router\Registry\Source\SourceInterface;
+use CeusMedia\Router\Log;
+use CeusMedia\Router\Registry\Source\JsonFile as JsonFileSource;
+use CeusMedia\Router\Registry\Source\JsonFolder as JsonFolderSource;
+use CeusMedia\Router\Registry\Source\SourceInterface;
+use RuntimeException;
 
 /**
  *	...
@@ -136,8 +137,8 @@ class Router
 	 *	@return		void
 	 *	@deprecated use Registry::addSource( new JsonFile( $filePath ) ) instead
 	 *	@example
-	 *	use \CeusMedia\Router\Router;
-	 *	use \CeusMedia\Router\Registry\Source\JsonFile;
+	 *	use CeusMedia\Router\Router;
+	 *	use CeusMedia\Router\Registry\Source\JsonFile;
 	 *	$router	= new Router();
 	 *	$router->getRegistry()->addSource( new JsonFile( $source ) );
 	 */
@@ -163,7 +164,7 @@ class Router
 	{
 		Log::debug( 'Router > resolve: path => '.$path );
 		if( is_null( $this->method ) || strlen( $this->method ) === 0 )
-			throw new \RuntimeException( 'No method set' );
+			throw new RuntimeException( 'No method set' );
 		$resolver	= new Resolver( $this->registry );
 		return $resolver->resolve( $path, $this->method, $strict );
 	}

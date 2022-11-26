@@ -24,6 +24,7 @@
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
+
 namespace CeusMedia\Router;
 
 use DomainException;
@@ -91,7 +92,7 @@ class Route
 	protected ?Route $origin		= NULL;
 
 	/** @var	string				$target				Target address for route of type "forward" */
-	protected $target;
+	protected string $target		= '';
 
 	/** @var	array				$supportedMethods	Allowed request methods */
 	public array $supportedMethods		= [
@@ -299,7 +300,7 @@ class Route
 	public function setPattern( string $pattern ): self
 	{
 		if( $this->method !== 'CLI' && preg_match( '/\s/', $pattern ) > 0 )
-			throw new \InvalidArgumentException( 'Route pattern must not contain whitespace ('.$pattern.')' );
+			throw new InvalidArgumentException( 'Route pattern must not contain whitespace ('.$pattern.')' );
 		$this->pattern		= $pattern;
 		return $this;
 	}

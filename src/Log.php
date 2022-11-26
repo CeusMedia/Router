@@ -1,5 +1,11 @@
 <?php
+
 namespace CeusMedia\Router;
+
+use DateTime;
+use DateTimeZone;
+use DomainException;
+use RuntimeException;
 
 class Log
 {
@@ -119,8 +125,8 @@ class Log
 		if( ( self::$level & $level ) !== $level )
 			return FALSE;
 		if( is_null( self::$file ) || strlen( trim( self::$file ) ) === 0 )
-			throw new \RuntimeException( 'No log file set' );
-		$date	= new \DateTime( 'now', new \DateTimeZone( 'Europe/Berlin' ) );
+			throw new RuntimeException( 'No log file set' );
+		$date	= new DateTime( 'now', new DateTimeZone( 'Europe/Berlin' ) );
 		$entry	= vsprintf( '%s %s %s', array(
 			$date->format( DATE_ATOM ),
 			strtoupper( self::LEVEL_KEYS_BY_LEVEL[$level] ),
@@ -142,11 +148,11 @@ class Log
 	{
 		if( is_string( $level ) ){
 			if( !in_array( $level, self::LEVEL_KEYS, TRUE ) )
-				throw new \DomainException( 'Invalid log level key' );
+				throw new DomainException( 'Invalid log level key' );
 			$level	= self::LEVELS_BY_KEY[$level];
 		}
 		if( !in_array( $level, self::LEVELS, TRUE ) )
-			throw new \DomainException( 'Invalid log level' );
+			throw new DomainException( 'Invalid log level' );
 
 		return static::_logByLevel( $level, $message, $data );
 	}

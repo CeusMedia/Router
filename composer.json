@@ -43,7 +43,7 @@
     ],
     "dev:stan-clear": [
       "@dev:install-quiet",
-      "vendor/bin/phpstan clear-result-cache --configuration=phpstan.neon --xdebug --verbose"
+      "vendor/bin/phpstan clear-result-cache --configuration=phpstan.neon --verbose"
     ],
     "dev:stan-save": [
       "@dev:install-quiet",

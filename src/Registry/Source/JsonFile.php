@@ -24,6 +24,7 @@
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
+
 namespace CeusMedia\Router\Registry\Source;
 
 use CeusMedia\Common\FS\File\JSON\Reader as JsonFileReader;
@@ -31,6 +32,8 @@ use CeusMedia\Common\FS\File\JSON\Writer as JsonFileWriter;
 use CeusMedia\Router\Registry;
 use CeusMedia\Router\Route;
 use CeusMedia\Router\Route\Factory as RouteFactory;
+use OutOfRangeException;
+//use RuntimeException;
 
 /**
  *	...
@@ -48,13 +51,13 @@ class JsonFile extends AbstractSource implements SourceInterface
 	{
 		if( !file_exists( $this->resource ) )
 			return -1;
-//			throw new \RuntimeException( 'JSON file "'.$this->resource.'" is not existing' );
+//			throw new RuntimeException( 'JSON file "'.$this->resource.'" is not existing' );
 		$counter	= 0;
 		$data		= JsonFileReader::load( $this->resource, FALSE );
 		$factory	= new RouteFactory();
 		foreach( (array) $data as $item ){
 			if( !isset( $item->pattern ) )
-				throw new \OutOfRangeException( 'Route set is missing pattern' );
+				throw new OutOfRangeException( 'Route set is missing pattern' );
 			$options	= array(
 				'method'		=> isset( $item->method ) ? $item->method : NULL,
 				'controller'	=> isset( $item->controller ) ? $item->controller : NULL,

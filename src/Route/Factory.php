@@ -71,6 +71,11 @@ class Factory
 						$route->setRoles( preg_split( '/\s*,\s*/', $options['roles'] ) );
 			}
 		}
+		if( isset( $options['priority'] ) && strlen( trim( $options['priority'] ) ) > 0 ){
+			if( !is_int( $options['priority'] ) )
+				$options['priority']	= Route::getPriorityFromKey( $options['priority'] );
+			$route->setPriority( $options['priority'] );
+		}
 		return $route;
 	}
 

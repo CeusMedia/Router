@@ -67,6 +67,8 @@ class JsonFile extends AbstractSource implements SourceInterface
 				$options['mode']	= Route::getModeFromKey( $item->mode );
 			if( isset( $item->roles ) && strlen( trim( $item->roles ) ) > 0 )
 				$options['roles']	= preg_split( "/, */", trim( $item->roles ) );
+			if( isset( $item->priority ) && strlen( trim( $item->priority ) ) > 0 )
+				$options['priority']	= Route::getPriorityFromKey( $item->priority );
 			$registry->add( $factory->create( $item->pattern, $options ) );
 			$counter++;
 		}
@@ -85,6 +87,8 @@ class JsonFile extends AbstractSource implements SourceInterface
 			$item['action']		= $route->getAction();
 			$item['pattern']	= $route->getPattern();
 			$item['method']		= $route->getMethod();
+			if( $route->getPriority() !== Route::PRIORITY_NORMAL )
+				$item['priority']	= Route::getPriorityKey( $route->getPriority() );
 			$data[]	= $item;
 		}
 		return JsonFileWriter::save( $this->resource, $data, TRUE );

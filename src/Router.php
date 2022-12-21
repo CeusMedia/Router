@@ -111,7 +111,7 @@ class Router
 	/**
 	 *	...
 	 *	@access		public
-	 *	@return		array 		List of route instances
+	 *	@return		Route[] 		List of route instances
 	 */
 	public function getRoutes(): array
 	{

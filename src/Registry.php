@@ -49,7 +49,7 @@ class Registry
 	const STATUS_CHANGED	= 2;
 	const STATUS_SAVING		= 3;
 
-	/** @var	array			$routes			List of registered routes */
+	/** @var	Route[]			$routes			List of registered routes */
 	protected array $routes		= [];
 
 	/** @var	integer			$status			Current status of registry */
@@ -97,7 +97,7 @@ class Registry
 	/**
 	 *	Return routes map.
 	 *	@access		public
-	 *	@return		array
+	 *	@return		Route[]
 	 */
 	public function index(): array
 	{

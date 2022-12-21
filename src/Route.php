@@ -37,7 +37,7 @@ use RangeException;
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2020 Christian Würker
+ *	@copyright		2016-2022 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -53,18 +53,46 @@ class Route
 	const MODE_KEY_EVENT		= 'event';
 	const MODE_KEY_FORWARD		= 'forward';
 
-	const MODES_BY_KEYS			= array(
-		'unknown'				=> self::MODE_UNKNOWN,
-		'controller'			=> self::MODE_CONTROLLER,
-		'event'					=> self::MODE_EVENT,
-		'forward'				=> self::MODE_FORWARD,
-	);
+	const MODES_BY_KEYS			= [
+		self::MODE_KEY_UNKNOWN		=> self::MODE_UNKNOWN,
+		self::MODE_KEY_CONTROLLER	=> self::MODE_CONTROLLER,
+		self::MODE_KEY_EVENT		=> self::MODE_EVENT,
+		self::MODE_KEY_FORWARD		=> self::MODE_FORWARD,
+	];
 
 	const MODE_KEYS				= [
-		self::MODE_UNKNOWN		=> 'unknown',
-		self::MODE_CONTROLLER	=> 'controller',
-		self::MODE_EVENT		=> 'event',
-		self::MODE_FORWARD		=> 'forward',
+		self::MODE_UNKNOWN		=> self::MODE_KEY_UNKNOWN,
+		self::MODE_CONTROLLER	=> self::MODE_KEY_CONTROLLER,
+		self::MODE_EVENT		=> self::MODE_KEY_EVENT,
+		self::MODE_FORWARD		=> self::MODE_KEY_FORWARD,
+	];
+
+	const PRIORITY_EARLIEST		= 1;
+	const PRIORITY_EARLIER		= 2;
+	const PRIORITY_NORMAL		= 3;
+	const PRIORITY_LATER		= 4;
+	const PRIORITY_LATEST		= 5;
+
+	const PRIORITY_KEY_EARLIEST		= 'earliest';
+	const PRIORITY_KEY_EARLIER		= 'earlier';
+	const PRIORITY_KEY_NORMAL		= 'normal';
+	const PRIORITY_KEY_LATER		= 'later';
+	const PRIORITY_KEY_LATEST		= 'latest';
+
+	const PRIORITIES_BY_KEYS			= [
+		self::PRIORITY_KEY_EARLIEST		=> self::PRIORITY_EARLIEST,
+		self::PRIORITY_KEY_EARLIER		=> self::PRIORITY_EARLIER,
+		self::PRIORITY_KEY_NORMAL		=> self::PRIORITY_NORMAL,
+		self::PRIORITY_KEY_LATER		=> self::PRIORITY_LATER,
+		self::PRIORITY_KEY_LATEST		=> self::PRIORITY_LATEST,
+	];
+
+	const PRIORITY_KEYS			= [
+		self::PRIORITY_EARLIEST		=> self::PRIORITY_KEY_EARLIEST,
+		self::PRIORITY_EARLIER		=> self::PRIORITY_KEY_EARLIER,
+		self::PRIORITY_NORMAL		=> self::PRIORITY_KEY_NORMAL,
+		self::PRIORITY_LATER		=> self::PRIORITY_KEY_LATER,
+		self::PRIORITY_LATEST		=> self::PRIORITY_KEY_LATEST,
 	];
 
 	/** @var	string				$method				Request method of route */
@@ -90,6 +118,9 @@ class Route
 
 	/** @var	?Route				$origin				... */
 	protected ?Route $origin		= NULL;
+
+	/** @var	int					$priority			Resolver priority: 1:earliest, 2:earlier, 3:normal, 4:later, 5:latest */
+	protected int $priority			= self::PRIORITY_NORMAL;
 
 	/** @var	string				$target				Target address for route of type "forward" */
 	protected string $target		= '';
@@ -122,6 +153,26 @@ class Route
 		if( $strict )
 			throw new RangeException( 'Invalid mode: '.$mode );
 		return self::MODE_KEY_UNKNOWN;
+	}
+
+	public static function getPriorityFromKey( string $priority ): int
+	{
+		$mode	= strtolower( $priority );
+		if( array_key_exists( $priority, self::PRIORITIES_BY_KEYS ) )
+			return self::PRIORITIES_BY_KEYS[$priority];
+		throw new RangeException( 'Invalid priority key: '.$priority );
+	}
+
+	/**
+	 *	@param		int			$priority
+	 *	@return		string
+	 *	@throws		RangeException		if priority is not supported (= within [1-5])
+	 */
+	public static function getPriorityKey( int $priority ): string
+	{
+		if( array_key_exists( $priority, self::PRIORITY_KEYS ) )
+			return self::PRIORITY_KEYS[$priority];
+		throw new RangeException( 'Invalid priority: '.$priority );
 	}
 
 	public function __construct( string $pattern, string $method = NULL, int $mode = NULL )
@@ -171,6 +222,11 @@ class Route
 	public function getPattern(): string
 	{
 		return $this->pattern;
+	}
+
+	public function getPriority(): int
+	{
+		return $this->priority;
 	}
 
 	public function getRoles(): array
@@ -273,8 +329,7 @@ class Route
 	 */
 	public function setMode( int $mode ): self
 	{
-		if( preg_match( '/^[0-9]+$/', (string) $mode ) === 0 )
-			throw new DomainException( 'Invalid mode: '.$mode );
+		self::getModeKey( $mode, TRUE );
 		$this->mode	= $mode;
 		return $this;
 	}
@@ -302,6 +357,20 @@ class Route
 		if( $this->method !== 'CLI' && preg_match( '/\s/', $pattern ) > 0 )
 			throw new InvalidArgumentException( 'Route pattern must not contain whitespace ('.$pattern.')' );
 		$this->pattern		= $pattern;
+		return $this;
+	}
+
+	/**
+	 *	...
+	 *	@access		public
+	 *	@param		int			$priority
+	 *	@return		Route
+	 *	@throws		RangeException		if priority is not supported (= within [1-5])
+	 */
+	public function setPriority( int $priority ): self
+	{
+		self::getPriorityKey( $priority );
+		$this->priority		= $priority;
 		return $this;
 	}
 
@@ -347,6 +416,7 @@ class Route
 			'roles'			=> $this->roles,
 			'origin'		=> $this->origin,
 			'target'		=> $this->target,
+			'priority'		=> $this->priority,
 		];
 	}
 }

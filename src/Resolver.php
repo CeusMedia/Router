@@ -114,7 +114,7 @@ class Resolver
 		$partsPath	= explode( $delimiter, $path );													//  split path into parts
 		Log::debug( '> path parts: '.json_encode( $partsPath ) );
 		$method		= strtoupper( $method );
-		foreach( $this->registry->index() as $route ){
+		foreach( self::orderRoutesByPriority( $this->registry->index() ) as $route ){
 			if( !$route->isMethod( $method ) )														//  method is not matching
 				continue;
 
@@ -236,6 +236,7 @@ class Resolver
 
 	/**
 	 *	@access		protected
+	 *	@static
 	 *	@param		string		$regExp
 	 *	@param		string		$replace
 	 *	@param		string		$string
@@ -247,5 +248,25 @@ class Resolver
 		if( $result === NULL )
 			throw new InvalidArgumentException( 'Error on replace of regex in pattern' );
 		$string	= $result;
+	}
+
+	/**
+	 *	@access		protected
+	 *	@static
+	 *	@param		Route[]		$routes		List of registered routes
+	 *	@return		Route[]		List of registered routes, ordered by priority
+	 */
+	protected static function orderRoutesByPriority( array $routes ): array
+	{
+		$map	= [];
+		foreach( array_keys( Route::PRIORITY_KEYS ) as $priority )
+			$map[$priority]	= [];
+
+		foreach( $routes as $route )
+			$map[$route->getPriority()][]	= $route;
+//		return array_merge( ...array_filter( $map ) );
+
+		$map	= array_filter( $map );
+		return array_merge( ...$map );
 	}
 }

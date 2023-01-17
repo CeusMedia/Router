@@ -31,12 +31,12 @@ $router->setMethod( 'GET' );
 $registry	= $router->getRegistry();
 $registry->addSource( $sourceJsonFile );
 
-$paths	= array(
+$paths	= [
 	'failing',
 	'/test',
 	'/test/1',
 	'/test/1/2',
-);
+];
 
 remark( 'Routes:' );
 foreach( $router->getRoutes() as $route ){

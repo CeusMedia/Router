@@ -30,11 +30,11 @@ class FactoryTest extends TestCase
 		$roles		= array( 'admin', 'manager' );
 		$this->factory->setDefaultMode( Route::MODE_CONTROLLER );
 		$this->factory->setDefaultMethod( 'POST' );
-		$options	= array(
+		$options	= [
 			'controller'	=> $controller,
 			'action'		=> $action,
 			'roles'			=> $roles,
-		);
+		];
 		$route	= $this->factory->create( '/', $options );
 		$this->assertSame( Route::class, get_class( $route ) );
 		$this->assertSame( '/', $route->getPattern() );

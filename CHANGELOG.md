@@ -1,5 +1,9 @@
 # Changelog for CeusMedia/Router
 
+## 0.5.x
+
+... is all about PHP 8 support ...
+
 ## Version 0.4
 - Extend route model by roles.
 - Migrate to support CeusMedia/Common 0.9.x

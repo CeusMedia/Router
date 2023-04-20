@@ -24,7 +24,10 @@
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
+
 namespace CeusMedia\Router;
+
+use InvalidArgumentException;
 
 /**
  *	...
@@ -36,10 +39,29 @@ namespace CeusMedia\Router;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
-class Resolver{
-
+class Resolver
+{
 	/** @var	Registry		$registry		Registry instance */
-	protected $registry;
+	protected Registry $registry;
+
+	/**
+	 *	...
+	 *	@static
+	 *	@access		public
+	 *	@param		Route		$route		Route object
+	 *	@return		array
+	 */
+	public static function getRoutePatternParts( Route $route ): array
+	{
+		$parts	= [];
+		if( 'CLI' === $route->getMethod() ){
+			$parts	= self::getRoutePatternPartsForCli( $route );
+		}
+		else{
+			$parts	= self::getRoutePatternPartsForWeb( $route );
+		}
+		return $parts;
+	}
 
 	/**
 	 *	Constructor.
@@ -50,57 +72,6 @@ class Resolver{
 	public function __construct( Registry $registry )
 	{
 		$this->registry	= $registry;
-	}
-
-	/**
-	 *	...
-	 *	@static
-	 *	@access		public
-	 *	@param		Route		$route			Route object
-	 *	@return		array		...
-	 */
-	static public function getRoutePatternParts( Route $route ): array
-	{
-		$parts	= array();
-		if( $route->getMethod() === 'CLI' ){
-			foreach( explode( " ", $route->getPattern() ) as $part ){
-				$optional	= FALSE;
-				$argument	= FALSE;
-				if( preg_match( "@\(:.+\)@U", $part ) > 0 ){										//  optional argument found
-					$part		= substr( $part, 1, -1 );											//  cut argument key
-					$optional	= TRUE;																//  note that is optional
-				}
-				if( substr( $part, 0, 1 ) === ":" ){												//  argument found
-					$part		= substr( $part, 1 );												//  cut argument key
-					$argument	= TRUE;																//  note that is argument
-				}
-				$parts[]	= (object) array(														//  prepare route pattern part object
-					'key'		=> $part,
-					'optional'	=> $optional,
-					'argument'	=> $argument,
-				);
-			}
-		}
-		else{
-			foreach( explode( "/", $route->getPattern() ) as $part ){
-				$optional	= FALSE;
-				$argument	= FALSE;
-				if( preg_match( "@\(:.+\)@U", $part ) > 0 ){										//  optional argument found
-					$part		= substr( $part, 1, -1 );											//  cut argument key
-					$optional	= TRUE;																//  note that is optional
-				}
-				if( substr( $part, 0, 1 ) === ":" ){												//  argument found
-					$part		= substr( $part, 1 );												//  cut argument key
-					$argument	= TRUE;																//  note that is argument
-				}
-				$parts[]	= (object) array(														//  prepare route pattern part object
-					'key'		=> $part,
-					'optional'	=> $optional,
-					'argument'	=> $argument,
-				);
-			}
-		}
-		return $parts;
 	}
 
 	/**
@@ -119,7 +90,7 @@ class Resolver{
 	 *	Tries to resolve a given path on a given HTTP method into a route.
 	 *	Iterates registered routes and matches given path against route pattern, if HTTP method applies.
 	 *	Having a matching route, this route will be returned augmented by parsed arguments.
-	 *	Otherwise a custom exception will be thrown having strict mode enabled (default).
+	 *	Otherwise, a custom exception will be thrown having strict mode enabled (default).
 	 *	In non-strict mode the returned value will be FALSE.
 	 *	@access		public
 	 *	@param		string		$path			Path to resolve
@@ -143,7 +114,7 @@ class Resolver{
 		$partsPath	= explode( $delimiter, $path );													//  split path into parts
 		Log::debug( '> path parts: '.json_encode( $partsPath ) );
 		$method		= strtoupper( $method );
-		foreach( $this->registry->index() as $route ){
+		foreach( self::orderRoutesByPriority( $this->registry->index() ) as $route ){
 			if( !$route->isMethod( $method ) )														//  method is not matching
 				continue;
 
@@ -173,6 +144,7 @@ class Resolver{
 			$matches	= TRUE;
 
 			$nr	= 0;
+			/* @phpstan-ignore-next-line */
 			foreach( $partsPattern as $nr => $part ){
 				if( empty( $part->argument ) && !empty( $part->key) ){								//  part is not an argument
 					if( $partsPath[$nr] !== $part->key )
@@ -186,7 +158,7 @@ class Resolver{
 			if( $nr < count( $partsPattern ) - 1 )													//  loop has been broken
 				continue;
 
-			$arguments	= array();
+			$arguments	= [];
 			foreach( $partsPattern as $part )
 				if( $part->argument )
 					$arguments[$part->key]	= $part->value;
@@ -204,11 +176,97 @@ class Resolver{
 
 	//  --  PROTECTED  --  //
 
+	/**
+	 *	@access		protected
+	 *	@static
+	 *	@param		Route		$route
+	 *	@return		array
+	 */
+	protected static function getRoutePatternPartsForCli( Route $route ): array
+	{
+		$parts	= [];
+		foreach( explode( " ", $route->getPattern() ) as $part ){
+			$optional	= FALSE;
+			$argument	= FALSE;
+			if( preg_match( "@\(:.+\)@U", $part ) > 0 ){									//  optional argument found
+				$part		= substr( $part, 1, -1 );									//  cut argument key
+				$optional	= TRUE;																	//  note that is optional
+			}
+			if( substr( $part, 0, 1 ) === ":" ){										//  argument found
+				$part		= substr( $part, 1 );											//  cut argument key
+				$argument	= TRUE;																	//  note that is argument
+			}
+			$parts[]	= (object) [																//  prepare route pattern part object
+				'key'		=> $part,
+				'optional'	=> $optional,
+				'argument'	=> $argument,
+			];
+		}
+		return $parts;
+	}
+
+	/**
+	 *	@access		protected
+	 *	@static
+	 *	@param		Route		$route
+	 *	@return		array
+	 */
+	protected static function getRoutePatternPartsForWeb( Route $route ): array
+	{
+		$parts	= [];
+		foreach( explode( "/", $route->getPattern() ) as $part ){
+			$optional	= FALSE;
+			$argument	= FALSE;
+			if( preg_match( "@\(:.+\)@U", $part ) > 0 ){									//  optional argument found
+				$part		= substr( $part, 1, -1 );									//  cut argument key
+				$optional	= TRUE;																	//  note that is optional
+			}
+			if( substr( $part, 0, 1 ) === ":" ){										//  argument found
+				$part		= substr( $part, 1 );											//  cut argument key
+				$argument	= TRUE;																	//  note that is argument
+			}
+			$parts[]	= (object) [																//  prepare route pattern part object
+				'key'		=> $part,
+				'optional'	=> $optional,
+				'argument'	=> $argument,
+			];
+		}
+		return $parts;
+	}
+
+	/**
+	 *	@access		protected
+	 *	@static
+	 *	@param		string		$regExp
+	 *	@param		string		$replace
+	 *	@param		string		$string
+	 *	@return		void
+	 */
 	protected static function regExpReplaceInString( string $regExp, string $replace, string & $string ): void
 	{
 		$result	= preg_replace( $regExp, $replace, $string );
 		if( $result === NULL )
-			throw new \InvalidArgumentException( 'Error on replace of regex in pattern' );
+			throw new InvalidArgumentException( 'Error on replace of regex in pattern' );
 		$string	= $result;
+	}
+
+	/**
+	 *	@access		protected
+	 *	@static
+	 *	@param		Route[]		$routes		List of registered routes
+	 *	@return		Route[]		List of registered routes, ordered by priority
+	 */
+	protected static function orderRoutesByPriority( array $routes ): array
+	{
+		$map	= [];
+		foreach( array_keys( Route::PRIORITY_KEYS ) as $priority )
+			$map[$priority]	= [];
+
+		foreach( $routes as $route )
+			$map[$route->getPriority()][]	= $route;
+//		return array_merge( ...array_filter( $map ) );
+
+		$map	= array_filter( $map );
+		return array_merge( ...$map );
 	}
 }

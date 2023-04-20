@@ -26,6 +26,8 @@
  */
 namespace CeusMedia\Router;
 
+use Exception;
+
 /**
  *	Exception for negative route resolve attempt.
  *
@@ -36,5 +38,6 @@ namespace CeusMedia\Router;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
-class ResolverException extends \Exception{
+class ResolverException extends Exception
+{
 }

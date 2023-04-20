@@ -32,10 +32,10 @@ class AbstractSourceTest extends TestCase
 		$this->assertEquals( JsonFileSource::CLASS, get_class( $instance3 ) );
 		$this->assertEquals( 'resC', $instance3->getResource() );
 
-		$instance3	= JsonFileSource::create( 'resD', array(
+		$instance3	= JsonFileSource::create( 'resD', [
 			SourceInterface::OPTION_AUTOLOAD	=> FALSE,
 			SourceInterface::OPTION_AUTOSAVE	=> TRUE,
-		) );
+		] );
 		$this->assertEquals( JsonFileSource::CLASS, get_class( $instance3 ) );
 		$this->assertEquals( 'resD', $instance3->getResource() );
 		$this->assertEquals( FALSE, $instance3->getOption( SourceInterface::OPTION_AUTOLOAD ) );
@@ -51,25 +51,25 @@ class AbstractSourceTest extends TestCase
 	public function testCreateException2()
 	{
 		$this->expectException( \InvalidArgumentException::CLASS );
-		$instance3	= JsonFileSource::create( 'resD', array(
+		$instance3	= JsonFileSource::create( 'resD', [
 			'invalid'	=> TRUE,
-		) );
+		] );
 	}
 
 	public function testGetOption()
 	{
-		$instance	= JsonFileSource::create( 'resA', array(
+		$instance	= JsonFileSource::create( 'resA', [
 			SourceInterface::OPTION_AUTOLOAD	=> TRUE,
 			SourceInterface::OPTION_AUTOSAVE	=> TRUE,
-		) );
+		] );
 		$this->assertEquals( TRUE, $instance->getOption( SourceInterface::OPTION_AUTOLOAD ) );
 		$this->assertEquals( TRUE, $instance->getOption( SourceInterface::OPTION_AUTOSAVE ) );
 		$this->assertEquals( NULL, $instance->getOption( 1024 ) );
 
-		$instance	= JsonFileSource::create( 'resA', array(
+		$instance	= JsonFileSource::create( 'resA', [
 			SourceInterface::OPTION_AUTOLOAD	=> FALSE,
 			SourceInterface::OPTION_AUTOSAVE	=> FALSE,
-		) );
+		] );
 		$this->assertEquals( FALSE, $instance->getOption( SourceInterface::OPTION_AUTOLOAD ) );
 		$this->assertEquals( FALSE, $instance->getOption( SourceInterface::OPTION_AUTOSAVE ) );
 
@@ -77,10 +77,10 @@ class AbstractSourceTest extends TestCase
 
 	public function testSetOption()
 	{
-		$instance	= JsonFileSource::create( 'resA', array(
+		$instance	= JsonFileSource::create( 'resA', [
 			SourceInterface::OPTION_AUTOLOAD	=> TRUE,
 			SourceInterface::OPTION_AUTOSAVE	=> TRUE,
-		) );
+		] );
 		$instance->setOption( SourceInterface::OPTION_AUTOLOAD, FALSE );
 		$instance->setOption( SourceInterface::OPTION_AUTOSAVE, FALSE );
 		$this->assertEquals( FALSE, $instance->getOption( SourceInterface::OPTION_AUTOLOAD ) );

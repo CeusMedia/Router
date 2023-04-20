@@ -62,12 +62,12 @@ foreach( $router->getRoutes() as $route ){
 	) );
 }
 
-$paths	= array(
+$paths	= [
 	'test a1 b2',
 //	'/test',
 //	'/test/1',
 //	'/test/1/2',
-);
+];
 
 foreach( $paths as $path ){
 	remark( 'Checking path: "'.$path.'"' );

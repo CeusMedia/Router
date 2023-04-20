@@ -10,7 +10,7 @@
     </report>
   </coverage>
   <testsuites>
-    <testsuite name="CeusMedia/Router">
+    <testsuite name="units">
       <directory>test</directory>
     </testsuite>
   </testsuites>

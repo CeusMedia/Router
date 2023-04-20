@@ -1,5 +1,11 @@
 <?php
+
 namespace CeusMedia\Router;
+
+use DateTime;
+use DateTimeZone;
+use DomainException;
+use RuntimeException;
 
 class Log
 {
@@ -53,64 +59,100 @@ class Log
 		self::LEVEL_KEY_ALL		=> self::LEVEL_ALL,
 	];
 
-	public static $level	= 0;
+	public static int $level	= 0;
 
-	public static $file;
+	public static ?string $file	= NULL;
 
+	/**
+	 *	@param		int|string		$levelOrLevelKey
+	 *	@param		string			$message
+	 *	@param		mixed|NULL		$data
+	 *	@return		bool
+	 */
 	public static function add( $levelOrLevelKey, string $message, $data = NULL ): bool
 	{
 		return static::_logByLevelOrLevelKey( $levelOrLevelKey, $message, $data );
 	}
 
+	/**
+	 *	@param		string			$message
+	 *	@param		mixed|NULL		$data
+	 *	@return		bool
+	 */
 	public static function debug( string $message, $data = NULL ): bool
 	{
 		return static::_logByLevel( self::LEVEL_DEBUG, $message, $data );
 	}
 
+	/**
+	 *	@param		string			$message
+	 *	@param		mixed|NULL		$data
+	 *	@return		bool
+	 */
 	public static function error( string $message, $data = NULL ): bool
 	{
 		return static::_logByLevel( self::LEVEL_ERROR, $message, $data );
 	}
 
+	/**
+	 *	@param		string			$message
+	 *	@param		mixed|NULL		$data
+	 *	@return		bool
+	 */
 	public static function info( string $message, $data = NULL ): bool
 	{
 		return static::_logByLevel( self::LEVEL_INFO, $message, $data );
 	}
 
+	/**
+	 *	@param		string			$message
+	 *	@param		mixed|NULL		$data
+	 *	@return		bool
+	 */
 	public static function warn( string $message, $data = NULL ): bool
 	{
 		return static::_logByLevel( self::LEVEL_WARN, $message, $data );
 	}
 
+	/**
+	 *	@param		int				$level
+	 *	@param		string			$message
+	 *	@param		mixed|NULL		$data
+	 *	@return		bool
+	 */
 	protected static function _logByLevel( int $level, string $message, $data = NULL ): bool
 	{
 		if( ( self::$level & $level ) !== $level )
 			return FALSE;
 		if( is_null( self::$file ) || strlen( trim( self::$file ) ) === 0 )
-			throw new \RuntimeException( 'No log file set' );
-		$date	= new \DateTime( 'now', new \DateTimeZone( 'Europe/Berlin' ) );
+			throw new RuntimeException( 'No log file set' );
+		$date	= new DateTime( 'now', new DateTimeZone( 'Europe/Berlin' ) );
 		$entry	= vsprintf( '%s %s %s', array(
 			$date->format( DATE_ATOM ),
 			strtoupper( self::LEVEL_KEYS_BY_LEVEL[$level] ),
 			$message
 		) );
 		error_log( $entry.PHP_EOL, 3, self::$file );
-		if( $data )
+		if( NULL !== $data )
 			error_log( print_r( $data, TRUE ).PHP_EOL, 3, self::$file );
 		return TRUE;
 	}
 
+	/**
+	 *	@param		int|string		$level
+	 *	@param		string			$message
+	 *	@param		mixed|NULL		$data
+	 *	@return		bool
+	 */
 	protected static function _logByLevelOrLevelKey( $level, string $message, $data = NULL ): bool
 	{
 		if( is_string( $level ) ){
 			if( !in_array( $level, self::LEVEL_KEYS, TRUE ) )
-				throw new \DomainException( 'Invalid log level key' );
+				throw new DomainException( 'Invalid log level key' );
 			$level	= self::LEVELS_BY_KEY[$level];
 		}
-		if( !is_int( $level ) )
-			throw new \InvalidArgumentException( 'Invalid log level' );
 		if( !in_array( $level, self::LEVELS, TRUE ) )
-			throw new \DomainException( 'Invalid log level' );
+			throw new DomainException( 'Invalid log level' );
 
 		return static::_logByLevel( $level, $message, $data );
 	}

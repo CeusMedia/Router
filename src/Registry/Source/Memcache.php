@@ -24,12 +24,11 @@
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
+
 namespace CeusMedia\Router\Registry\Source;
 
 use CeusMedia\Router\Registry;
-use CeusMedia\Router\Registry\Source\AbstractSource;
-use CeusMedia\Router\Registry\Source\SourceInterface;
-use CeusMedia\Router\Route\Factory as RouteFactory;
+use InvalidArgumentException;
 
 /**
  *	...
@@ -73,16 +72,16 @@ class Memcache extends AbstractSource implements SourceInterface
 
 	public function setResource( string $resource ): AbstractSource
 	{
-		$matches	= array();
+		$matches	= [];
 		$result		= preg_match( '/^([^:]+):([^:]+):(.+)$/U', $resource, $matches );
 		if( $result === 0 )
-			throw new \InvalidArgumentException( 'Invalid Memcache resource string: '.$resource );
+			throw new InvalidArgumentException( 'Invalid Memcache resource string: '.$resource );
 		$server			= $matches[1];
 		$port			= $matches[2];
 		$this->cacheKey	= $matches[3];
 		$this->resource	= $resource;
 		$this->server	= new \Memcache;
-		$this->server->connect( $server, $port );
+		$this->server->connect( $server, (int) $port );
 		return $this;
 	}
 }

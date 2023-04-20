@@ -33,11 +33,11 @@ class ResolverTest extends TestCase
 		$route		= $this->factory->create( 'test' );
 		$creation	= $this->resolver->getRoutePatternParts( $route );
 		$assertion	= array(
-			(object) array(
+			(object) [
 				'key'		=> 'test',
 				'optional'	=> FALSE,
 				'argument'	=> FALSE,
-			)
+			]
 		);
 		$this->assertEquals( $assertion, $creation );
 	}
@@ -49,16 +49,16 @@ class ResolverTest extends TestCase
 		$route		= $this->factory->create( 'test/path' );
 		$creation	= $this->resolver->getRoutePatternParts( $route );
 		$assertion	= array(
-			(object) array(
+			(object) [
 				'key'		=> 'test',
 				'optional'	=> FALSE,
 				'argument'	=> FALSE,
-			),
-			(object) array(
+			],
+			(object) [
 				'key'		=> 'path',
 				'optional'	=> FALSE,
 				'argument'	=> FALSE,
-			)
+			]
 		);
 		$this->assertEquals( $assertion, $creation );
 	}
@@ -70,16 +70,16 @@ class ResolverTest extends TestCase
 		$route		= $this->factory->create( 'test/(:param)' );
 		$creation	= $this->resolver->getRoutePatternParts( $route );
 		$assertion	= array(
-			(object) array(
+			(object) [
 				'key'		=> 'test',
 				'optional'	=> FALSE,
 				'argument'	=> FALSE,
-			),
-			(object) array(
+			],
+			(object) [
 				'key'		=> 'param',
 				'optional'	=> TRUE,
 				'argument'	=> TRUE,
-			)
+			]
 		);
 		$this->assertEquals( $assertion, $creation );
 	}
@@ -91,21 +91,21 @@ class ResolverTest extends TestCase
 		$route		= $this->factory->create( 'test/(:param1)/(:param2)' );
 		$creation	= $this->resolver->getRoutePatternParts( $route );
 		$assertion	= array(
-			(object) array(
+			(object) [
 				'key'		=> 'test',
 				'optional'	=> FALSE,
 				'argument'	=> FALSE,
-			),
-			(object) array(
+			],
+			(object) [
 				'key'		=> 'param1',
 				'optional'	=> TRUE,
 				'argument'	=> TRUE,
-			),
-			(object) array(
+			],
+			(object) [
 				'key'		=> 'param2',
 				'optional'	=> TRUE,
 				'argument'	=> TRUE,
-			)
+			]
 		);
 		$this->assertEquals( $assertion, $creation );
 	}
@@ -117,21 +117,21 @@ class ResolverTest extends TestCase
 		$route		= $this->factory->create( 'test/:param1/(:param2)' );
 		$creation	= $this->resolver->getRoutePatternParts( $route );
 		$assertion	= array(
-			(object) array(
+			(object) [
 				'key'		=> 'test',
 				'optional'	=> FALSE,
 				'argument'	=> FALSE,
-			),
-			(object) array(
+			],
+			(object) [
 				'key'		=> 'param1',
 				'optional'	=> FALSE,
 				'argument'	=> TRUE,
-			),
-			(object) array(
+			],
+			(object) [
 				'key'		=> 'param2',
 				'optional'	=> TRUE,
 				'argument'	=> TRUE,
-			)
+			]
 		);
 		$this->assertEquals( $assertion, $creation );
 	}
@@ -143,26 +143,26 @@ class ResolverTest extends TestCase
 		$route		= $this->factory->create( 'test/path/:param1/(:param2)' );
 		$creation	= $this->resolver->getRoutePatternParts( $route );
 		$assertion	= array(
-			(object) array(
+			(object) [
 				'key'		=> 'test',
 				'optional'	=> FALSE,
 				'argument'	=> FALSE,
-			),
-			(object) array(
+			],
+			(object) [
 				'key'		=> 'path',
 				'optional'	=> FALSE,
 				'argument'	=> FALSE,
-			),
-			(object) array(
+			],
+			(object) [
 				'key'		=> 'param1',
 				'optional'	=> FALSE,
 				'argument'	=> TRUE,
-			),
-			(object) array(
+			],
+			(object) [
 				'key'		=> 'param2',
 				'optional'	=> TRUE,
 				'argument'	=> TRUE,
-			)
+			]
 		);
 		$this->assertEquals( $assertion, $creation );
 	}

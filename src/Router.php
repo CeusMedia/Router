@@ -26,10 +26,11 @@
  */
 namespace CeusMedia\Router;
 
-use \CeusMedia\Router\Log;
-use \CeusMedia\Router\Registry\Source\JsonFile as JsonFileSource;
-use \CeusMedia\Router\Registry\Source\JsonFolder as JsonFolderSource;
-use \CeusMedia\Router\Registry\Source\SourceInterface;
+use CeusMedia\Router\Log;
+use CeusMedia\Router\Registry\Source\JsonFile as JsonFileSource;
+use CeusMedia\Router\Registry\Source\JsonFolder as JsonFolderSource;
+use CeusMedia\Router\Registry\Source\SourceInterface;
+use RuntimeException;
 
 /**
  *	...
@@ -43,14 +44,14 @@ use \CeusMedia\Router\Registry\Source\SourceInterface;
  */
 class Router
 {
-	/** @var	?string		$method			Request method, set by setMethod */
-	protected $method;
+	/** @var	string|NULL		$method			Request method, set by setMethod */
+	protected ?string $method;
 
-	/** @var	Registry	$registry		Registry for routes and route sources */
-	protected $registry;
+	/** @var	Registry		$registry		Registry for routes and route sources */
+	protected Registry $registry;
 
-	/** @var	array		$options		Map of options, usable by inherenting classes */
-	protected $options	= array();
+	/** @var	array			$options		Map of options, usable by inhereting classes */
+	protected array $options	= [];
 
 	/**
 	 *	Constructor.
@@ -58,9 +59,9 @@ class Router
 	 *	@param		array		$options	Map of options
 	 *	@return		void
 	 */
-	public function __construct( array $options = array() )
+	public function __construct( array $options = [] )
 	{
-		$this->options	= array_merge( $this->options, $options );
+		$this->options	= $options + $this->options;
 		$this->registry	= new Registry();
 		$this->method	= PHP_SAPI === 'cli' ? 'CLI' : NULL;
 	}
@@ -110,7 +111,7 @@ class Router
 	/**
 	 *	...
 	 *	@access		public
-	 *	@return		array 		List of route instances
+	 *	@return		Route[] 		List of route instances
 	 */
 	public function getRoutes(): array
 	{
@@ -136,8 +137,8 @@ class Router
 	 *	@return		void
 	 *	@deprecated use Registry::addSource( new JsonFile( $filePath ) ) instead
 	 *	@example
-	 *	use \CeusMedia\Router\Router;
-	 *	use \CeusMedia\Router\Registry\Source\JsonFile;
+	 *	use CeusMedia\Router\Router;
+	 *	use CeusMedia\Router\Registry\Source\JsonFile;
 	 *	$router	= new Router();
 	 *	$router->getRegistry()->addSource( new JsonFile( $source ) );
 	 */
@@ -163,7 +164,7 @@ class Router
 	{
 		Log::debug( 'Router > resolve: path => '.$path );
 		if( is_null( $this->method ) || strlen( $this->method ) === 0 )
-			throw new \RuntimeException( 'No method set' );
+			throw new RuntimeException( 'No method set' );
 		$resolver	= new Resolver( $this->registry );
 		return $resolver->resolve( $path, $this->method, $strict );
 	}

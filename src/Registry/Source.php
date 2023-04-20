@@ -24,10 +24,13 @@
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
+
 namespace CeusMedia\Router\Registry;
 
-use \CeusMedia\Router\Registry;
-use \CeusMedia\Router\Registry\Source\SourceInterface as SourceInterface;
+use CeusMedia\Router\Registry;
+use CeusMedia\Router\Registry\Source\SourceInterface as SourceInterface;
+use Exception;
+use RuntimeException;
 
 /**
  *	...
@@ -42,7 +45,7 @@ use \CeusMedia\Router\Registry\Source\SourceInterface as SourceInterface;
 class Source
 {
 	/** @var	array		$sources		List of ... */
-	protected $sources		= array();
+	protected array $sources		= [];
 
 	/**
 	 *	...
@@ -60,7 +63,7 @@ class Source
 	{
 		$nrLoadedSources	= 0;
 		if( count( $this->sources ) === 0 )
-			throw new \RuntimeException( 'No registry sources set' );
+			throw new RuntimeException( 'No registry sources set' );
 		$loadSource	= NULL;
 		for( $i=0; $i<count($this->sources); $i++ ){
 			$result		= 0;
@@ -80,9 +83,9 @@ class Source
 				}
 				$nrLoadedSources	+= $result;
 			}
-			catch( \Exception $e ){
+			catch( Exception $e ){
 				if( $strict )
-					throw new \RuntimeException( 'Loading source failed', 0, $e );
+					throw new RuntimeException( 'Loading source failed', 0, $e );
 			}
 		}
 		return $nrLoadedSources;

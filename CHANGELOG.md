@@ -1,7 +1,14 @@
 # Changelog for CeusMedia/Router
 
 ## Version 0.4
-- 0.3.1: Extend route model by roles.
+- Extend route model by roles.
+- Migrate to support CeusMedia/Common 0.9.x
+- Fix bug in merging custom and default source/router options.
+- Add priority property on route.
+- Improve code quality.
+- Reach maximum PHPStan level.
+- Short array syntax.
+- Fix PHPStan to PHP 7.4.
 
 ## Version 0.3
 - Add this changelog.

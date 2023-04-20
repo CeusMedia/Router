@@ -24,10 +24,12 @@
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
+
 namespace CeusMedia\Router\Registry\Source;
 
 use CeusMedia\Router\Registry;
-use CeusMedia\Router\Registry\Source\SourceInterface;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  *	...
@@ -42,15 +44,19 @@ use CeusMedia\Router\Registry\Source\SourceInterface;
 abstract class AbstractSource
 {
 	/** @var	array		$instances		List of ... */
-	protected static $instances	= array();
+	protected static array $instances		= [];
 
 	/** @var	array		$options		Map of ... */
-	protected $options			= array();
+	protected array $options				= [];
 
 	/** @var	string		$resource		... */
-	protected $resource;
+	protected string $resource;
 
-	public function __construct( string $resource = NULL, array $options = array() )
+	/**
+	 *	@param		string|NULL		$resource
+	 *	@param		array			$options
+	 */
+	public function __construct( string $resource = NULL, array $options = [] )
 	{
 		if( strlen( trim( (string) $resource ) ) > 0 )
 			$this->setResource( (string) $resource );
@@ -58,19 +64,28 @@ abstract class AbstractSource
 		$mergedOptions	= $options + $defaultOptions;
 		foreach( $mergedOptions as $key => $value ){
 			if( !is_int( $key ) )
-				throw new \InvalidArgumentException( 'Option key must be integer' );
+				throw new InvalidArgumentException( 'Option key must be integer' );
 			$this->setOption( $key, $value );
 		}
 	}
 
-	public static function create( string $resource = NULL, array $options = array() ): AbstractSource
+	/**
+	 *	@param		string|NULL		$resource
+	 *	@param		array			$options
+	 *	@return		AbstractSource
+	 */
+	public static function create( string $resource = NULL, array $options = [] ): AbstractSource
 	{
 		$class	= get_called_class();
-		if( $class === self::CLASS )
-			throw new \RuntimeException( 'Cannot create instance of abstract class' );
+		if( self::CLASS === $class )
+			throw new RuntimeException( 'Cannot create instance of abstract class' );
 		return new $class( $resource, $options );
 	}
 
+	/**
+	 *	@param		int			$key
+	 *	@return		mixed|NULL
+	 */
 	public function getOption( int $key )
 	{
 		if( array_key_exists( $key, $this->options ) )
@@ -83,15 +98,31 @@ abstract class AbstractSource
 		return $this->options;
 	}
 
+	/**
+	 *	@return		string|NULL
+	 */
 	public function getResource(): ?string
 	{
 		return $this->resource;
 	}
 
+	/**
+	 *	@param		Registry		$registry
+	 *	@return		int
+	 */
 	abstract public function load( Registry $registry ): int;
 
+	/**
+	 *	@param		Registry		$registry
+	 *	@return		int
+	 */
 	abstract public function save( Registry $registry ): int;
 
+	/**
+	 *	@param		int				$key
+	 *	@param		mixed|NULL		$value
+	 *	@return		$this
+	 */
 	public function setOption( int $key, $value = NULL ): self
 	{
 		if( $value === NULL && array_key_exists( $key, $this->options ) )
@@ -101,6 +132,10 @@ abstract class AbstractSource
 		return $this;
 	}
 
+	/**
+	 *	@param		string		$resource
+	 *	@return		$this
+	 */
 	public function setResource( string $resource ): AbstractSource
 	{
 		$this->resource	= $resource;

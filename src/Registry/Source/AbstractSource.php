@@ -55,6 +55,7 @@ abstract class AbstractSource
 	/**
 	 *	@param		string|NULL		$resource
 	 *	@param		array			$options
+	 *	@throws		InvalidArgumentException		if an option key is not of integer
 	 */
 	public function __construct( string $resource = NULL, array $options = [] )
 	{
@@ -72,12 +73,14 @@ abstract class AbstractSource
 	/**
 	 *	@param		string|NULL		$resource
 	 *	@param		array			$options
-	 *	@return		AbstractSource
+	 *	@return		SourceInterface
+	 *	@throws		RuntimeException				if create is called on abstract class
+	 *	@throws		InvalidArgumentException		if an option key is not of integer
 	 */
-	public static function create( string $resource = NULL, array $options = [] ): AbstractSource
+	public static function create( string $resource = NULL, array $options = [] ): SourceInterface
 	{
 		$class	= get_called_class();
-		if( self::CLASS === $class )
+		if( AbstractSource::class === $class )
 			throw new RuntimeException( 'Cannot create instance of abstract class' );
 		return new $class( $resource, $options );
 	}

@@ -3,5 +3,5 @@
 /doc/API
 /doc/Test
 /demo/cli/all_collected_routes.json
-/.phpunit.result.cache
 /router.log
+/util/.phpunit.cache

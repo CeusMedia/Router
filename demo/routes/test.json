@@ -2,7 +2,7 @@
     {
         "controller": "Controller_Test",
         "action": "test",
-        "pattern": "test (:a) (:b)",
+        "pattern": "test :a (:b)",
         "method": "CLI"
     },
     {

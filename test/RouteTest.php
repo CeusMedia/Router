@@ -1,14 +1,20 @@
 <?php
+namespace CeusMedia\RouterTest;
+
+use DomainException;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use CeusMedia\Router\Route;
 use CeusMedia\Router\Route\Factory as RouteFactory;
+use RangeException;
+use TypeError;
 
 /**
  *	@coversDefaultClass	\CeusMedia\Router\Route
  */
 class RouteTest extends TestCase
 {
-	protected $factory;
+	protected RouteFactory $factory;
 
 	protected function setUp(): void
 	{
@@ -19,168 +25,168 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::getAction
 	 */
-	public function testGetAction()
+	public function testGetAction(): void
 	{
 		$route	= $this->factory->create( 'test' );
-		$this->assertSame( '', $route->getAction() );
+		self::assertSame( '', $route->getAction() );
 
 		$route->setAction( 'test');
-		$this->assertSame( 'test', $route->getAction() );
+		self::assertSame( 'test', $route->getAction() );
 
 		$route->setAction( 'TEST2');
-		$this->assertSame( 'TEST2', $route->getAction() );
+		self::assertSame( 'TEST2', $route->getAction() );
 	}
 
 	/**
 	 *	@covers	::getController
 	 */
-	public function testGetController()
+	public function testGetController(): void
 	{
 		$route	= $this->factory->create( 'test' );
-		$this->assertSame( '', $route->getController() );
+		self::assertSame( '', $route->getController() );
 
 		$route->setController( 'Test');
-		$this->assertSame( 'Test', $route->getController() );
+		self::assertSame( 'Test', $route->getController() );
 
 		$route->setController( 'TEST2');
-		$this->assertSame( 'TEST2', $route->getController() );
+		self::assertSame( 'TEST2', $route->getController() );
 	}
 
 	/**
 	 *	@covers	::getMethod
 	 */
-	public function testGetMethod()
+	public function testGetMethod(): void
 	{
 		$route	= $this->factory->create( 'test' );
-		$this->assertSame( 'GET', $route->getMethod() );
+		self::assertSame( 'GET', $route->getMethod() );
 
 		$route->setMethod( 'POST');
-		$this->assertSame( 'POST', $route->getMethod() );
+		self::assertSame( 'POST', $route->getMethod() );
 
 		$route->setMethod( 'GET,POST');
-		$this->assertSame( 'GET,POST', $route->getMethod() );
+		self::assertSame( 'GET,POST', $route->getMethod() );
 
 		$route->setMethod( 'POST|GET');
-		$this->assertSame( 'POST,GET', $route->getMethod() );
+		self::assertSame( 'POST,GET', $route->getMethod() );
 	}
 
 	/**
 	 *	@covers	::getMode
 	 */
-	public function testGetMode()
+	public function testGetMode(): void
 	{
 		$route	= $this->factory->create( 'test' );
-		$this->assertSame( Route::MODE_UNKNOWN, $route->getMode() );
+		self::assertSame( Route::MODE_UNKNOWN, $route->getMode() );
 
 		$route->setMode( Route::MODE_CONTROLLER );
-		$this->assertSame( Route::MODE_CONTROLLER, $route->getMode() );
+		self::assertSame( Route::MODE_CONTROLLER, $route->getMode() );
 
 		$route->setMode( Route::MODE_EVENT );
-		$this->assertSame( Route::MODE_EVENT, $route->getMode() );
+		self::assertSame( Route::MODE_EVENT, $route->getMode() );
 
 		$route->setMode( Route::MODE_FORWARD );
-		$this->assertSame( Route::MODE_FORWARD, $route->getMode() );
+		self::assertSame( Route::MODE_FORWARD, $route->getMode() );
 	}
 
 	/**
 	*	@covers	::getArguments
 	*	@covers	::setArguments
 	 */
-	public function testGetArguments()
+	public function testGetArguments(): void
 	{
 		$route	= $this->factory->create( 'test' );
-		$this->assertSame( [], $route->getArguments() );
+		self::assertSame( [], $route->getArguments() );
 
 		$arguments	= ['a' => 'a1', 'b' => 'b2'];
 		$route->setArguments( $arguments );
-		$this->assertSame( $arguments, $route->getArguments() );
+		self::assertSame( $arguments, $route->getArguments() );
 	}
 
 	/**
 	*	@covers	::getOrigin
 	*	@covers	::setOrigin
 	 */
-	public function testGetOrigin()
+	public function testGetOrigin(): void
 	{
 		$route	= $this->factory->create( 'test' );
-		$this->assertSame( NULL, $route->getOrigin() );
+		self::assertSame( NULL, $route->getOrigin() );
 
 		$route->setOrigin( $route );
-		$this->assertSame( $route, $route->getOrigin() );
+		self::assertSame( $route, $route->getOrigin() );
 	}
 
 	/**
 	 *	@covers	::getPattern
 	 */
-	public function testGetPattern()
+	public function testGetPattern(): void
 	{
 		$route	= $this->factory->create( 'test' );
-		$this->assertSame( 'test', $route->getPattern() );
+		self::assertSame( 'test', $route->getPattern() );
 
 		$pattern	= '/_(test|TEST)+_/';
 		$route->setPattern( $pattern );
-		$this->assertSame( $pattern, $route->getPattern() );
+		self::assertSame( $pattern, $route->getPattern() );
 	}
 
 	/**
 	 *	@covers	::getRoles
 	 */
-	public function testGetRoles()
+	public function testGetRoles(): void
 	{
 		$route	= $this->factory->create( 'test' );
-		$this->assertSame( array(), $route->getRoles() );
+		self::assertSame( array(), $route->getRoles() );
 
 		$roles	= array( 'role1', 'role2' );
 		$route->setRoles( $roles );
-		$this->assertSame( $roles, $route->getRoles() );
+		self::assertSame( $roles, $route->getRoles() );
 	}
 
 	/**
 	 *	@covers	::isMethod
 	 */
-	public function testIsMethod()
+	public function testIsMethod(): void
 	{
 		$route	= $this->factory->create( 'test' );
-		$this->assertTrue( $route->isMethod( 'GET' ) );
-		$this->assertTrue( $route->isMethod( 'get' ) );
-		$this->assertFalse( $route->isMethod( 'POST' ) );
+		self::assertTrue( $route->isMethod( 'GET' ) );
+		self::assertTrue( $route->isMethod( 'get' ) );
+		self::assertFalse( $route->isMethod( 'POST' ) );
 
 		$route->setMethod( 'POST' );
-		$this->assertTrue( $route->isMethod( 'POST' ) );
-		$this->assertTrue( $route->isMethod( 'post' ) );
-		$this->assertFalse( $route->isMethod( 'GET' ) );
+		self::assertTrue( $route->isMethod( 'POST' ) );
+		self::assertTrue( $route->isMethod( 'post' ) );
+		self::assertFalse( $route->isMethod( 'GET' ) );
 
 		$route->setMethod( '*' );
-		$this->assertTrue( $route->isMethod( 'GET' ) );
-		$this->assertTrue( $route->isMethod( 'get' ) );
-		$this->assertTrue( $route->isMethod( 'POST' ) );
-		$this->assertTrue( $route->isMethod( 'post' ) );
-		$this->assertTrue( $route->isMethod( 'PUT' ) );
-		$this->assertTrue( $route->isMethod( 'DELETE' ) );
-		$this->assertTrue( $route->isMethod( 'HEAD' ) );
-		$this->assertTrue( $route->isMethod( 'OPTIONS' ) );
+		self::assertTrue( $route->isMethod( 'GET' ) );
+		self::assertTrue( $route->isMethod( 'get' ) );
+		self::assertTrue( $route->isMethod( 'POST' ) );
+		self::assertTrue( $route->isMethod( 'post' ) );
+		self::assertTrue( $route->isMethod( 'PUT' ) );
+		self::assertTrue( $route->isMethod( 'DELETE' ) );
+		self::assertTrue( $route->isMethod( 'HEAD' ) );
+		self::assertTrue( $route->isMethod( 'OPTIONS' ) );
 	}
 
 	/**
 	 *	@covers	::setAction
 	 */
-	public function testSetAction()
+	public function testSetAction(): void
 	{
 		$route	= $this->factory->create( 'test' );
 		$result	= $route->setController( 'SomethingElse' );
-		$this->assertTrue( is_object( $result ) );
-		$this->assertSame( Route::class, get_class( $result ) );
+		self::assertIsObject( $result );
+		self::assertSame( Route::class, get_class( $result ) );
 
 		$route->setAction( 'TEST2');
-		$this->assertSame( 'TEST2', $route->getAction() );
+		self::assertSame( 'TEST2', $route->getAction() );
 	}
 
 	/**
 	 *	@covers	::setAction
 	 */
-	public function testSetActionExceptionOnEmpty()
+	public function testSetActionExceptionOnEmpty(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setAction( '' );
 	}
@@ -188,9 +194,9 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setAction
 	 */
-	public function testSetActionExceptionOnContainsWhitespace1()
+	public function testSetActionExceptionOnContainsWhitespace1(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setAction( ' ' );
 	}
@@ -198,9 +204,9 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setAction
 	 */
-	public function testSetActionExceptionOnContainsWhitespace2()
+	public function testSetActionExceptionOnContainsWhitespace2(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setAction( ' methodName' );
 	}
@@ -208,9 +214,9 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setAction
 	 */
-	public function testSetActionExceptionOnContainsWhitespace3()
+	public function testSetActionExceptionOnContainsWhitespace3(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setAction( 'methodName ' );
 	}
@@ -218,9 +224,9 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setAction
 	 */
-	public function testSetActionExceptionOnContainsWhitespace4()
+	public function testSetActionExceptionOnContainsWhitespace4(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setAction( 'method Name' );
 	}
@@ -228,9 +234,9 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setAction
 	 */
-	public function testSetActionExceptionOnContainsInvalidCharacter1()
+	public function testSetActionExceptionOnContainsInvalidCharacter1(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setAction( 'method-name' );
 	}
@@ -238,29 +244,29 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setController
 	 */
-	public function testSetController()
+	public function testSetController(): void
 	{
 		$route	= $this->factory->create( 'test' );
 		$result	= $route->setController( 'SomethingElse' );
-		$this->assertTrue( is_object( $result ) );
-		$this->assertSame( Route::class, get_class( $result ) );
+		self::assertIsObject( $result );
+		self::assertSame( Route::class, get_class( $result ) );
 
 		$route->setController( 'TEST2');
-		$this->assertSame( 'TEST2', $route->getController() );
+		self::assertSame( 'TEST2', $route->getController() );
 
 		$route->setController( '\\Namespace\\ClassName' );
-		$this->assertSame( '\\Namespace\\ClassName', $route->getController() );
+		self::assertSame( '\\Namespace\\ClassName', $route->getController() );
 
 		$route->setController( '\\Namespace\\Package\\ClassName' );
-		$this->assertSame( '\\Namespace\\Package\\ClassName', $route->getController() );
+		self::assertSame( '\\Namespace\\Package\\ClassName', $route->getController() );
 	}
 
 	/**
 	 *	@covers	::setController
 	 */
-	public function testSetControllerExceptionOnEmpty()
+	public function testSetControllerExceptionOnEmpty(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setController( '' );
 	}
@@ -268,9 +274,9 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setController
 	 */
-	public function testSetControllerExceptionOnContainsWhitespace1()
+	public function testSetControllerExceptionOnContainsWhitespace1(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setController( ' ' );
 	}
@@ -278,9 +284,9 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setController
 	 */
-	public function testSetControllerExceptionOnContainsWhitespace2()
+	public function testSetControllerExceptionOnContainsWhitespace2(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setController( ' ClassName' );
 	}
@@ -288,9 +294,9 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setController
 	 */
-	public function testSetControllerExceptionOnContainsWhitespace3()
+	public function testSetControllerExceptionOnContainsWhitespace3(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setController( 'ClassName ' );
 	}
@@ -298,9 +304,9 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setController
 	 */
-	public function testSetControllerExceptionOnContainsWhitespace4()
+	public function testSetControllerExceptionOnContainsWhitespace4(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setController( 'Class Name' );
 	}
@@ -308,9 +314,9 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setController
 	 */
-	public function testSetControllerExceptionOnContainsInvalidCharacter1()
+	public function testSetControllerExceptionOnContainsInvalidCharacter1(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setController( 'class-name' );
 	}
@@ -318,65 +324,65 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setMethod
 	 */
-	public function testSetMethod()
+	public function testSetMethod(): void
 	{
 		$route	= $this->factory->create( 'test' );
 		$result	= $route->setMethod( 'GET' );
-		$this->assertTrue( is_object( $result ) );
-		$this->assertSame( Route::class, get_class( $result ) );
+		self::assertIsObject( $result );
+		self::assertSame( Route::class, get_class( $result ) );
 
 		$route->setMethod( 'POST' );
-		$this->assertSame( 'POST', $route->getMethod() );
+		self::assertSame( 'POST', $route->getMethod() );
 
 		$route->setMethod( ' POST' );
-		$this->assertSame( 'POST', $route->getMethod() );
+		self::assertSame( 'POST', $route->getMethod() );
 
 		$route->setMethod( 'POST ' );
-		$this->assertSame( 'POST', $route->getMethod() );
+		self::assertSame( 'POST', $route->getMethod() );
 
 		$route->setMethod( ',POST,' );
-		$this->assertSame( 'POST', $route->getMethod() );
+		self::assertSame( 'POST', $route->getMethod() );
 
 		$route->setMethod( 'GET,POST' );
-		$this->assertSame( 'GET,POST', $route->getMethod() );
+		self::assertSame( 'GET,POST', $route->getMethod() );
 
 		$route->setMethod( ',GET,POST,' );
-		$this->assertSame( 'GET,POST', $route->getMethod() );
+		self::assertSame( 'GET,POST', $route->getMethod() );
 
 		$route->setMethod( ' GET , POST ' );
-		$this->assertSame( 'GET,POST', $route->getMethod() );
+		self::assertSame( 'GET,POST', $route->getMethod() );
 
 		$route->setMethod( 'GET|POST' );
-		$this->assertSame( 'GET,POST', $route->getMethod() );
+		self::assertSame( 'GET,POST', $route->getMethod() );
 
 		$route->setMethod( '|GET|POST|' );
-		$this->assertSame( 'GET,POST', $route->getMethod() );
+		self::assertSame( 'GET,POST', $route->getMethod() );
 
 		$route->setMethod( ' GET | POST ' );
-		$this->assertSame( 'GET,POST', $route->getMethod() );
+		self::assertSame( 'GET,POST', $route->getMethod() );
 
 		$route->setMethod( '*' );
-		$this->assertSame( '*', $route->getMethod() );
+		self::assertSame( '*', $route->getMethod() );
 
 		$route->setMethod( ',*,' );
-		$this->assertSame( '*', $route->getMethod() );
+		self::assertSame( '*', $route->getMethod() );
 
 		$route->setMethod( '|*|' );
-		$this->assertSame( '*', $route->getMethod() );
+		self::assertSame( '*', $route->getMethod() );
 
 		$route->setMethod( '*,POST' );
-		$this->assertSame( '*', $route->getMethod() );
+		self::assertSame( '*', $route->getMethod() );
 
 		$route->setMethod( ',*|POST|GET,' );
-		$this->assertSame( '*', $route->getMethod() );
+		self::assertSame( '*', $route->getMethod() );
 	}
 
 	/**
 	 *	@covers	::setMethod
 	 */
-	public function testSetMethodExceptionOnInvalidMethod()
+	public function testSetMethodExceptionOnInvalidMethod(): void
 	{
-		$this->expectException( \DomainException::class );
+		$this->expectException( DomainException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setMethod( 'invalid' );
 	}
@@ -384,30 +390,30 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setMode
 	 */
-	public function testSetMode()
+	public function testSetMode(): void
 	{
 		$route	= $this->factory->create( 'test' );
 		$result	= $route->setMode( Route::MODE_UNKNOWN );
-		$this->assertTrue( is_object( $result ) );
-		$this->assertSame( Route::class, get_class( $result ) );
-		$this->assertSame( Route::MODE_UNKNOWN, $route->getMode() );
+		self::assertIsObject( $result );
+		self::assertSame( Route::class, get_class( $result ) );
+		self::assertSame( Route::MODE_UNKNOWN, $route->getMode() );
 
 		$route->setMode( Route::MODE_CONTROLLER );
-		$this->assertSame( Route::MODE_CONTROLLER, $route->getMode() );
+		self::assertSame( Route::MODE_CONTROLLER, $route->getMode() );
 
 		$route->setMode( Route::MODE_EVENT );
-		$this->assertSame( Route::MODE_EVENT, $route->getMode() );
+		self::assertSame( Route::MODE_EVENT, $route->getMode() );
 
 		$route->setMode( Route::MODE_FORWARD );
-		$this->assertSame( Route::MODE_FORWARD, $route->getMode() );
+		self::assertSame( Route::MODE_FORWARD, $route->getMode() );
 	}
 
 	/**
 	 *	@covers	::setMode
 	 */
-	public function testSetModeExceptionOnInvalidMode()
+	public function testSetModeExceptionOnInvalidMode(): void
 	{
-		$this->expectException( \TypeError::class );
+		$this->expectException( TypeError::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setMode( 'invalid' );
 	}
@@ -415,27 +421,27 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setPattern
 	 */
-	public function testSetPattern()
+	public function testSetPattern(): void
 	{
 		$route	= $this->factory->create( 'test' );
 		$result	= $route->setPattern( '123' );
-		$this->assertTrue( is_object( $result ) );
-		$this->assertSame( Route::class, get_class( $result ) );
-		$this->assertSame( '123', $route->getPattern() );
+		self::assertIsObject( $result );
+		self::assertSame( Route::class, get_class( $result ) );
+		self::assertSame( '123', $route->getPattern() );
 
 		$result	= $route->setPattern( '/path/to/some/action[/:action]' );
-		$this->assertTrue( is_object( $result ) );
-		$this->assertSame( Route::class, get_class( $result ) );
-		$this->assertSame( '/path/to/some/action[/:action]', $route->getPattern() );
+		self::assertIsObject( $result );
+		self::assertSame( Route::class, get_class( $result ) );
+		self::assertSame( '/path/to/some/action[/:action]', $route->getPattern() );
 
 	}
 
 	/**
 	 *	@covers	::setPattern
 	 */
-	public function testSetPatternException1()
+	public function testSetPatternException1(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setPattern( ' 123' );
 	}
@@ -443,9 +449,9 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setPattern
 	 */
-	public function testSetPatternException2()
+	public function testSetPatternException2(): void
 	{
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setPattern( '1 2 3' );
 	}
@@ -453,50 +459,47 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setRoles
 	 */
-	public function testSetRoles()
+	public function testSetRoles(): void
 	{
 		$route	= $this->factory->create( 'test' );
 		$result	= $route->setRoles( array() );
-		$this->assertTrue( is_object( $result ) );
-		$this->assertSame( Route::class, get_class( $result ) );
-		$this->assertSame( array(), $route->getRoles() );
+		self::assertIsObject( $result );
+		self::assertSame( Route::class, get_class( $result ) );
+		self::assertSame( array(), $route->getRoles() );
 
 		$roles	= array( 'role1', 'role2' );
 		$route->setRoles( $roles );
-		$this->assertSame( $roles, $route->getRoles() );
+		self::assertSame( $roles, $route->getRoles() );
 	}
 
 	/**
 	 *	@covers	::getModeFromKey
 	 */
-	public function testGetModeFromKey(){
-		$route	= $this->factory->create( 'test' );
-
+	public function testGetModeFromKey(): void
+	{
 		$expected = Route::MODE_CONTROLLER;
-		$this->assertEquals( $expected, $route->getModeFromKey( 'controller' ) );
-		$this->assertEquals( $expected, $route->getModeFromKey( 'Controller' ) );
-		$this->assertEquals( $expected, $route->getModeFromKey( 'CONTROLLER' ) );
+		self::assertEquals( $expected, Route::getModeFromKey( 'controller' ) );
+		self::assertEquals( $expected, Route::getModeFromKey( 'Controller' ) );
+		self::assertEquals( $expected, Route::getModeFromKey( 'CONTROLLER' ) );
 
 		$expected = Route::MODE_EVENT;
-		$this->assertEquals( $expected, $route->getModeFromKey( 'event' ) );
-		$this->assertEquals( $expected, $route->getModeFromKey( 'Event' ) );
-		$this->assertEquals( $expected, $route->getModeFromKey( 'EVENT' ) );
+		self::assertEquals( $expected, Route::getModeFromKey( 'event' ) );
+		self::assertEquals( $expected, Route::getModeFromKey( 'Event' ) );
+		self::assertEquals( $expected, Route::getModeFromKey( 'EVENT' ) );
 
 		$expected = Route::MODE_FORWARD;
-		$this->assertEquals( $expected, $route->getModeFromKey( 'forward' ) );
-		$this->assertEquals( $expected, $route->getModeFromKey( 'Forward' ) );
-		$this->assertEquals( $expected, $route->getModeFromKey( 'FORWARD' ) );
+		self::assertEquals( $expected, Route::getModeFromKey( 'forward' ) );
+		self::assertEquals( $expected, Route::getModeFromKey( 'Forward' ) );
+		self::assertEquals( $expected, Route::getModeFromKey( 'FORWARD' ) );
 	}
 
 	/**
 	 *	@covers	::getModeFromKey
-	 *	@expectedException \RangeException
 	 */
-	public function testGetModeFromKeyException(){
-		$this->expectException( \RangeException::class );
-		$route	= $this->factory->create( 'test' );
-		$route->getModeFromKey( 'invalid' );
+	public function testGetModeFromKeyException(): void
+	{
+		$this->expectException( RangeException::class );
+		Route::getModeFromKey( 'invalid' );
 	}
 }
-class RouteMock extends Route{
-}
+

@@ -46,9 +46,9 @@ interface SourceInterface
 
 	/**
 	 *	@param		string|NULL		$resource
-	 *	@return		AbstractSource
+	 *	@return		SourceInterface
 	 */
-	public static function create( string $resource = NULL ): AbstractSource;
+	public static function create( string $resource = NULL ): SourceInterface;
 
 	/**
 	 *	@param		string|NULL		$resource

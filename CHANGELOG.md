@@ -1,8 +1,11 @@
 # Changelog for CeusMedia/Router
 
-## 0.5.x
-
-... is all about PHP 8 support ...
+## Version 0.5
+- PHP 8.1 support and migration.
+- Migrate to support CeusMedia/Common 1.0.x.
+- Use PHPUnit 10.1.
+- Reach maximum PHPStan level.
+- Move tool config files to util.
 
 ## Version 0.4
 - Extend route model by roles.

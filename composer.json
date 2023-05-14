@@ -13,41 +13,50 @@
   ],
   "support": {
     "email": "office@ceusmedia.de",
-    "jabber": "ceus-media@jabber.org"
+    "jabber": "cwuerker@ceusmedia.de"
   },
-  "minimum-stability": "dev",
   "require": {
-    "php": "^8",
+    "php": "^8.1",
     "ext-memcache": "*",
     "ceus-media/common": "^1.0 | 1.0.x-dev",
     "ceus-media/cache": "^0.5 | 0.5.x-dev"
   },
   "require-dev": {
     "ceus-media/doc-creator": "*",
-    "phpunit/phpunit": "*",
-    "phpstan/phpstan": "*",
-    "phpstan/phpstan-strict-rules": "*",
+    "phpunit/phpunit": "^9.5 | ^10.1",
+    "phpstan/phpstan": "^1",
+    "phpstan/phpstan-strict-rules": "^1",
     "php-parallel-lint/php-parallel-lint": "*"
   },
   "autoload": {
     "psr-4": {
-        "CeusMedia\\Router\\": ["src/"]
+      "CeusMedia\\Router\\": ["src/"],
+      "CeusMedia\\RouterTest\\": ["test/"]
     }
   },
   "scripts": {
+    "dev:all": [
+      "@dev:test-syntax",
+      "@dev:phpstan",
+      "@dev:phpunit"
+    ],
     "dev:install-quiet": "composer install --quiet",
     "dev:update-quiet": "composer update --quiet",
-    "dev:stan": [
+    "dev:phpstan": [
       "@dev:install-quiet",
-      "vendor/bin/phpstan analyze --configuration=phpstan.neon --memory-limit=1G --xdebug --verbose"
+      "XDEBUG_MODE=off vendor/bin/phpstan analyze --configuration=util/phpstan.neon --memory-limit=1G --verbose"
     ],
-    "dev:stan-clear": [
+    "dev:phpstan-clear": [
       "@dev:install-quiet",
-      "vendor/bin/phpstan clear-result-cache --configuration=phpstan.neon --verbose"
+      "XDEBUG_MODE=off vendor/bin/phpstan clear-result-cache --configuration=util/phpstan.neon --verbose"
     ],
-    "dev:stan-save": [
+    "dev:phpstan-save": [
       "@dev:install-quiet",
-      "vendor/bin/phpstan analyse --configuration=phpstan.neon --generate-baseline phpstan-baseline.neon --xdebug --verbose"
+      "XDEBUG_MODE=off vendor/bin/phpstan analyse --configuration=util/phpstan.neon --generate-baseline util/phpstan-baseline.neon --verbose"
+    ],
+    "dev:phpunit": [
+      "@dev:install-quiet",
+      "XDEBUG_MODE=coverage php vendor/bin/phpunit --configuration util/phpunit10.xml --testsuite units"
     ],
     "dev:rector": [
       "@dev:install-quiet",
@@ -60,22 +69,18 @@
     "dev:test-syntax": [
       "@dev:install-quiet",
       "vendor/bin/parallel-lint . -j 10 --colors --exclude vendor"
-    ],
-    "dev:test-units": [
-      "@dev:install-quiet",
-      "XDEBUG_MODE=coverage php vendor/bin/phpunit --configuration phpunit.xml --testsuite units"
     ]
   },
   "scripts-descriptions": {
+    "dev:all": "Install, test syntax, run PHPStan and PHPUnit",
     "dev:install": "Installs project dependencies for Development stage",
     "dev:update": "Updates project dependencies for Development stage",
-    "dev:stan": "Validate codebase with PHPStan",
-    "dev:stan-clear": "Clear PHPStan cache",
-    "dev:stan-save": "Store current results in ignore list",
+    "dev:phpstan": "Validate codebase with PHPStan",
+    "dev:phpstan-clear": "Clear PHPStan cache",
+    "dev:phpstan-save": "Store current results in ignore list",
+    "dev:phpunit": "Run unit tests",
     "dev:rector": "Shows suggestions of configured Rector rules",
     "dev:rector-fix": "Apply currently configured Rector rules to codebase",
-    "dev:test-syntax": "Validate code base syntax using PHP linter",
-    "dev:test-units": "Run unit tests"
+    "dev:test-syntax": "Validate code base syntax using PHP linter"
   }
-
 }

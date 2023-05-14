@@ -69,28 +69,8 @@ class Router
 	/**
 	 *	...
 	 *	@access		public
-	 *	@param		string		$controller		Name of controller class
-	 *	@param		string		$action			Name of action name
-	 *	@param		string		$pattern		Pattern to resolve route by
-	 *	@param		string		$method			HTTP method (GET|POST|PUT|DELETE)
-	 *	@return		string		ID of added route
-	 *	@todo		return route instance instead of route ID
-	 *	@deprecated	use Router::add with Route\Factory::create instead
-	 */
-	public function add( string $controller, string $action = 'index', string $pattern, string $method = '*' ): string
-	{
-		$route	= new Route( $pattern, strtoupper( $method ) );
-		$route->setController( $controller );
-		$route->setAction( $action );
-		return $this->registry->add( $route );
-	}
-
-	/**
-	 *	...
-	 *	@access		public
 	 *	@param		Route		$route			Route instance to add
 	 *	@return		self 		This instance for method chaining
-	 *	@todo		return route instance instead of route ID
 	 */
 	public function addRoute( Route $route ): self
 	{

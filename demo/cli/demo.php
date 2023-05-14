@@ -2,18 +2,21 @@
 (@include '../../vendor/autoload.php') or die('Please use composer to install required packages.' . PHP_EOL);
 
 /*  --  IMPORT  ------------------------------------------------------------  */
-use \CeusMedia\Router\Registry;
-use \CeusMedia\Router\Registry\Source\SourceInterface as RegistrySourceInterface;
-use \CeusMedia\Router\Registry\Source\Memcache as RegistryMemcacheSource;
-use \CeusMedia\Router\Registry\Source\JsonFile as RegistryJsonFileSource;
-use \CeusMedia\Router\Registry\Source\JsonFolder as RegistryJsonFolderSource;
-use \CeusMedia\Router\Router;
-use \CeusMedia\Router\Router\ResolverException as ResolverException;
+use CeusMedia\Common\Alg\Obj\MethodFactory as ObjectMethodFactory;
+use CeusMedia\Common\Alg\Time\Clock;
+use CeusMedia\Common\UI\DevOutput;
+use CeusMedia\Router\Registry;
+use CeusMedia\Router\Registry\Source\SourceInterface as RegistrySourceInterface;
+use CeusMedia\Router\Registry\Source\Memcache as RegistryMemcacheSource;
+use CeusMedia\Router\Registry\Source\JsonFile as RegistryJsonFileSource;
+use CeusMedia\Router\Registry\Source\JsonFolder as RegistryJsonFolderSource;
+use CeusMedia\Router\Router;
+use CeusMedia\Router\Router\ResolverException as ResolverException;
 
 require_once '../Controller/Test.php';
 
 /*  --  INIT  --------------------------------------------------------------  */
-new UI_DevOutput;
+new DevOutput;
 error_reporting( E_ALL );
 
 /*  --  CONFIG  ------------------------------------------------------------  */
@@ -33,12 +36,12 @@ $sourceMemcache	= new RegistryMemcacheSource( 'localhost:11211:CeusMediaRouterCl
 $sourceMemcache->setOption( RegistrySourceInterface::OPTION_AUTOSAVE, TRUE );
 $sourceMemcache->setOption( RegistrySourceInterface::OPTION_AUTOLOAD, !$forceFreshLoad );
 
-$sourceJsonFile		= RegistryJsonFileSource::getNewInstance()
+$sourceJsonFile		= RegistryJsonFileSource::create()
 	->setResource( $filePathCollectedRoutes )
 	->setOption( RegistrySourceInterface::OPTION_AUTOSAVE, TRUE )
 	->setOption( RegistrySourceInterface::OPTION_AUTOLOAD, !$forceFreshLoad );
 
-$sourceJsonFolder	= RegistryJsonFolderSource::getNewInstance()
+$sourceJsonFolder	= RegistryJsonFolderSource::create()
 	->setResource( $folderPathSplitRoutes );
 
 $registry	= new Registry();
@@ -46,24 +49,27 @@ $registry->addSource( $sourceMemcache );
 $registry->addSource( $sourceJsonFile );
 $registry->addSource( $sourceJsonFolder );
 
-$watch		= new \Alg_Time_Clock();
+$clock		= new Clock();
 
 $router		= new Router();
 $router->setRegistry( $registry );
 
 remark( 'Routes:' );
 foreach( $router->getRoutes() as $route ){
-//	print_m( $route->toArray() );
-	print_m( array(
-		'Pattern'		=> $route->getPattern(),
-		'Method'		=> $route->getMethod(),
-		'Controller'	=> $route->getController(),
-		'Action'		=> $route->getAction(),
-	) );
+	if( 'CLI' === $route->getMethod() )
+	//	print_m( $route->toArray() );
+		print_m( array(
+			'Pattern'		=> $route->getPattern(),
+			'Method'		=> $route->getMethod(),
+			'Controller'	=> $route->getController(),
+			'Action'		=> $route->getAction(),
+		) );
 }
 
 $paths	= [
 	'test a1 b2',
+	'test a1',
+	'test',
 //	'/test',
 //	'/test/1',
 //	'/test/1/2',
@@ -77,10 +83,10 @@ foreach( $paths as $path ){
 		remark( ' - Call: '.$result->getController().'::'.$result->getAction().'('.join( ', ', $result->getArguments() ).')' );
 		remark( ' - Arguments: '.json_encode( $result->getArguments() ) );
 
-		$controller	= Alg_Object_MethodFactory::callClassMethod(
+		$controller	= ObjectMethodFactory::staticCallClassMethod(
 			$result->getController(),
 			$result->getAction(),
-			array(),
+			[],
 			$result->getArguments()
 		);
 	}
@@ -89,4 +95,4 @@ foreach( $paths as $path ){
 	}
 	remark();
 }
-remark( 'Time: '.$watch->stop( 3, 1 ).'ms'.PHP_EOL );
+remark( 'Time: '.$clock->stop( 3, 1 ).'ms'.PHP_EOL );

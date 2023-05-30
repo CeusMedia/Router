@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2016-2020 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2023 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,13 +20,12 @@
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2020 Christian Würker
- *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@copyright		2016-2023 Christian Würker
+ *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 namespace CeusMedia\Router;
 
-use CeusMedia\Router\Log;
 use CeusMedia\Router\Registry\Source\JsonFile as JsonFileSource;
 use CeusMedia\Router\Registry\Source\JsonFolder as JsonFolderSource;
 use CeusMedia\Router\Registry\Source\SourceInterface;
@@ -38,8 +37,8 @@ use RuntimeException;
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2020 Christian Würker
- *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@copyright		2016-2023 Christian Würker
+ *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 class Router
@@ -122,7 +121,7 @@ class Router
 	 *	$router	= new Router();
 	 *	$router->getRegistry()->addSource( new JsonFile( $source ) );
 	 */
-	public function loadRoutesFromJsonFile( string $filePath, ?string $folderPath = NULL )
+	public function loadRoutesFromJsonFile( string $filePath, ?string $folderPath = NULL ): void
 	{
 		$sourceFile	= new JsonFileSource( $filePath );
 		$sourceFile->setOption( SourceInterface::OPTION_AUTOSAVE, TRUE );

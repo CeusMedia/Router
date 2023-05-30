@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2016-2020 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2023 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
  *	@category		Library
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@package		CeusMedia_Router_Registry_Source
- *	@copyright		2016-2020 Christian Würker
- *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@copyright		2016-2023 Christian Würker
+ *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 
@@ -36,17 +36,17 @@ use InvalidArgumentException;
  *	@category		Library
  *	@package		CeusMedia_Router_Registry_Source
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2020 Christian Würker
- *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@copyright		2016-2023 Christian Würker
+ *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 class Memcache extends AbstractSource implements SourceInterface
 {
 	/** @var	string		$cacheKey		Key in cache */
-	protected $cacheKey;
+	protected string $cacheKey;
 
 	/** @var	\Memcache	$server			Memcache instance */
-	protected $server;
+	protected \Memcache $server;
 
 	public function load( Registry $registry ): int
 	{

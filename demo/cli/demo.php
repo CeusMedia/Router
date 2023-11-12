@@ -83,12 +83,13 @@ foreach( $paths as $path ){
 		remark( ' - Call: '.$result->getController().'::'.$result->getAction().'('.join( ', ', $result->getArguments() ).')' );
 		remark( ' - Arguments: '.json_encode( $result->getArguments() ) );
 
-		$controller	= ObjectMethodFactory::staticCallClassMethod(
+		$result	= ObjectMethodFactory::staticCallClassMethod(
 			$result->getController(),
 			$result->getAction(),
 			[],
 			$result->getArguments()
 		);
+		remark( $result );
 	}
 	catch( \Exception $e ){
 		remark( ' - Status: '.$e->getMessage() );

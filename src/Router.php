@@ -49,8 +49,19 @@ class Router
 	/** @var	Registry		$registry		Registry for routes and route sources */
 	protected Registry $registry;
 
-	/** @var	array			$options		Map of options, usable by inhereting classes */
+	/** @var	array			$options		Map of options, usable by inheriting classes */
 	protected array $options	= [];
+
+	/**
+	 *	Static constructor.
+	 *	@access		public
+	 *	@param		array		$options	Map of options
+	 *	@return		self
+	 */
+	public static function create( array $options = [] ): self
+	{
+		return new self( $options );
+	}
 
 	/**
 	 *	Constructor.
@@ -111,8 +122,8 @@ class Router
 	/**
 	 *	...
 	 *	@access		public
-	 *	@param		string		$filePath		Path to routes file
-	 *	@param		string		$folderPath		Path to folder with routes files to assemble
+	 *	@param		string			$filePath		Path to routes file
+	 *	@param		string|NULL		$folderPath		Path to folder with routes files to assemble
 	 *	@return		void
 	 *	@deprecated use Registry::addSource( new JsonFile( $filePath ) ) instead
 	 *	@example

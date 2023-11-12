@@ -64,6 +64,14 @@ class Registry
 	}
 
 	/**
+	 *	@return		self
+	 */
+	public static function create(): self
+	{
+		return new self();
+	}
+
+	/**
 	 *	Adds route to route registry by route object.
 	 *	@access		public
 	 *	@param		Route		$route			Route object

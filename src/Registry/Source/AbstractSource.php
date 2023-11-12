@@ -41,7 +41,7 @@ use RuntimeException;
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
-abstract class AbstractSource
+abstract class AbstractSource implements SourceInterface
 {
 	/** @var	array		$instances		List of ... */
 	protected static array $instances		= [];

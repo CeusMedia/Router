@@ -5,3 +5,4 @@
 /demo/cli/all_collected_routes.json
 /router.log
 /util/.phpunit.cache
+/.idea

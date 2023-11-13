@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2016-2020 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2023 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
  *	@category		Library
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@package		CeusMedia_Router_Registry_Source
- *	@copyright		2016-2020 Christian Würker
- *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@copyright		2016-2023 Christian Würker
+ *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 
@@ -37,11 +37,11 @@ use RuntimeException;
  *	@category		Library
  *	@package		CeusMedia_Router_Registry_Source
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2020 Christian Würker
- *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@copyright		2016-2023 Christian Würker
+ *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
-abstract class AbstractSource
+abstract class AbstractSource implements SourceInterface
 {
 	/** @var	array		$instances		List of ... */
 	protected static array $instances		= [];
@@ -50,11 +50,12 @@ abstract class AbstractSource
 	protected array $options				= [];
 
 	/** @var	string		$resource		... */
-	protected string $resource;
+	protected string $resource				= '';
 
 	/**
 	 *	@param		string|NULL		$resource
 	 *	@param		array			$options
+	 *	@throws		InvalidArgumentException		if an option key is not of integer
 	 */
 	public function __construct( string $resource = NULL, array $options = [] )
 	{
@@ -72,12 +73,14 @@ abstract class AbstractSource
 	/**
 	 *	@param		string|NULL		$resource
 	 *	@param		array			$options
-	 *	@return		AbstractSource
+	 *	@return		SourceInterface
+	 *	@throws		RuntimeException				if create is called on abstract class
+	 *	@throws		InvalidArgumentException		if an option key is not of integer
 	 */
-	public static function create( string $resource = NULL, array $options = [] ): AbstractSource
+	public static function create( string $resource = NULL, array $options = [] ): SourceInterface
 	{
 		$class	= get_called_class();
-		if( self::CLASS === $class )
+		if( AbstractSource::class === $class )
 			throw new RuntimeException( 'Cannot create instance of abstract class' );
 		return new $class( $resource, $options );
 	}
@@ -86,7 +89,7 @@ abstract class AbstractSource
 	 *	@param		int			$key
 	 *	@return		mixed|NULL
 	 */
-	public function getOption( int $key )
+	public function getOption( int $key ): mixed
 	{
 		if( array_key_exists( $key, $this->options ) )
 			return $this->options[$key];
@@ -123,7 +126,7 @@ abstract class AbstractSource
 	 *	@param		mixed|NULL		$value
 	 *	@return		$this
 	 */
-	public function setOption( int $key, $value = NULL ): self
+	public function setOption( int $key, mixed $value = NULL ): self
 	{
 		if( $value === NULL && array_key_exists( $key, $this->options ) )
 			unset( $this->options[$key] );

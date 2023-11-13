@@ -2,17 +2,20 @@
 (@include '../../vendor/autoload.php') or die('Please use composer to install required packages.' . PHP_EOL);
 
 /*  --  IMPORT  ------------------------------------------------------------  */
-use \CeusMedia\Router as Router;
-use \CeusMedia\Router\Registry;
-use \CeusMedia\Router\Registry\Source\SourceInterface as RegistrySourceInterface;
-//use \CeusMedia\Router\Registry\Source\Memcache as RegistryMemcacheSource;
-use \CeusMedia\Router\Registry\Source\JsonFile as RegistryJsonFileSource;
-//use \CeusMedia\Router\Registry\Source\JsonFolder as RegistryJsonFolderSource;
+use CeusMedia\Common\Alg\Obj\MethodFactory as ObjectMethodFactory;
+use CeusMedia\Common\Alg\Time\Clock;
+use CeusMedia\Common\UI\DevOutput;
+use CeusMedia\Router as Router;
+use CeusMedia\Router\Registry;
+use CeusMedia\Router\Registry\Source\SourceInterface as RegistrySourceInterface;
+//use CeusMedia\Router\Registry\Source\Memcache as RegistryMemcacheSource;
+use CeusMedia\Router\Registry\Source\JsonFile as RegistryJsonFileSource;
+//use CeusMedia\Router\Registry\Source\JsonFolder as RegistryJsonFolderSource;
 
 require_once '../Controller/Test.php';
 
 /*  --  INIT  --------------------------------------------------------------  */
-new UI_DevOutput;
+new DevOutput;
 error_reporting( E_ALL );
 ini_set( 'display_errors', 'On' );
 
@@ -40,6 +43,8 @@ $paths	= [
 
 remark( 'Routes:' );
 foreach( $router->getRoutes() as $route ){
+	if( 'CLI' === $route->getMethod() )
+		continue;
 	print_m( array(
 		'Controller'	=> $route->getController(),
 		'Action'		=> $route->getAction(),
@@ -55,10 +60,10 @@ foreach( $paths as $path ){
 		remark( ' - Status: found' );
 		remark( ' - Call: '.$result->getController().'::'.$result->getAction().'('.join( ', ', $result->getArguments() ).')' );
 
-		$controller	= Alg_Object_MethodFactory::callClassMethod(
+		$controller	= ObjectMethodFactory::staticCallClassMethod(
 			$result->getController(),
 			$result->getAction(),
-			array(),
+			[],
 			$result->getArguments()
 		);
 	}

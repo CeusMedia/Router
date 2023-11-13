@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2016-2020 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2023 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2020 Christian Würker
- *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@copyright		2016-2023 Christian Würker
+ *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 
@@ -38,7 +38,7 @@ use RangeException;
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2016-2022 Christian Würker
- *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 class Route
@@ -157,8 +157,7 @@ class Route
 
 	public static function getPriorityFromKey( string $priority ): int
 	{
-		$mode	= strtolower( $priority );
-		if( array_key_exists( $priority, self::PRIORITIES_BY_KEYS ) )
+		if( array_key_exists( strtolower( $priority ), self::PRIORITIES_BY_KEYS ) )
 			return self::PRIORITIES_BY_KEYS[$priority];
 		throw new RangeException( 'Invalid priority key: '.$priority );
 	}
@@ -329,7 +328,7 @@ class Route
 	 */
 	public function setMode( int $mode ): self
 	{
-		self::getModeKey( $mode, TRUE );
+		self::getModeKey( $mode );
 		$this->mode	= $mode;
 		return $this;
 	}

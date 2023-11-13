@@ -1,4 +1,29 @@
 <?php
+/**
+ *	...
+ *
+ *	Copyright (c) 2016-2023 Christian Würker (ceusmedia.de)
+ *
+ *	This program is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	(at your option) any later version.
+ *
+ *	This program is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *	@category		Library
+ *	@package		CeusMedia_Router
+ *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
+ *	@copyright		2016-2023 Christian Würker
+ *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@link			https://github.com/CeusMedia/Router
+ */
 
 namespace CeusMedia\Router;
 
@@ -7,6 +32,16 @@ use DateTimeZone;
 use DomainException;
 use RuntimeException;
 
+/**
+ *	...
+ *
+ *	@category		Library
+ *	@package		CeusMedia_Router
+ *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
+ *	@copyright		2016-2023 Christian Würker
+ *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@link			https://github.com/CeusMedia/Router
+ */
 class Log
 {
 	const LEVEL_NONE	= 0;
@@ -69,7 +104,7 @@ class Log
 	 *	@param		mixed|NULL		$data
 	 *	@return		bool
 	 */
-	public static function add( $levelOrLevelKey, string $message, $data = NULL ): bool
+	public static function add( int|string $levelOrLevelKey, string $message, mixed $data = NULL ): bool
 	{
 		return static::_logByLevelOrLevelKey( $levelOrLevelKey, $message, $data );
 	}
@@ -79,7 +114,7 @@ class Log
 	 *	@param		mixed|NULL		$data
 	 *	@return		bool
 	 */
-	public static function debug( string $message, $data = NULL ): bool
+	public static function debug( string $message, mixed $data = NULL ): bool
 	{
 		return static::_logByLevel( self::LEVEL_DEBUG, $message, $data );
 	}
@@ -89,7 +124,7 @@ class Log
 	 *	@param		mixed|NULL		$data
 	 *	@return		bool
 	 */
-	public static function error( string $message, $data = NULL ): bool
+	public static function error( string $message, mixed $data = NULL ): bool
 	{
 		return static::_logByLevel( self::LEVEL_ERROR, $message, $data );
 	}
@@ -99,7 +134,7 @@ class Log
 	 *	@param		mixed|NULL		$data
 	 *	@return		bool
 	 */
-	public static function info( string $message, $data = NULL ): bool
+	public static function info( string $message, mixed $data = NULL ): bool
 	{
 		return static::_logByLevel( self::LEVEL_INFO, $message, $data );
 	}
@@ -109,7 +144,7 @@ class Log
 	 *	@param		mixed|NULL		$data
 	 *	@return		bool
 	 */
-	public static function warn( string $message, $data = NULL ): bool
+	public static function warn( string $message, mixed $data = NULL ): bool
 	{
 		return static::_logByLevel( self::LEVEL_WARN, $message, $data );
 	}
@@ -120,7 +155,7 @@ class Log
 	 *	@param		mixed|NULL		$data
 	 *	@return		bool
 	 */
-	protected static function _logByLevel( int $level, string $message, $data = NULL ): bool
+	protected static function _logByLevel( int $level, string $message, mixed $data = NULL ): bool
 	{
 		if( ( self::$level & $level ) !== $level )
 			return FALSE;
@@ -144,7 +179,7 @@ class Log
 	 *	@param		mixed|NULL		$data
 	 *	@return		bool
 	 */
-	protected static function _logByLevelOrLevelKey( $level, string $message, $data = NULL ): bool
+	protected static function _logByLevelOrLevelKey( int|string $level, string $message, mixed $data = NULL ): bool
 	{
 		if( is_string( $level ) ){
 			if( !in_array( $level, self::LEVEL_KEYS, TRUE ) )

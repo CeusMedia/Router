@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2016-2020 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2023 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,13 +20,12 @@
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2020 Christian Würker
- *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@copyright		2016-2023 Christian Würker
+ *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 namespace CeusMedia\Router;
 
-use CeusMedia\Router\Log;
 use CeusMedia\Router\Registry\Source\JsonFile as JsonFileSource;
 use CeusMedia\Router\Registry\Source\JsonFolder as JsonFolderSource;
 use CeusMedia\Router\Registry\Source\SourceInterface;
@@ -38,8 +37,8 @@ use RuntimeException;
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2020 Christian Würker
- *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@copyright		2016-2023 Christian Würker
+ *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 class Router
@@ -50,8 +49,19 @@ class Router
 	/** @var	Registry		$registry		Registry for routes and route sources */
 	protected Registry $registry;
 
-	/** @var	array			$options		Map of options, usable by inhereting classes */
+	/** @var	array			$options		Map of options, usable by inheriting classes */
 	protected array $options	= [];
+
+	/**
+	 *	Static constructor.
+	 *	@access		public
+	 *	@param		array		$options	Map of options
+	 *	@return		self
+	 */
+	public static function create( array $options = [] ): self
+	{
+		return new self( $options );
+	}
 
 	/**
 	 *	Constructor.
@@ -69,28 +79,8 @@ class Router
 	/**
 	 *	...
 	 *	@access		public
-	 *	@param		string		$controller		Name of controller class
-	 *	@param		string		$action			Name of action name
-	 *	@param		string		$pattern		Pattern to resolve route by
-	 *	@param		string		$method			HTTP method (GET|POST|PUT|DELETE)
-	 *	@return		string		ID of added route
-	 *	@todo		return route instance instead of route ID
-	 *	@deprecated	use Router::add with Route\Factory::create instead
-	 */
-	public function add( string $controller, string $action = 'index', string $pattern, string $method = '*' ): string
-	{
-		$route	= new Route( $pattern, strtoupper( $method ) );
-		$route->setController( $controller );
-		$route->setAction( $action );
-		return $this->registry->add( $route );
-	}
-
-	/**
-	 *	...
-	 *	@access		public
 	 *	@param		Route		$route			Route instance to add
 	 *	@return		self 		This instance for method chaining
-	 *	@todo		return route instance instead of route ID
 	 */
 	public function addRoute( Route $route ): self
 	{
@@ -132,8 +122,8 @@ class Router
 	/**
 	 *	...
 	 *	@access		public
-	 *	@param		string		$filePath		Path to routes file
-	 *	@param		string		$folderPath		Path to folder with routes files to assemble
+	 *	@param		string			$filePath		Path to routes file
+	 *	@param		string|NULL		$folderPath		Path to folder with routes files to assemble
 	 *	@return		void
 	 *	@deprecated use Registry::addSource( new JsonFile( $filePath ) ) instead
 	 *	@example
@@ -142,7 +132,7 @@ class Router
 	 *	$router	= new Router();
 	 *	$router->getRegistry()->addSource( new JsonFile( $source ) );
 	 */
-	public function loadRoutesFromJsonFile( string $filePath, ?string $folderPath = NULL )
+	public function loadRoutesFromJsonFile( string $filePath, ?string $folderPath = NULL ): void
 	{
 		$sourceFile	= new JsonFileSource( $filePath );
 		$sourceFile->setOption( SourceInterface::OPTION_AUTOSAVE, TRUE );

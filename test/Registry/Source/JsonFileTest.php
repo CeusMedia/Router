@@ -1,14 +1,17 @@
 <?php
+namespace CeusMedia\RouterTest\Registry\Source;
+
 use PHPUnit\Framework\TestCase;
 use CeusMedia\Router\Registry;
 use CeusMedia\Router\Registry\Source\JsonFile as JsonFileSource;
-use CeusMedia\Router\Registry\Source\SourceInterface;
 
 /**
- *	@coversDefaultClass	\CeusMedia\Router\Source\JsonFile
+ *	@coversDefaultClass	\CeusMedia\Router\Registry\Source\JsonFile
  */
 class JsonFileTest extends TestCase
 {
+	protected string $jsonFile;
+
 	protected function setUp(): void
 	{
 		$this->jsonFile	= __DIR__.'/../../JsonFileTest.routes.json';
@@ -18,18 +21,18 @@ class JsonFileTest extends TestCase
 	{
 	}
 
-	public function testLoad()
+	public function testLoad(): void
 	{
 		$registry	= new Registry();
 		$instance	= new JsonFileSource( 'invalidFileName' );
-		$this->assertEquals( -1, $instance->load( $registry ) );
+		self::assertEquals( -1, $instance->load( $registry ) );
 
 		$instance	= new JsonFileSource( $this->jsonFile );
-		$this->assertEquals( 4, $instance->load( $registry ) );
+		self::assertEquals( 4, $instance->load( $registry ) );
 	}
 
-	public function testSave()
+	public function testSave(): void
 	{
-		$this->markTestIncomplete();
+		self::markTestIncomplete();
 	}
 }

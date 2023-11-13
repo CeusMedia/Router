@@ -1,4 +1,6 @@
 <?php
+namespace CeusMedia\RouterTest\Route;
+
 use PHPUnit\Framework\TestCase;
 use CeusMedia\Router\Registry;
 use CeusMedia\Router\Route;
@@ -9,20 +11,20 @@ use CeusMedia\Router\Route\Factory as RouteFactory;
  */
 class FactoryTest extends TestCase
 {
-	protected $factory;
+	protected RouteFactory $factory;
 
 	protected function setUp(): void
 	{
 		$this->factory	= new RouteFactory();
 	}
 
-	public function testCreate()
+	public function testCreate(): void
 	{
 		$route	= $this->factory->create( '/' );
-		$this->assertSame( Route::class, get_class( $route ) );
-		$this->assertSame( '/', $route->getPattern() );
-		$this->assertSame( 'GET', $route->getMethod() );
-		$this->assertSame( Route::MODE_UNKNOWN, $route->getMode() );
+		self::assertSame( Route::class, get_class( $route ) );
+		self::assertSame( '/', $route->getPattern() );
+		self::assertSame( 'GET', $route->getMethod() );
+		self::assertSame( Route::MODE_UNKNOWN, $route->getMode() );
 
 
 		$controller	= 'Controller1';
@@ -36,12 +38,12 @@ class FactoryTest extends TestCase
 			'roles'			=> $roles,
 		];
 		$route	= $this->factory->create( '/', $options );
-		$this->assertSame( Route::class, get_class( $route ) );
-		$this->assertSame( '/', $route->getPattern() );
-		$this->assertSame( 'POST', $route->getMethod() );
-		$this->assertSame( Route::MODE_CONTROLLER, $route->getMode() );
-		$this->assertSame( $controller, $route->getController() );
-		$this->assertSame( $action, $route->getAction() );
-		$this->assertSame( $roles, $route->getRoles() );
+		self::assertSame( Route::class, get_class( $route ) );
+		self::assertSame( '/', $route->getPattern() );
+		self::assertSame( 'POST', $route->getMethod() );
+		self::assertSame( Route::MODE_CONTROLLER, $route->getMode() );
+		self::assertSame( $controller, $route->getController() );
+		self::assertSame( $action, $route->getAction() );
+		self::assertSame( $roles, $route->getRoles() );
 	}
 }

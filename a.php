@@ -1,9 +1,10 @@
 <?php
 namespace Test\AbstractSingleton;
 
-abstract class A{
-	public $v	= 'a';
-	protected static $instances	= array();
+abstract class A
+{
+	public string $v	= 'a';
+	protected static array $instances	= array();
 	public static function getInstance(): A
 	{
 		$class	= get_called_class();
@@ -16,8 +17,9 @@ abstract class A{
 		return self::$instances[$class];
 	}
 }
-class B extends A{
-	public $v	= 'b';
+class B extends A
+{
+	public string $v	= 'b';
 }
 
 $i1	= B::getInstance();

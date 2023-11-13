@@ -1,8 +1,8 @@
 <?php
+namespace CeusMedia\RouterTest;
+
 use PHPUnit\Framework\TestCase;
 use CeusMedia\Router\Registry;
-use CeusMedia\Router\Registry\Source as RegistrySource;
-use CeusMedia\Router\Route;
 
 /**
  *	@coversDefaultClass	\CeusMedia\Router\Registry
@@ -20,50 +20,48 @@ class RegistryTest extends TestCase
 	/**
 	 *	@covers	::add
 	 */
-	public function testAdd()
+	public function testAdd(): void
 	{
-		$this->markTestIncomplete();
+		self::markTestIncomplete();
 	}
 
 	/**
 	 *	@covers	::index
 	 */
-	public function testIndex()
+	public function testIndex(): void
 	{
-		$this->markTestIncomplete();
+		self::markTestIncomplete();
 	}
 
 	/**
 	 *	@covers	::indexByController
 	 */
-	public function testIndexByController()
+	public function testIndexByController(): void
 	{
-		$this->markTestIncomplete();
+		self::markTestIncomplete();
 	}
 
 	/**
 	 *	@covers	::loadFromJsonFile
 	 */
-	public function testLoadFromJsonFile()
+	public function testLoadFromJsonFile(): void
 	{
-		$this->markTestIncomplete();
+		self::markTestIncomplete();
 	}
 
 	/**
 	 *	@covers	::remove
 	 */
-	public function testRemove()
+	public function testRemove(): void
 	{
-		$this->markTestIncomplete();
+		self::markTestIncomplete();
 	}
 
 	/**
 	 *	@covers	::assembleJsonFileFromFolder
 	 */
-	public function testAssembleJsonFileFromFolder()
+	public function testAssembleJsonFileFromFolder(): void
 	{
-		$this->markTestIncomplete();
+		self::markTestIncomplete();
 	}
-}
-class RegistryMock extends Registry{
 }

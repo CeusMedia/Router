@@ -1,6 +1,6 @@
 <?php
 /**
- *	Exception for negative route resolve attempt.
+ *	...
  *
  *	Copyright (c) 2016-2023 Christian Würker (ceusmedia.de)
  *
@@ -18,27 +18,41 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *	@category		Library
- *	@package		CeusMedia_Router
+ *	@package		CeusMedia_Router_Route
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2016-2023 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 
-namespace CeusMedia\Router;
-
-use Exception;
+namespace CeusMedia\Router\Route;
 
 /**
- *	Exception for negative route resolve attempt.
+ *	...
  *
  *	@category		Library
- *	@package		CeusMedia_Router
+ *	@package		CeusMedia_Router_Route
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2016-2023 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
- */
-class ResolverException extends Exception
+ */class PatternPart
 {
+	public string $key;
+
+	public bool $optional	= FALSE;
+
+	public bool $argument	= FALSE;
+
+	public mixed $value		= NULL;
+
+	public static function create( string $key, bool $optional = FALSE, bool $argument = FALSE, mixed $value = NULL ): self
+	{
+		$object				= new self();
+		$object->key		= $key;
+		$object->optional	= $optional;
+		$object->argument	= $argument;
+		$object->value		= $value;
+		return $object;
+	}
 }

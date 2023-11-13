@@ -1,8 +1,8 @@
 <?php
 class Controller_Test
 {
-	public function test( $a = NULL, $b = NULL )
+	public function test( string $a = NULL, string $b = NULL ): string
 	{
-		remark( " - Called: Controller_Test::test($a, $b)" );
+		return 'Called: Controller_Test::test($a, $b)';
 	}
 }

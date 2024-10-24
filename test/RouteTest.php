@@ -188,7 +188,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetActionExceptionOnEmpty(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setAction( '' );
 	}
@@ -198,7 +198,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetActionExceptionOnContainsWhitespace1(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setAction( ' ' );
 	}
@@ -208,7 +208,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetActionExceptionOnContainsWhitespace2(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setAction( ' methodName' );
 	}
@@ -218,7 +218,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetActionExceptionOnContainsWhitespace3(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setAction( 'methodName ' );
 	}
@@ -228,7 +228,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetActionExceptionOnContainsWhitespace4(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setAction( 'method Name' );
 	}
@@ -238,7 +238,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetActionExceptionOnContainsInvalidCharacter1(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setAction( 'method-name' );
 	}
@@ -268,7 +268,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetControllerExceptionOnEmpty(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setController( '' );
 	}
@@ -278,7 +278,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetControllerExceptionOnContainsWhitespace1(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setController( ' ' );
 	}
@@ -288,7 +288,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetControllerExceptionOnContainsWhitespace2(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setController( ' ClassName' );
 	}
@@ -298,7 +298,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetControllerExceptionOnContainsWhitespace3(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setController( 'ClassName ' );
 	}
@@ -308,7 +308,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetControllerExceptionOnContainsWhitespace4(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setController( 'Class Name' );
 	}
@@ -318,7 +318,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetControllerExceptionOnContainsInvalidCharacter1(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setController( 'class-name' );
 	}
@@ -384,7 +384,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetMethodExceptionOnInvalidMethod(): void
 	{
-		$this->expectException( DomainException::class );
+		self::expectException( DomainException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setMethod( 'invalid' );
 	}
@@ -413,11 +413,11 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::setMode
 	 */
-	public function testSetModeExceptionOnInvalidMode(): void
+	public function testSetMode_invalidToUnknown(): void
 	{
-		$this->expectException( TypeError::class );
+		self::expectException( RangeException::class );
 		$route	= $this->factory->create( 'test' );
-		$route->setMode( 'invalid' );
+		$route->setMode( -15 );
 	}
 
 	/**
@@ -443,7 +443,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetPatternException1(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setPattern( ' 123' );
 	}
@@ -453,7 +453,7 @@ class RouteTest extends TestCase
 	 */
 	public function testSetPatternException2(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		$route	= $this->factory->create( 'test' );
 		$route->setPattern( '1 2 3' );
 	}
@@ -500,7 +500,7 @@ class RouteTest extends TestCase
 	 */
 	public function testGetModeFromKeyException(): void
 	{
-		$this->expectException( RangeException::class );
+		self::expectException( RangeException::class );
 		Route::getModeFromKey( 'invalid' );
 	}
 }

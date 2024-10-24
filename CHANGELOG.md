@@ -4,8 +4,15 @@
 - PHP 8.1 support and migration.
 - Migrate to support CeusMedia/Common 1.0.x.
 - Use PHPUnit 10.1.
+- Support CeusMedia/Cache 0.6.x.
 - Reach maximum PHPStan level.
 - Move tool config files to util.
+- Add badges and show examples in readme.
+- Use strict types.
+- Apply PHPStan also on tests and demos.
+- Update tests.
+- Update copyright year.
+
 
 ## Version 0.4
 - Extend route model by roles.

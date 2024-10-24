@@ -1,4 +1,5 @@
 <?php /** @noinspection PhpRedundantOptionalArgumentInspection */
+declare(strict_types=1);
 
 namespace CeusMedia\RouterTest;
 

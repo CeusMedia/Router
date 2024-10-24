@@ -25,6 +25,7 @@ $folderPathSplitRoutes		= '../routes/';
 $forceFreshLoad				= TRUE;
 
 /*  --  RUN  ---------------------------------------------------------------  */
+/** @noinspection PhpConditionAlreadyCheckedInspection */
 if( $forceFreshLoad ){
 	@unlink( $filePathCollectedRoutes );
 	$memcache = new Memcache();
@@ -78,18 +79,20 @@ $paths	= [
 foreach( $paths as $path ){
 	remark( 'Checking path: "'.$path.'"' );
 	try{
-		$result	= $router->resolve( $path );
+		/** @var \CeusMedia\Router\Route $route */
+		$route	= $router->resolve( $path );
 		remark( ' - Status: found' );
-		remark( ' - Call: '.$result->getController().'::'.$result->getAction().'('.join( ', ', $result->getArguments() ).')' );
-		remark( ' - Arguments: '.json_encode( $result->getArguments() ) );
+		remark( ' - Call: '.$route->getController().'::'.$route->getAction().'('.join( ', ', $route->getArguments() ).')' );
+		remark( ' - Arguments: '.json_encode( $route->getArguments() ) );
 
-		$result	= ObjectMethodFactory::staticCallClassMethod(
-			$result->getController(),
-			$result->getAction(),
+		/** @var string $response */
+		$response	= ObjectMethodFactory::staticCallClassMethod(
+			$route->getController(),
+			$route->getAction(),
 			[],
-			$result->getArguments()
+			$route->getArguments()
 		);
-		remark( $result );
+		remark( $response );
 	}
 	catch( \Exception $e ){
 		remark( ' - Status: '.$e->getMessage() );

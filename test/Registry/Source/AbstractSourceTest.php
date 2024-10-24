@@ -50,13 +50,13 @@ class AbstractSourceTest extends TestCase
 
 	public function testCreateException1(): void
 	{
-		$this->expectException( RuntimeException::class );
+		self::expectException( RuntimeException::class );
 		AbstractSource::create();
 	}
 
 	public function testCreateException_invalidOptionKey(): void
 	{
-		$this->expectException( InvalidArgumentException::class );
+		self::expectException( InvalidArgumentException::class );
 		JsonFileSource::create( 'resD', [
 			'invalid'	=> TRUE,
 		] );

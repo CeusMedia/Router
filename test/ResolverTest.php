@@ -37,14 +37,14 @@ class ResolverTest extends TestCase
 
 	public function test_resolve_exceptionCli(): void
 	{
-		$this->expectException( ResolverException::class );
+		self::expectException( ResolverException::class );
 		$this->registry->add( new Route( 'test :a (:b)', 'CLI' ) );
 		$this->resolver->resolve( 'test', 'CLI' );
 	}
 
 	public function test_resolve_exceptionWeb(): void
 	{
-		$this->expectException( ResolverException::class );
+		self::expectException( ResolverException::class );
 		$this->registry->add( new Route( '/test/:a/(:b)', 'GET' ) );
 		$this->resolver->resolve( 'test', 'GET' );
 	}

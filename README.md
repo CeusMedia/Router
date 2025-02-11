@@ -1,12 +1,14 @@
 # Router
 
-![Branch](https://img.shields.io/badge/Branch-0.5.x-blue?style=flat-square)
-![Release](https://img.shields.io/badge/Release-0.5.1-blue?style=flat-square)
-![PHP version](https://img.shields.io/badge/PHP-%5E8.1-blue?style=flat-square&color=777BB4)
+![Branch](https://img.shields.io/badge/Branch-0.6.x-blue?style=flat-square)
+![Release](https://img.shields.io/badge/Release-0.6.0-blue?style=flat-square)
+![PHP version](https://img.shields.io/badge/PHP-%5E8.3-blue?style=flat-square&color=777BB4)
 ![PHPStan level](https://img.shields.io/badge/PHPStan_level-max+strict-darkgreen?style=flat-square)
 
 PHP router for HTTP requests.  
-Branch for PHP 8 support.
+
+Branch for PHP 8.3 support.     
+The former branch 0.5.x supports PHP 8.1.
 
 ## Examples
 ### Simplest: single JSON file

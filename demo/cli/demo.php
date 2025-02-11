@@ -11,7 +11,6 @@ use CeusMedia\Router\Registry\Source\Memcache as RegistryMemcacheSource;
 use CeusMedia\Router\Registry\Source\JsonFile as RegistryJsonFileSource;
 use CeusMedia\Router\Registry\Source\JsonFolder as RegistryJsonFolderSource;
 use CeusMedia\Router\Router;
-use CeusMedia\Router\Router\ResolverException as ResolverException;
 
 require_once '../Controller/Test.php';
 
@@ -26,6 +25,9 @@ $forceFreshLoad				= TRUE;
 
 /*  --  RUN  ---------------------------------------------------------------  */
 /** @noinspection PhpConditionAlreadyCheckedInspection */
+/** @phpstan-ignore-next-line  */
+$forceFreshLoad ??= FALSE;
+/** @phpstan-ignore-next-line  */
 if( $forceFreshLoad ){
 	@unlink( $filePathCollectedRoutes );
 	$memcache = new Memcache();
@@ -35,11 +37,13 @@ if( $forceFreshLoad ){
 
 $sourceMemcache	= new RegistryMemcacheSource( 'localhost:11211:CeusMediaRouterCliDemo1' );
 $sourceMemcache->setOption( RegistrySourceInterface::OPTION_AUTOSAVE, TRUE );
+/** @phpstan-ignore-next-line  */
 $sourceMemcache->setOption( RegistrySourceInterface::OPTION_AUTOLOAD, !$forceFreshLoad );
 
 $sourceJsonFile		= RegistryJsonFileSource::create()
 	->setResource( $filePathCollectedRoutes )
 	->setOption( RegistrySourceInterface::OPTION_AUTOSAVE, TRUE )
+	/** @phpstan-ignore-next-line  */
 	->setOption( RegistrySourceInterface::OPTION_AUTOLOAD, !$forceFreshLoad );
 
 $sourceJsonFolder	= RegistryJsonFolderSource::create()

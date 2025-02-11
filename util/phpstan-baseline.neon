@@ -1,21 +1,2 @@
 parameters:
 	ignoreErrors:
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: ../demo/cli/d.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 2
-			path: ../demo/cli/d.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: ../demo/cli/demo.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 2
-			path: ../demo/cli/demo.php

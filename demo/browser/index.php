@@ -56,6 +56,7 @@ foreach( $router->getRoutes() as $route ){
 foreach( $paths as $path ){
 	remark( 'Checking path: "'.$path.'"' );
 	try{
+		/** @var \CeusMedia\Router\Route $result */
 		$result	= $router->resolve( $path );
 		remark( ' - Status: found' );
 		remark( ' - Call: '.$result->getController().'::'.$result->getAction().'('.join( ', ', $result->getArguments() ).')' );

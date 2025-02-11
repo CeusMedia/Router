@@ -11,7 +11,6 @@ use CeusMedia\Router\Registry\Source\Memcache as RegistryMemcacheSource;
 use CeusMedia\Router\Registry\Source\JsonFile as RegistryJsonFileSource;
 use CeusMedia\Router\Registry\Source\JsonFolder as RegistryJsonFolderSource;
 use CeusMedia\Router\Router;
-use CeusMedia\Router\Router\ResolverException as ResolverException;
 
 require_once '../Controller/Test.php';
 
@@ -25,6 +24,10 @@ $folderPathSplitRoutes		= '../routes/';
 $forceFreshLoad				= TRUE;
 
 /*  --  RUN  ---------------------------------------------------------------  */
+/** @noinspection PhpConditionAlreadyCheckedInspection */
+/** @phpstan-ignore-next-line  */
+$forceFreshLoad ??= FALSE;
+/** @phpstan-ignore-next-line  */
 if( $forceFreshLoad ){
 	@unlink( $filePathCollectedRoutes );
 	$memcache = new Memcache();
@@ -34,11 +37,13 @@ if( $forceFreshLoad ){
 
 $sourceMemcache	= new RegistryMemcacheSource( 'localhost:11211:CeusMediaRouterCliDemo1' );
 $sourceMemcache->setOption( RegistrySourceInterface::OPTION_AUTOSAVE, TRUE );
+/** @phpstan-ignore-next-line  */
 $sourceMemcache->setOption( RegistrySourceInterface::OPTION_AUTOLOAD, !$forceFreshLoad );
 
 $sourceJsonFile		= RegistryJsonFileSource::create()
 	->setResource( $filePathCollectedRoutes )
 	->setOption( RegistrySourceInterface::OPTION_AUTOSAVE, TRUE )
+	/** @phpstan-ignore-next-line  */
 	->setOption( RegistrySourceInterface::OPTION_AUTOLOAD, !$forceFreshLoad );
 
 $sourceJsonFolder	= RegistryJsonFolderSource::create()
@@ -78,18 +83,20 @@ $paths	= [
 foreach( $paths as $path ){
 	remark( 'Checking path: "'.$path.'"' );
 	try{
-		$result	= $router->resolve( $path );
+		/** @var \CeusMedia\Router\Route $route */
+		$route	= $router->resolve( $path );
 		remark( ' - Status: found' );
-		remark( ' - Call: '.$result->getController().'::'.$result->getAction().'('.join( ', ', $result->getArguments() ).')' );
-		remark( ' - Arguments: '.json_encode( $result->getArguments() ) );
+		remark( ' - Call: '.$route->getController().'::'.$route->getAction().'('.join( ', ', $route->getArguments() ).')' );
+		remark( ' - Arguments: '.json_encode( $route->getArguments() ) );
 
-		$result	= ObjectMethodFactory::staticCallClassMethod(
-			$result->getController(),
-			$result->getAction(),
+		/** @var string $response */
+		$response	= ObjectMethodFactory::staticCallClassMethod(
+			$route->getController(),
+			$route->getAction(),
 			[],
-			$result->getArguments()
+			$route->getArguments()
 		);
-		remark( $result );
+		remark( $response );
 	}
 	catch( \Exception $e ){
 		remark( ' - Status: '.$e->getMessage() );

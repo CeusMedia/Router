@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CeusMedia\RouterTest;
 
 use PHPUnit\Framework\TestCase;
@@ -66,7 +68,7 @@ class RouterTest extends TestCase
 	 */
 	public function testResolveException(): void
 	{
-		$this->expectException( ResolverException::class );
+		self::expectException( ResolverException::class );
 		$jsonFile	= __DIR__.'/JsonFileTest.routes.json';
 		$router	= new Router();
 		$router->getRegistry()->addSource( new JsonFileRegistry( $jsonFile ) );

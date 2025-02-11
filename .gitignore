@@ -6,3 +6,4 @@
 /router.log
 /util/.phpunit.cache
 /.idea
+/.phpunit.result.cache

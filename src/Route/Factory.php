@@ -57,6 +57,7 @@ class Factory
 			'controller'	=> NULL,
 			'action'		=> NULL,
 			'roles'			=> [],
+			'priority'		=> NULL,
 		], $options );
 
 		$route	= new Route( $pattern, $options['method'], $options['mode'] );
@@ -73,7 +74,8 @@ class Factory
 						$route->setRoles( preg_split( '/\s*,\s*/', $options['roles'] ) );
 			}
 		}
-		if( isset( $options['priority'] ) && '' !== trim( (string) $options['priority'] ) ){
+		$hasPriority	= '' !== trim( (string) ( $options['priority'] ?? '' ) );
+		if( $hasPriority ){
 			if( !is_int( $options['priority'] ) )
 				$options['priority']	= Route::getPriorityFromKey( $options['priority'] );
 			$route->setPriority( $options['priority'] );

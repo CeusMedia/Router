@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 /**
- *	...
+ *	Base for route registry adapters.
  *
- *	Copyright (c) 2016-2024 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2025 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@ declare(strict_types=1);
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *	along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  *	@category		Library
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@package		CeusMedia_Router_Registry_Source
- *	@copyright		2016-2024 Christian Würker
+ *	@copyright		2016-2025 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -34,12 +34,12 @@ use InvalidArgumentException;
 use RuntimeException;
 
 /**
- *	...
+ *	Base adapter for route registries.
  *
  *	@category		Library
  *	@package		CeusMedia_Router_Registry_Source
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2024 Christian Würker
+ *	@copyright		2016-2025 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -63,7 +63,7 @@ abstract class AbstractSource implements SourceInterface
 	{
 		if( strlen( trim( (string) $resource ) ) > 0 )
 			$this->setResource( (string) $resource );
-		$defaultOptions	= array( SourceInterface::OPTION_AUTOLOAD => TRUE );
+		$defaultOptions	= [SourceInterface::OPTION_AUTOLOAD => TRUE];
 		$mergedOptions	= $options + $defaultOptions;
 		foreach( $mergedOptions as $key => $value ){
 			if( !is_int( $key ) )
@@ -98,6 +98,9 @@ abstract class AbstractSource implements SourceInterface
 		return NULL;
 	}
 
+	/**
+	 *	@return		array
+	 */
 	public function getOptions(): array
 	{
 		return $this->options;

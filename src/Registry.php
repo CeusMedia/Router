@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  *	...
  *
- *	Copyright (c) 2016-2024 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2025 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@ declare(strict_types=1);
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *	along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2024 Christian Würker
+ *	@copyright		2016-2025 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -39,22 +39,22 @@ use DomainException;
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2024 Christian Würker
+ *	@copyright		2016-2025 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
 class Registry
 {
-	const STATUS_NEW		= 0;
-	const STATUS_CLEAN		= 1;
-	const STATUS_LOADING	= 2;
-	const STATUS_CHANGED	= 2;
-	const STATUS_SAVING		= 3;
+	const STATUS_NEW			= 0;
+	const STATUS_CLEAN			= 1;
+	const STATUS_LOADING		= 2;
+	const STATUS_CHANGED		= 3;
+	const STATUS_SAVING			= 4;
 
 	/** @var	Route[]			$routes			List of registered routes */
 	protected array $routes		= [];
 
-	/** @var	integer			$status			Current status of registry */
+	/** @var	integer			$status			Current status of registry, one of static::STATUS_* (NEW,CLEAN,LOADING,CHANGED,SAVING) */
 	protected int $status		= 0;
 
 	/** @var	RegistrySource	$source			List of registered routes */
@@ -92,11 +92,16 @@ class Registry
 			) );
 		}
 		$this->routes[$routeId]	= $route;
-		$this->status = self::STATUS_CHANGED;
+		$this->status	= self::STATUS_CHANGED;
 		$this->saveToSources();
 		return $routeId;
 	}
 
+	/**
+	 *	Add source to registry and load it.
+	 *	@param		RegistrySourceInterface		$source
+	 *	@return		self
+	 */
 	public function addSource( RegistrySourceInterface $source ): self
 	{
 		$this->source->addSource( $source );
@@ -116,7 +121,7 @@ class Registry
 	}
 
 	/**
-	 *	...
+	 *	Returns list of routes (from all registered source) matching controller
 	 *	@access		public
 	 *	@param		string		$controller		...
 	 *	@return		array  		List of found routes
@@ -124,13 +129,9 @@ class Registry
 	public function indexByController( string $controller ): array
 	{
 		$this->loadFromSources();
-		$routes		= [];
-		foreach( $this->routes as $route ){
-			if( $route->getController() === $controller ){
-				$routes[]	= $route;
-			}
-		}
-		return $routes;
+		return array_filter( $this->routes, function( $route ) use ( $controller ) {
+			return $route->getController() === $controller;
+		} );
 	}
 
 	/**
@@ -170,7 +171,7 @@ class Registry
 
 	protected function saveToSources( bool $forceFreshSave = FALSE ): bool
 	{
-		if( $this->status === self::STATUS_CHANGED || $forceFreshSave ){
+		if( self::STATUS_CHANGED === $this->status || $forceFreshSave ){
 			$this->status	= self::STATUS_SAVING;
 			$this->source->save( $this );
 			$this->status	= self::STATUS_CLEAN;

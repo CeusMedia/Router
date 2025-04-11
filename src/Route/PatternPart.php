@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 /**
- *	...
+ *	Entity of path pattern.
  *
- *	Copyright (c) 2016-2024 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2025 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@ declare(strict_types=1);
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *	along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  *	@category		Library
  *	@package		CeusMedia_Router_Route
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2024 Christian Würker
+ *	@copyright		2016-2025 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -30,15 +30,16 @@ declare(strict_types=1);
 namespace CeusMedia\Router\Route;
 
 /**
- *	...
+ *	Entity of path pattern.
  *
  *	@category		Library
  *	@package		CeusMedia_Router_Route
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2024 Christian Würker
+ *	@copyright		2016-2025 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
- */class PatternPart
+ */
+class PatternPart
 {
 	public string $key;
 
@@ -48,6 +49,13 @@ namespace CeusMedia\Router\Route;
 
 	public mixed $value		= NULL;
 
+	/**
+	 *	@param		string			$key
+	 *	@param		bool			$optional
+	 *	@param		bool			$argument
+	 *	@param		mixed|NULL		$value
+	 *	@return		self
+	 */
 	public static function create( string $key, bool $optional = FALSE, bool $argument = FALSE, mixed $value = NULL ): self
 	{
 		$object				= new self();

@@ -142,7 +142,7 @@ abstract class AbstractSource implements SourceInterface
 
 	/**
 	 *	@param		string		$resource
-	 *	@return		$this
+	 *	@return		AbstractSource
 	 */
 	public function setResource( string $resource ): AbstractSource
 	{

@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace CeusMedia\RouterTest;
 
+use CeusMedia\Router\Route;
 use PHPUnit\Framework\TestCase;
 use CeusMedia\Router\Log;
+use CeusMedia\Router\Registry;
 use CeusMedia\Router\Router;
 use CeusMedia\Router\ResolverException;
 use CeusMedia\Router\Registry\Source\JsonFile as JsonFileRegistry;
@@ -83,5 +85,26 @@ class RouterTest extends TestCase
 
 		$router->setMethod( 'GET' );
 		$router->resolve( '/test/a1/b2/c3' );
+	}
+
+	/**
+	 *	@covers	::create
+	 */
+	public function testCreate(): void
+	{
+		$instance	= Router::create();
+		self::assertEquals( Router::class, get_class( $instance ) );
+		self::assertEquals( Registry::class, get_class( $instance->getRegistry() ) );
+	}
+
+	/**
+	 *	@covers	::addRoute
+	 */
+	public function testAddRoute(): void
+	{
+		$route		= new Route( '/test', 'head' );
+		$instance	= Router::create();
+		$instance->addRoute( $route );
+		self::assertEquals( [$route], array_values( $instance->getRoutes() ) );
 	}
 }

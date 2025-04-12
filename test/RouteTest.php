@@ -131,6 +131,48 @@ class RouteTest extends TestCase
 	}
 
 	/**
+	 *	@covers	::getPriorityFromKey
+	 */
+	public function testGetPriorityFromKey(): void
+	{
+		self::assertEquals( 1, Route::getPriorityFromKey( Route::PRIORITY_KEY_EARLIEST ) );
+		self::assertEquals( 2, Route::getPriorityFromKey( Route::PRIORITY_KEY_EARLIER ) );
+		self::assertEquals( 3, Route::getPriorityFromKey( Route::PRIORITY_KEY_NORMAL ) );
+		self::assertEquals( 4, Route::getPriorityFromKey( Route::PRIORITY_KEY_LATER ) );
+		self::assertEquals( 5, Route::getPriorityFromKey( Route::PRIORITY_KEY_LATEST ) );
+	}
+
+	/**
+	 *	@covers	::getPriorityFromKey
+	 */
+	public function testGetPriorityFromKeyException(): void
+	{
+		self::expectException( RangeException::class );
+		Route::getPriorityFromKey( 'invalid' );
+	}
+
+	/**
+	 *	@covers	::getPriorityKey
+	 */
+	public function testGetPriorityKey(): void
+	{
+		self::assertEquals( 'earliest', Route::getPriorityKey( Route::PRIORITY_EARLIEST ) );
+		self::assertEquals( 'earlier', Route::getPriorityKey( Route::PRIORITY_EARLIER ) );
+		self::assertEquals( 'normal', Route::getPriorityKey( Route::PRIORITY_NORMAL ) );
+		self::assertEquals( 'later', Route::getPriorityKey( Route::PRIORITY_LATER ) );
+		self::assertEquals( 'latest', Route::getPriorityKey( Route::PRIORITY_LATEST ) );
+	}
+
+	/**
+	 *	@covers	::getPriorityKey
+	 */
+	public function testGetPriorityKeyException(): void
+	{
+		self::expectException( RangeException::class );
+		Route::getPriorityKey( -1 );
+	}
+
+	/**
 	 *	@covers	::getRoles
 	 */
 	public function testGetRoles(): void
@@ -493,6 +535,12 @@ class RouteTest extends TestCase
 		self::assertEquals( $expected, Route::getModeFromKey( 'forward' ) );
 		self::assertEquals( $expected, Route::getModeFromKey( 'Forward' ) );
 		self::assertEquals( $expected, Route::getModeFromKey( 'FORWARD' ) );
+
+		$expected = Route::MODE_UNKNOWN;
+		self::assertEquals( $expected, Route::getModeFromKey( 'unknown' ) );
+		self::assertEquals( $expected, Route::getModeFromKey( 'Unknown' ) );
+		self::assertEquals( $expected, Route::getModeFromKey( 'UNKNOWN' ) );
+		self::assertEquals( $expected, Route::getModeFromKey( 'invalid', FALSE ) );
 	}
 
 	/**
@@ -502,6 +550,40 @@ class RouteTest extends TestCase
 	{
 		self::expectException( RangeException::class );
 		Route::getModeFromKey( 'invalid' );
+	}
+
+	/**
+	 *	@covers	::getModeKey
+	 */
+	public function testGetModeKey(): void
+	{
+		self::assertEquals( 'unknown', Route::getModeKey( Route::MODE_UNKNOWN ));
+		self::assertEquals( 'controller', Route::getModeKey( Route::MODE_CONTROLLER ));
+		self::assertEquals( 'event', Route::getModeKey( Route::MODE_EVENT ));
+		self::assertEquals( 'forward', Route::getModeKey( Route::MODE_FORWARD ));
+
+		self::assertEquals( 'unknown', Route::getModeKey( -1, FALSE ));
+	}
+
+	/**
+	 *	@covers	::getModeKey
+	 */
+	public function testGetModeKeyException(): void
+	{
+		self::expectException( RangeException::class );
+		Route::getModeKey( -1 );
+	}
+
+	/**
+	 *	@covers	::getTarget
+	 *	@covers	::setTarget
+	 */
+	public function testGetSetTarget(): void
+	{
+		$route	= new Route( 'a' );
+		self::assertEquals( '', $route->getTarget() );
+		self::assertEquals( $route, $route->setTarget( 't1') );
+		self::assertEquals( 't1', $route->getTarget() );
 	}
 }
 

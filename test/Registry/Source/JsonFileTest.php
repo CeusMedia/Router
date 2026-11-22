@@ -33,6 +33,27 @@ class JsonFileTest extends TestCase
 		self::assertEquals( 4, $instance->load( $registry ) );
 	}
 
+	public function testLoadRolesAndMeta(): void
+	{
+		$registry	= new Registry();
+		$instance	= new JsonFileSource( __DIR__.'/../../JsonFileTest.meta.routes.json' );
+		self::assertEquals( 3, $instance->load( $registry ) );
+
+		$routes	= [];
+		foreach( $registry->index() as $route )
+			$routes[$route->getPattern()]	= $route;
+
+		$login	= $routes['/auth/login'];
+		self::assertTrue( $login->getMeta( 'public' ) );
+		self::assertSame( 'auth', $login->getMeta( 'rateLimit' ) );
+		self::assertSame( ['perMinute' => 10], $login->getMeta( 'limits' ), 'nested objects become arrays' );
+		self::assertSame( [], $login->getRoles() );
+
+		self::assertSame( ['setup', 'full'], $routes['/account']->getRoles(), 'roles as list' );
+		self::assertSame( [], $routes['/account']->getMeta() );
+		self::assertSame( ['admin', 'full'], $routes['/admin']->getRoles(), 'roles as comma separated string' );
+	}
+
 	public function testSave(): void
 	{
 		self::markTestIncomplete();

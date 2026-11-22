@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  *	...
  *
- *	Copyright (c) 2016-2025 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2026 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ declare(strict_types=1);
  *	@category		Library
  *	@package		CeusMedia_Router
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2025 Christian Würker
+ *	@copyright		2016-2026 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -117,6 +117,9 @@ class Route
 
 	/** @var	array				$roles				List of role keys to limit route access to, empty means no limits */
 	protected array $roles			= [];
+
+	/** @var	array<string,mixed>	$meta				Additional information for consumers, e.g. ['public' => TRUE, 'rateLimit' => 'auth'] */
+	protected array $meta			= [];
 
 	/** @var	?Route				$origin				... */
 	protected ?Route $origin		= NULL;
@@ -233,6 +236,25 @@ class Route
 	public function getRoles(): array
 	{
 		return $this->roles;
+	}
+
+	/**
+	 *	Returns all meta information or the value of one key.
+	 *	The router only carries meta information, consumers (e.g. a REST server) interpret it.
+	 *	@param		string|NULL		$key		Key of meta information, NULL for all
+	 *	@param		mixed			$default	Value if key is not set
+	 *	@return		mixed
+	 */
+	public function getMeta( ?string $key = NULL, mixed $default = NULL ): mixed
+	{
+		if( NULL === $key )
+			return $this->meta;
+		return array_key_exists( $key, $this->meta ) ? $this->meta[$key] : $default;
+	}
+
+	public function hasMeta( string $key ): bool
+	{
+		return array_key_exists( $key, $this->meta );
 	}
 
 	/**
@@ -388,6 +410,17 @@ class Route
 	}
 
 	/**
+	 *	Sets meta information, replacing existing.
+	 *	@param		array<string,mixed>		$meta
+	 *	@return		self
+	 */
+	public function setMeta( array $meta ): self
+	{
+		$this->meta		= $meta;
+		return $this;
+	}
+
+	/**
 	 *	Set target address for route of type "forward".
 	 *	@access		public
 	 *	@param		string		$target
@@ -415,6 +448,7 @@ class Route
 			'action'		=> $this->action,
 			'arguments'		=> $this->arguments,
 			'roles'			=> $this->roles,
+			'meta'			=> $this->meta,
 			'origin'		=> $this->origin,
 			'target'		=> $this->target,
 			'priority'		=> $this->priority,

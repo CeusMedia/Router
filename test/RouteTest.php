@@ -188,6 +188,22 @@ class RouteTest extends TestCase
 	/**
 	 *	@covers	::isMethod
 	 */
+	public function testMeta(): void
+	{
+		$route	= new Route( '/test', 'GET' );
+		self::assertSame( [], $route->getMeta() );
+		self::assertNull( $route->getMeta( 'public' ) );
+		self::assertSame( 'none', $route->getMeta( 'rateLimit', 'none' ) );
+		self::assertFalse( $route->hasMeta( 'public' ) );
+
+		self::assertSame( $route, $route->setMeta( ['public' => TRUE, 'rateLimit' => NULL] ) );
+		self::assertTrue( $route->getMeta( 'public' ) );
+		self::assertTrue( $route->hasMeta( 'rateLimit' ), 'key with NULL value exists' );
+		self::assertNull( $route->getMeta( 'rateLimit', 'default' ), 'NULL value is returned, not the default' );
+		self::assertSame( ['public' => TRUE, 'rateLimit' => NULL], $route->toArray()['meta'] );
+		self::assertSame( ['public' => TRUE, 'rateLimit' => NULL], ( clone $route )->getMeta(), 'kept by resolver clones' );
+	}
+
 	public function testIsMethod(): void
 	{
 		$route	= $this->factory->create( 'test' );

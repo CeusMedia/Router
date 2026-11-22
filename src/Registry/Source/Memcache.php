@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  *	Memcache route registry adapter.
  *
- *	Copyright (c) 2016-2025 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2026 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ declare(strict_types=1);
  *	@category		Library
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@package		CeusMedia_Router_Registry_Source
- *	@copyright		2016-2025 Christian Würker
+ *	@copyright		2016-2026 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -31,6 +31,7 @@ namespace CeusMedia\Router\Registry\Source;
 
 use CeusMedia\Router\Registry;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  *	Memcache route registry adapter.
@@ -38,7 +39,7 @@ use InvalidArgumentException;
  *	@category		Library
  *	@package		CeusMedia_Router_Registry_Source
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2025 Christian Würker
+ *	@copyright		2016-2026 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -95,6 +96,8 @@ class Memcache extends AbstractSource implements SourceInterface
 		$port			= $matches[2];
 		$this->cacheKey	= $matches[3];
 		$this->resource	= $resource;
+		if( !class_exists( \Memcache::class ) )
+			throw new RuntimeException( 'PHP extension "memcache" is needed for the Memcache route source' );
 		$this->server	= new \Memcache;
 		$this->server->connect( $server, (int) $port );
 		return $this;

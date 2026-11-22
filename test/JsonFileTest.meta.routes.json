@@ -1,0 +1,23 @@
+[
+	{
+		"controller": "Controller_Auth",
+		"action": "login",
+		"pattern": "/auth/login",
+		"method": "POST",
+		"meta": {"public": true, "rateLimit": "auth", "limits": {"perMinute": 10}}
+	},
+	{
+		"controller": "Controller_Account",
+		"action": "index",
+		"pattern": "/account",
+		"method": "GET",
+		"roles": ["setup", "full"]
+	},
+	{
+		"controller": "Controller_Admin",
+		"action": "index",
+		"pattern": "/admin",
+		"method": "GET",
+		"roles": "admin, full"
+	}
+]

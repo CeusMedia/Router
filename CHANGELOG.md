@@ -1,5 +1,11 @@
 # Changelog for CeusMedia/Router
 
+## Unreleased (0.6.x)
+- Make ext-memcache optional (suggest): only needed for the Memcache route source, which now throws a clear exception if the extension is missing.
+- Add meta information on routes (`meta` in JSON route files, `Route::getMeta()`, `setMeta()`, `hasMeta()`), carried for consumers like a REST server, e.g. `{"public": true, "rateLimit": "auth"}`.
+- JSON route files accept roles as list, besides comma separated string.
+
+
 ## Version 0.5
 - PHP 8.1 support and migration.
 - Migrate to support CeusMedia/Common 1.0.x.

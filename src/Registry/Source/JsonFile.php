@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  *	JSON file route registry adapter.
  *
- *	Copyright (c) 2016-2025 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2026 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ declare(strict_types=1);
  *	@category		Library
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@package		CeusMedia_Router_Registry_Source
- *	@copyright		2016-2025 Christian Würker
+ *	@copyright		2016-2026 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -43,7 +43,7 @@ use OutOfRangeException;
  *	@category		Library
  *	@package		CeusMedia_Router_Registry_Source
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2025 Christian Würker
+ *	@copyright		2016-2026 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -71,8 +71,12 @@ class JsonFile extends AbstractSource implements SourceInterface
 			);
 			if( isset( $item->mode ) && strlen( trim( $item->mode ) ) > 0 )
 				$options['mode']	= Route::getModeFromKey( $item->mode );
-			if( isset( $item->roles ) && strlen( trim( $item->roles ) ) > 0 )
+			if( isset( $item->roles ) && is_array( $item->roles ) )
+				$options['roles']	= array_values( array_filter( array_map( 'strval', $item->roles ), static fn( string $role ): bool => '' !== trim( $role ) ) );
+			else if( isset( $item->roles ) && is_string( $item->roles ) && strlen( trim( $item->roles ) ) > 0 )
 				$options['roles']	= preg_split( "/, */", trim( $item->roles ) );
+			if( isset( $item->meta ) && is_object( $item->meta ) )
+				$options['meta']	= $item->meta;
 			if( isset( $item->priority ) && strlen( trim( $item->priority ) ) > 0 )
 				$options['priority']	= Route::getPriorityFromKey( $item->priority );
 			$registry->add( $factory->create( $item->pattern, $options ) );

@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  *	Factory for route objects.
  *
- *	Copyright (c) 2016-2025 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2016-2026 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ declare(strict_types=1);
  *	@category		Library
  *	@package		CeusMedia_Router_Route
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2025 Christian Würker
+ *	@copyright		2016-2026 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -37,7 +37,7 @@ use CeusMedia\Router\Route;
  *	@category		Library
  *	@package		CeusMedia_Router_Route
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2016-2025 Christian Würker
+ *	@copyright		2016-2026 Christian Würker
  *	@license		https://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/Router
  */
@@ -65,6 +65,7 @@ class Factory
 			'controller'	=> NULL,
 			'action'		=> NULL,
 			'roles'			=> [],
+			'meta'			=> [],
 			'priority'		=> NULL,
 		], $options );
 
@@ -78,6 +79,10 @@ class Factory
 			$options['roles']	= preg_split( '/\s*,\s*/', $options['roles'] );
 		$options['roles']	= array_map( 'trim', $options['roles'] ?? '' );
 		$route->setRoles( $options['roles'] );
+		if( is_object( $options['meta'] ) )
+			$options['meta']	= self::objectToArray( $options['meta'] );
+		if( is_array( $options['meta'] ) && [] !== $options['meta'] )
+			$route->setMeta( $options['meta'] );
 
 		if( '' !== trim( (string) ( $options['priority'] ?? '' ) ) ){
 			if( !is_int( $options['priority'] ) )
@@ -109,4 +114,17 @@ class Factory
 		$this->defaultMode		= $mode;
 		return $this;
 	}
+
+    /**
+     *	Converts nested objects (e.g. decoded JSON) to arrays.
+     *	@param		object|array	$value
+     *	@return		array<string,mixed>
+     */
+    protected static function objectToArray( object|array $value ): array
+    {
+        $array	= [];
+        foreach( (array) $value as $key => $item )
+            $array[(string) $key]	= is_object( $item ) || is_array( $item ) ? self::objectToArray( $item ) : $item;
+        return $array;
+    }
 }

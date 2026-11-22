@@ -67,4 +67,13 @@ class FactoryTest extends TestCase
 		self::assertSame( $roles, $route->getRoles() );
 		self::assertSame( Route::PRIORITY_LATER, $route->getPriority() );
 	}
+
+	public function testCreateWithMeta(): void
+	{
+		$route	= $this->factory->create( '/auth/login', ['method' => 'POST', 'meta' => (object) ['public' => TRUE, 'limits' => (object) ['perMinute' => 10]]] );
+		self::assertSame( ['public' => TRUE, 'limits' => ['perMinute' => 10]], $route->getMeta() );
+
+		$route	= $this->factory->create( '/', ['meta' => ['rateLimit' => 'api']] );
+		self::assertSame( 'api', $route->getMeta( 'rateLimit' ) );
+	}
 }

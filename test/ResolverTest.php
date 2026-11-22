@@ -85,6 +85,67 @@ class ResolverTest extends TestCase
 	}
 
 	/**
+	 *	Regression: static parts were used as regular expression, so a dot matched any character.
+	 *	@covers	::resolve
+	 */
+	public function test_resolve_staticPartIsNotRegExp(): void
+	{
+		$this->registry->add( new Route( '/files/a.json', 'GET' ) );
+		$this->registry->add( new Route( 'db.dump', 'CLI' ) );
+
+		self::assertFalse( $this->resolver->hasRouteForPath( '/files/aXjson', 'GET' ) );
+		self::assertTrue( $this->resolver->hasRouteForPath( '/files/a.json', 'GET' ) );
+		self::assertFalse( $this->resolver->hasRouteForPath( 'dbXdump', 'CLI' ) );
+		self::assertTrue( $this->resolver->hasRouteForPath( 'db.dump', 'CLI' ) );
+	}
+
+	/**
+	 *	Regression: static parts containing regex characters were not resolvable.
+	 *	@covers	::resolve
+	 */
+	public function test_resolve_staticPartWithRegExpCharacters(): void
+	{
+		$this->registry->add( new Route( '/a+b/(:c)', 'GET' ) );
+		$this->registry->add( new Route( '/mail/user@example.org', 'GET' ) );
+
+		/** @noinspection PhpUnhandledExceptionInspection */
+		$route	= $this->resolver->resolve( '/a+b/c1', 'GET', FALSE );
+		self::assertIsObject( $route, 'Route not resolved' );
+		self::assertEquals( ['c' => 'c1'], $route->getArguments() );
+		self::assertFalse( $this->resolver->hasRouteForPath( '/aab/c1', 'GET' ) );
+		self::assertTrue( $this->resolver->hasRouteForPath( '/mail/user@example.org', 'GET' ) );
+	}
+
+	/**
+	 *	Regression: a mismatch on the last pattern part was not detected.
+	 *	@covers	::resolve
+	 */
+	public function test_resolve_mismatchOnLastPart(): void
+	{
+		$this->registry->add( new Route( '/a/(:b)/c', 'GET' ) );
+
+		/** @noinspection PhpUnhandledExceptionInspection */
+		self::assertNull( $this->resolver->resolve( '/a/c', 'GET', FALSE ) );
+
+		/** @noinspection PhpUnhandledExceptionInspection */
+		$route	= $this->resolver->resolve( '/a/b1/c', 'GET', FALSE );
+		self::assertIsObject( $route, 'Route not resolved' );
+		self::assertEquals( ['b' => 'b1'], $route->getArguments() );
+	}
+
+	/**
+	 *	@covers	::resolve
+	 */
+	public function test_resolve_endingSlashIsOptional(): void
+	{
+		$this->registry->add( new Route( '/list/', 'GET' ) );
+
+		self::assertTrue( $this->resolver->hasRouteForPath( '/list/', 'GET' ) );
+		self::assertTrue( $this->resolver->hasRouteForPath( '/list', 'GET' ) );
+		self::assertFalse( $this->resolver->hasRouteForPath( '/lists', 'GET' ) );
+	}
+
+	/**
 	 *	@covers	::getRoutePatternParts
 	 */
 	public function test_getRoutePatternParts_CLI_SinglePathOnly(): void

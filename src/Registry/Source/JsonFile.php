@@ -93,14 +93,17 @@ class JsonFile extends AbstractSource implements SourceInterface
 	{
 		$data	= [];
 		foreach( $registry->index() as $route ){
-			$mode	= Route::getModeKey( $route->getMode() );
 			$item	= [];
-			if( strlen( $mode ) > 0 )
-				$item['mode']	= $mode;
+			if( Route::MODE_UNKNOWN !== $route->getMode() )
+				$item['mode']	= Route::getModeKey( $route->getMode() );
 			$item['controller']	= $route->getController();
 			$item['action']		= $route->getAction();
 			$item['pattern']	= $route->getPattern();
 			$item['method']		= $route->getMethod();
+			if( [] !== $route->getRoles() )
+				$item['roles']	= array_values( $route->getRoles() );
+			if( [] !== $route->getMeta() )
+				$item['meta']	= (object) $route->getMeta();
 			if( Route::PRIORITY_NORMAL !== $route->getPriority() )
 				$item['priority']	= Route::getPriorityKey( $route->getPriority() );
 			$data[]	= $item;

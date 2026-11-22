@@ -4,6 +4,9 @@
 - Make ext-memcache optional (suggest): only needed for the Memcache route source, which now throws a clear exception if the extension is missing.
 - Add meta information on routes (`meta` in JSON route files, `Route::getMeta()`, `setMeta()`, `hasMeta()`), carried for consumers like a REST server, e.g. `{"public": true, "rateLimit": "auth"}`.
 - JSON route files accept roles as list, besides comma separated string.
+- Fix: Loading routes from a source with autosave (e.g. `Router::loadRoutesFromJsonFile()`) no longer rewrites the source while reading it.
+- Fix: JSON route source saves roles and meta, and omits unknown mode.
+- Fix: Resolver matches static pattern parts literally (no regex interpretation of `.`, `+`, …) and detects a mismatch on the last pattern part.
 
 
 ## Version 0.5

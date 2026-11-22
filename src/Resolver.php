@@ -125,21 +125,9 @@ class Resolver
 			if( !$route->isMethod( $method ) )														//  method is not matching
 				continue;
 
-			$pattern	= $route->getPattern();
-			if( $route->getMethod() === 'CLI' ){
-				self::regExpReplaceInString( "@\(:[\S]+\)@", "(\S+)?", $pattern );					//  insert mandatory argument pattern
-				self::regExpReplaceInString( "@:[\S]+@", "\S+", $pattern );						//  insert mandatory argument pattern
-				self::regExpReplaceInString( "@ @", "(\s+)?", $pattern );								//
-			}
-			else{
-				self::regExpReplaceInString( "@(/\(:[^/]+\))@", "(/\S+)?", $pattern );				//  insert optional argument pattern
-				self::regExpReplaceInString( "@(/:[^/(]+)@", "/\S+", $pattern );					//  insert mandatory argument pattern
-				self::regExpReplaceInString( "/@/", "\@", $pattern );								//  escape @ to \@
-				self::regExpReplaceInString( "@/$@", "/?", $pattern );								//  make ending slash optional
-//				self::regExpReplaceInString( "@/$@", "", $path );
-			}
+			$pattern	= self::getRoutePatternRegExp( $route );
 			Log::debug( '> try pattern: '.$pattern );
-			if( preg_match( '@^'.$pattern.'$@U', $path ) === 0 )									//  path is not matching route pattern
+			if( preg_match( '@^'.$pattern.'$@U', $path ) !== 1 )									//  path is not matching route pattern
 				continue;
 
 			$partsPattern	= self::getRoutePatternParts( $route );
@@ -148,19 +136,23 @@ class Resolver
 			if( count( $partsPath ) > count( $partsPattern ) )										//  path has more parts than route pattern
 				continue;
 
-			$nr	= 0;
-			/* @phpstan-ignore-next-line */
+			$matched	= TRUE;
 			foreach( $partsPattern as $nr => $part ){
-				if( !$part->argument && 0 !== strlen( trim( $part->key ) ) ){								//  part is not an argument
-					if( $partsPath[$nr] !== $part->key )
+				if( $part->argument ){																//  part is an argument
+					if( !$part->optional && !isset( $partsPath[$nr] ) ){							//  argument is mandatory but not set
+						$matched	= FALSE;
 						break;
+					}
 				}
-				else if( $part->optional && !isset( $partsPath[$nr] ) )					//  part is argument but mandatory and not set
-					break;
+				else if( '' !== trim( $part->key ) ){												//  part is a static path part
+					if( ( $partsPath[$nr] ?? NULL ) !== $part->key ){								//  path part is not equal
+						$matched	= FALSE;
+						break;
+					}
+				}
 				$part->value	= $partsPath[$nr] ?? NULL;
 			}
-
-			if( $nr < count( $partsPattern ) - 1 )													//  loop has been broken
+			if( !$matched )
 				continue;
 
 			$arguments	= [];
@@ -239,6 +231,47 @@ class Resolver
 	 *	@param		string		$string
 	 *	@return		void
 	 */
+	/**
+	 *	Builds regular expression (without delimiters and anchors) for a route pattern.
+	 *	Static pattern parts are quoted, so regex characters (like . + ?) are matched literally.
+	 *	Arguments are replaced by placeholders: mandatory ones by \S+, optional ones by (\S+)?.
+	 *	The regular expression is meant to be used with delimiter @.
+	 *	@access		protected
+	 *	@static
+	 *	@param		Route		$route
+	 *	@return		string
+	 */
+	protected static function getRoutePatternRegExp( Route $route ): string
+	{
+		if( 'CLI' === $route->getMethod() ){
+			$parts	= [];
+			foreach( explode( ' ', $route->getPattern() ) as $part ){
+				if( 1 === preg_match( '@^\(:.+\)$@', $part ) )										//  optional argument
+					$parts[]	= '(\S+)?';
+				else if( str_starts_with( $part, ':' ) )											//  mandatory argument
+					$parts[]	= '\S+';
+				else																				//  static part
+					$parts[]	= preg_quote( $part, '@' );
+			}
+			return implode( '(\s+)?', $parts );
+		}
+
+		$segments	= explode( '/', $route->getPattern() );
+		$regExp		= preg_quote( (string) array_shift( $segments ), '@' );						//  part before first slash, usually empty
+		$lastIndex	= count( $segments ) - 1;
+		foreach( $segments as $index => $segment ){
+			if( 1 === preg_match( '@^\(:[^/]+\)$@', $segment ) )										//  optional argument, slash included
+				$regExp	.= '(/\S+)?';
+			else if( str_starts_with( $segment, ':' ) )												//  mandatory argument
+				$regExp	.= '/\S+';
+			else if( '' === $segment && $index === $lastIndex )										//  ending slash is optional
+				$regExp	.= '/?';
+			else																					//  static part
+				$regExp	.= '/'.preg_quote( $segment, '@' );
+		}
+		return $regExp;
+	}
+
 	protected static function regExpReplaceInString( string $regExp, string $replace, string & $string ): void
 	{
 		$result	= preg_replace( $regExp, $replace, $string );

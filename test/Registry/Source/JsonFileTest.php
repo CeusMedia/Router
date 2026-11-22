@@ -54,8 +54,28 @@ class JsonFileTest extends TestCase
 		self::assertSame( ['admin', 'full'], $routes['/admin']->getRoles(), 'roles as comma separated string' );
 	}
 
+	/**
+	 *	Regression: saving dropped roles and meta and wrote mode "unknown".
+	 */
 	public function testSave(): void
 	{
-		self::markTestIncomplete();
+		$tempFile	= (string) tempnam( sys_get_temp_dir(), 'RouterTest' );
+		try{
+			$registry	= new Registry();
+			( new JsonFileSource( __DIR__.'/../../JsonFileTest.meta.routes.json' ) )->load( $registry );
+			self::assertGreaterThan( 0, ( new JsonFileSource( $tempFile ) )->save( $registry ) );
+
+			$data	= json_decode( (string) file_get_contents( $tempFile ), TRUE );
+			self::assertIsArray( $data );
+			foreach( $data as $item )
+				self::assertArrayNotHasKey( 'mode', $item, 'unknown mode is not written' );
+
+			$reloaded	= new Registry();
+			self::assertEquals( 3, ( new JsonFileSource( $tempFile ) )->load( $reloaded ) );
+			self::assertEquals( $registry->index(), $reloaded->index() );
+		}
+		finally{
+			@unlink( $tempFile );
+		}
 	}
 }

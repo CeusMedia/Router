@@ -88,6 +88,41 @@ class RouterTest extends TestCase
 	}
 
 	/**
+	 *	Regression: loading routes rewrote the JSON file (autosave on every added route),
+	 *	losing roles and meta.
+	 *	@covers	::loadRoutesFromJsonFile
+	 */
+	public function testLoadRoutesFromJsonFile(): void
+	{
+		$tempFile	= (string) tempnam( sys_get_temp_dir(), 'RouterTest' );
+		try{
+			copy( __DIR__.'/JsonFileTest.meta.routes.json', $tempFile );
+			$original	= file_get_contents( $tempFile );
+
+			$router	= new Router();
+			$router->loadRoutesFromJsonFile( $tempFile );
+			self::assertCount( 3, $router->getRoutes() );
+			self::assertSame( $original, file_get_contents( $tempFile ), 'File must not be rewritten on load' );
+
+			//  autosave on adding a route keeps roles and meta of loaded routes
+			$router->addRoute( new Route( '/new', 'GET' ) );
+			$reloaded	= new Router();
+			$reloaded->loadRoutesFromJsonFile( $tempFile );
+			self::assertEquals( $router->getRoutes(), $reloaded->getRoutes() );
+
+			$routes	= [];
+			foreach( $reloaded->getRoutes() as $route )
+				$routes[$route->getPattern()]	= $route;
+			self::assertSame( 'auth', $routes['/auth/login']->getMeta( 'rateLimit' ) );
+			self::assertSame( ['perMinute' => 10], $routes['/auth/login']->getMeta( 'limits' ) );
+			self::assertSame( ['setup', 'full'], $routes['/account']->getRoles() );
+		}
+		finally{
+			@unlink( $tempFile );
+		}
+	}
+
+	/**
 	 *	@covers	::create
 	 */
 	public function testCreate(): void

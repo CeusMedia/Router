@@ -92,20 +92,30 @@ class Registry
 			) );
 		}
 		$this->routes[$routeId]	= $route;
-		$this->status	= self::STATUS_CHANGED;
-		$this->saveToSources();
+		if( self::STATUS_LOADING !== $this->status ){										//  route added by user, not by loading source
+			$this->status	= self::STATUS_CHANGED;
+			$this->saveToSources();
+		}
 		return $routeId;
 	}
 
 	/**
 	 *	Add source to registry and load it.
+	 *	Loading does not trigger saving to sources with autosave option,
+	 *	so a source is not rewritten while being read.
 	 *	@param		RegistrySourceInterface		$source
 	 *	@return		self
 	 */
 	public function addSource( RegistrySourceInterface $source ): self
 	{
 		$this->source->addSource( $source );
-		$source->load( $this );
+		$this->status	= self::STATUS_LOADING;
+		try{
+			$source->load( $this );
+		}
+		finally{
+			$this->status	= self::STATUS_CLEAN;
+		}
 		return $this;
 	}
 

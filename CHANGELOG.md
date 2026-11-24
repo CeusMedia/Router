@@ -1,12 +1,23 @@
 # Changelog for CeusMedia/Router
 
-## Unreleased (0.6.x)
+## Version 0.6.2
 - Make ext-memcache optional (suggest): only needed for the Memcache route source, which now throws a clear exception if the extension is missing.
 - Add meta information on routes (`meta` in JSON route files, `Route::getMeta()`, `setMeta()`, `hasMeta()`), carried for consumers like a REST server, e.g. `{"public": true, "rateLimit": "auth"}`.
 - JSON route files accept roles as list, besides comma separated string.
 - Fix: Loading routes from a source with autosave (e.g. `Router::loadRoutesFromJsonFile()`) no longer rewrites the source while reading it.
 - Fix: JSON route source saves roles and meta, and omits unknown mode.
-- Fix: Resolver matches static pattern parts literally (no regex interpretation of `.`, `+`, …) and detects a mismatch on the last pattern part.
+- Fix: Resolver matches static pattern parts literally (no regex interpretation of `.`, `+`, …) and detects a mismatch on the last pattern part. Patterns relying on regular expressions in static parts no longer match.
+
+
+## Version 0.6.1
+- Add memory route registry source, usable for testing or high performance use cases.
+- Improve stability of route factory on priority, controller, action and roles (list or comma separated string).
+- Improve unit tests (62% coverage) and code documentation.
+
+
+## Version 0.6.0
+- PHP 8.3 support, drop support for PHP < 8.3.
+- Migrate to support CeusMedia/Common 1.1.x and CeusMedia/Cache 0.7.x.
 
 
 ## Version 0.5
